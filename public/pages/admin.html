@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Futbol Tahmin</title>
+<link rel="stylesheet" href="/css/main.css">
+<style>
+body{padding:0;position:relative;z-index:1}
+#login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:16px}
+.login-box{width:100%;max-width:340px}
+.a-logo{text-align:center;margin-bottom:20px}
+.a-icon{width:50px;height:50px;background:linear-gradient(135deg,var(--red),#c62828);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 8px;box-shadow:0 0 20px rgba(255,61,107,.3)}
+.a-title{font-family:var(--fh);font-size:24px;letter-spacing:2px;color:var(--red)}
+#app-wrap{display:none;padding:12px;max-width:1400px;margin:0 auto}
+header{display:flex;align-items:center;justify-content:space-between;padding:10px 0 16px;border-bottom:1px solid var(--bdr);margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.h-left{display:flex;align-items:center;gap:8px}
+.h-title{font-family:var(--fh);font-size:18px;letter-spacing:2px;color:var(--red)}
+.h-right{display:flex;gap:6px;flex-wrap:wrap}
+.stat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px}
+@media(max-width:800px){.stat-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:460px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+.stat-card{background:var(--s1);border:1px solid var(--bdr);border-radius:11px;padding:12px;text-align:center}
+.stat-v{font-family:var(--fh);font-size:26px;margin-bottom:3px}
+.stat-l{font-size:9px;color:var(--t3);letter-spacing:1px;text-transform:uppercase}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:separate;border-spacing:0 3px;font-size:12px}
+th{font-size:9px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;padding:6px 9px;text-align:left;border-bottom:1px solid var(--bdr);white-space:nowrap}
+td{padding:8px 9px;background:var(--s2);vertical-align:middle}
+tr td:first-child{border-radius:7px 0 0 7px}
+tr td:last-child{border-radius:0 7px 7px 0}
+tr:hover td{background:var(--s3)}
+.fc{padding:4px 10px;border-radius:16px;border:1px solid var(--bdr);background:var(--s2);font-size:11px;color:var(--t2);cursor:pointer;transition:all .2s;white-space:nowrap}
+.fc.active,.fc:hover{border-color:var(--green);color:var(--green)}
+.inp-sm{width:55px;padding:4px 6px;background:var(--bg);border:1px solid var(--bdr);border-radius:6px;color:var(--text);font-family:var(--fm);font-size:11px;text-align:center;outline:none}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:999;align-items:center;justify-content:center;padding:16px}
+.modal-bg.open{display:flex}
+.modal{background:var(--s1);border:1px solid var(--bdr);border-radius:16px;padding:20px;width:100%;max-width:560px;max-height:85vh;overflow-y:auto}
+.modal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.modal-title{font-family:var(--fh);font-size:17px;letter-spacing:1px}
+.close-x{background:none;border:none;color:var(--t3);font-size:20px;cursor:pointer;padding:2px 7px;line-height:1}
+.close-x:hover{color:var(--text)}
+.feat-row{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.feat-nm{font-size:11px;color:var(--t2);min-width:120px}
+.feat-tr{flex:1;height:4px;background:var(--s3);border-radius:2px;overflow:hidden}
+.feat-fl{height:100%;background:var(--cyan);border-radius:2px}
+.feat-ct{font-size:10px;font-family:var(--fm);color:var(--t3);min-width:25px;text-align:right}
+</style>
+</head>
+<body>
+
+<!-- GİRİŞ -->
+<div id="login-wrap">
+  <div class="login-box">
+    <div class="a-logo">
+      <div class="a-icon">🔐</div>
+      <div class="a-title">ADMİN PANELİ</div>
+    </div>
+    <div class="card">
+      <div class="fg"><label>E-posta</label><input type="email" id="a-email" placeholder="admin@email.com" autocomplete="username"></div>
+      <div class="fg"><label>Şifre</label><input type="password" id="a-pass" placeholder="••••••••" autocomplete="current-password"></div>
+      <button class="btn btn-r btn-w" id="a-btn" onclick="doAdminLogin()">Giriş Yap</button>
+      <div class="msg" id="a-msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- UYGULAMA -->
+<div id="app-wrap">
+  <header>
+    <div class="h-left">
+      <div class="a-icon" style="width:34px;height:34px;font-size:16px">🔐</div>
+      <div class="h-title">ADMİN</div>
+    </div>
+    <div class="h-right">
+      <button class="btn btn-a" style="padding:6px 12px;font-size:11px" onclick="doReport()">📊 Rapor</button>
+      <button class="btn btn-g" style="padding:6px 12px;font-size:11px" onclick="refresh()">🔄 Yenile</button>
+      <button class="btn btn-g" style="padding:6px 12px;font-size:11px" onclick="doLogout()">🚪 Çıkış</button>
+    </div>
+  </header>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-v" style="color:var(--cyan)"  id="s-total">—</div><div class="stat-l">Toplam</div></div>
+    <div class="stat-card"><div class="stat-v" style="color:var(--green)" id="s-active">—</div><div class="stat-l">Aktif</div></div>
+    <div class="stat-card"><div class="stat-v" style="color:var(--amber)" id="s-pend">—</div><div class="stat-l">Bekleyen</div></div>
+    <div class="stat-card"><div class="stat-v" style="color:var(--red)"   id="s-susp">—</div><div class="stat-l">Askıda</div></div>
+    <div class="stat-card"><div class="stat-v" style="color:var(--t3)"    id="s-exp">—</div><div class="stat-l">Dolmuş</div></div>
+    <div class="stat-card"><div class="stat-v" style="color:var(--blue)"  id="s-acc">—</div><div class="stat-l">Doğruluk</div></div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px">
+      <div class="card-title" style="margin:0">👥 KULLANICILAR</div>
+    </div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px" id="filter-bar">
+      <span class="fc active" data-f="all" onclick="setFilter('all',this)">Tümü</span>
+      <span class="fc" data-f="pending"   onclick="setFilter('pending',this)">⏳ Bekleyen</span>
+      <span class="fc" data-f="active"    onclick="setFilter('active',this)">✅ Aktif</span>
+      <span class="fc" data-f="suspended" onclick="setFilter('suspended',this)">🚫 Askıda</span>
+      <span class="fc" data-f="expired"   onclick="setFilter('expired',this)">⌛ Dolmuş</span>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Üye</th><th>Telefon</th><th>Durum</th><th>Kalan</th><th>Son Giriş</th><th>İşlemler</th>
+        </tr></thead>
+        <tbody id="tbody"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--t3)">Yükleniyor...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title" id="modal-title">Detay</div>
+      <button class="close-x" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script src="/js/core.js"></script>
+<script>
+// ── STATE ────────────────────────────────────────
+var adminToken = localStorage.getItem('ft_admin_token') || '';
+var allUsers   = [];
+var curFilter  = 'all';
+
+// ── INIT ─────────────────────────────────────────
+if (adminToken) initApp();
+
+document.getElementById('a-pass').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') doAdminLogin();
+});
+
+// ── GİRİŞ ────────────────────────────────────────
+async function doAdminLogin() {
+  var email = (document.getElementById('a-email').value || '').trim();
+  var pass  = document.getElementById('a-pass').value || '';
+  if (!email || !pass) { showMsg('a-msg','E-posta ve şifre girin','err'); return; }
+  btnLoad('a-btn', true, 'Giriş yapılıyor...');
+  hideMsg('a-msg');
+  try {
+    var r = await fetch('/.netlify/functions/admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pass }),
+    });
+    var d = await r.json();
+    if (d.error) { showMsg('a-msg', d.error, 'err'); btnLoad('a-btn', false, 'Giriş Yap'); return; }
+    adminToken = d.token;
+    localStorage.setItem('ft_admin_token', adminToken);
+    initApp();
+  } catch(e) {
+    showMsg('a-msg', 'Bağlantı hatası: ' + e.message, 'err');
+    btnLoad('a-btn', false, 'Giriş Yap');
+  }
+}
+
+function doLogout() {
+  localStorage.removeItem('ft_admin_token');
+  adminToken = '';
+  location.reload();
+}
+
+function initApp() {
+  document.getElementById('login-wrap').style.display = 'none';
+  document.getElementById('app-wrap').style.display   = 'block';
+  loadStats();
+  loadUsers();
+}
+
+// ── API ──────────────────────────────────────────
+async function adminFetch(path, method, body) {
+  var opts = {
+    method: method || 'GET',
+    headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+adminToken },
+  };
+  if (body) opts.body = JSON.stringify(body);
+  var r = await fetch('/.netlify/functions/admin' + path, opts);
+  var text = await r.text();
+  try { return JSON.parse(text); } catch(e) { return { error: text }; }
+}
+
+// ── STATS ────────────────────────────────────────
+async function loadStats() {
+  try {
+    var d = await adminFetch('/stats');
+    if (d.error) return;
+    document.getElementById('s-total').textContent = d.total_users  || 0;
+    document.getElementById('s-active').textContent= d.active       || 0;
+    document.getElementById('s-pend').textContent  = d.pending      || 0;
+    document.getElementById('s-susp').textContent  = d.suspended    || 0;
+    document.getElementById('s-exp').textContent   = d.expired      || 0;
+    document.getElementById('s-acc').textContent   = (d.accuracy_pct||0) + '%';
+  } catch(e) {}
+}
+
+// ── KULLANICILAR ──────────────────────────────────
+async function loadUsers() {
+  document.getElementById('tbody').innerHTML =
+    '<tr><td colspan="6" style="text-align:center;padding:18px;color:var(--t3)"><span class="spin" style="border-top-color:var(--green)"></span> Yükleniyor...</td></tr>';
+  try {
+    var d = await adminFetch('/users');
+    if (d.error) { document.getElementById('tbody').innerHTML = '<tr><td colspan="6" style="color:var(--red);padding:12px">' + d.error + '</td></tr>'; return; }
+    allUsers = Array.isArray(d) ? d : [];
+    renderUsers();
+  } catch(e) {
+    document.getElementById('tbody').innerHTML = '<tr><td colspan="6" style="color:var(--red);padding:12px">Hata: ' + e.message + '</td></tr>';
+  }
+}
+
+function getStatus(u) {
+  if (!u.is_active) return 'suspended';
+  if (!u.is_approved) return 'pending';
+  if (u.access_end && new Date(u.access_end) < new Date()) return 'expired';
+  return 'active';
+}
+
+function setFilter(f, el) {
+  curFilter = f;
+  document.querySelectorAll('.fc').forEach(function(c) { c.classList.remove('active'); });
+  el.classList.add('active');
+  renderUsers();
+}
+
+function renderUsers() {
+  var list = curFilter === 'all' ? allUsers : allUsers.filter(function(u) { return getStatus(u) === curFilter; });
+  if (!list.length) {
+    document.getElementById('tbody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:18px;color:var(--t3)">Kullanıcı yok</td></tr>';
+    return;
+  }
+  document.getElementById('tbody').innerHTML = list.map(function(u) {
+    var st = getStatus(u);
+    var badge = st==='active' ? '<span class="badge b-ok">AKTİF</span>'
+              : st==='pending' ? '<span class="badge b-pend">BEKLEMEDE</span>'
+              : st==='suspended' ? '<span class="badge b-err">ASKIDA</span>'
+              : '<span class="badge b-off">DOLMUŞ</span>';
+    var dl = u.days_left;
+    var days = dl!==null ? '<span style="font-family:var(--fm);color:'+(dl>7?'var(--green)':dl>0?'var(--amber)':'var(--red)')+'">'+dl+'g</span>' : '—';
+    var acts = '<div style="display:flex;gap:3px;flex-wrap:wrap">';
+    if (st === 'pending') {
+      acts += '<input class="inp-sm" id="d-'+u.id+'" type="number" min="1" placeholder="gün">'
+            + '<button class="btn btn-p" style="padding:4px 7px;font-size:10px" onclick="doApprove(\''+u.id+'\')">✅</button>';
+    } else {
+      acts += '<input class="inp-sm" id="e-'+u.id+'" type="number" min="1" placeholder="gün">'
+            + '<button class="btn btn-a" style="padding:4px 7px;font-size:10px" onclick="doExtend(\''+u.id+'\')">+</button>';
+    }
+    acts += '<button class="btn '+(u.is_active?'btn-r':'btn-p')+'" style="padding:4px 7px;font-size:10px" onclick="doToggle(\''+u.id+'\','+(!u.is_active)+')">'+(u.is_active?'🚫':'✅')+'</button>'
+          + '<button class="btn btn-g" style="padding:4px 7px;font-size:10px" onclick="openModal(\''+u.id+'\')">📊</button>'
+          + '</div>';
+    return '<tr>'
+      + '<td><div style="font-weight:600;font-size:12px">'+(u.full_name||'—')+'</div><div style="font-size:10px;color:var(--t3)">'+u.email+'</div></td>'
+      + '<td style="font-family:var(--fm);font-size:10px">'+(u.phone||'—')+'</td>'
+      + '<td>'+badge+'</td>'
+      + '<td>'+days+'</td>'
+      + '<td style="font-size:10px;color:var(--t3);white-space:nowrap">'+fmtDate(u.last_login)+'</td>'
+      + '<td>'+acts+'</td>'
+      + '</tr>';
+  }).join('');
+}
+
+// ── İŞLEMLER ────────────────────────────────────
+async function doApprove(uid) {
+  var el = document.getElementById('d-'+uid);
+  var days = parseInt(el&&el.value)||0;
+  if (days < 1) { Toast.show('Gün sayısı girin','err'); return; }
+  var d = await adminFetch('/users/'+uid+'/approve','POST',{days});
+  if (d.error) { Toast.show(d.error,'err'); return; }
+  Toast.show('✅ '+days+' gün onaylandı');
+  loadUsers(); loadStats();
+}
+
+async function doExtend(uid) {
+  var el = document.getElementById('e-'+uid);
+  var days = parseInt(el&&el.value)||0;
+  if (days < 1) { Toast.show('Gün sayısı girin','err'); return; }
+  var d = await adminFetch('/users/'+uid+'/extend','POST',{days});
+  if (d.error) { Toast.show(d.error,'err'); return; }
+  Toast.show('✅ '+days+' gün eklendi');
+  loadUsers();
+}
+
+async function doToggle(uid, active) {
+  var d = await adminFetch('/users/'+uid+'/toggle','POST',{is_active:active});
+  if (d.error) { Toast.show(d.error,'err'); return; }
+  Toast.show(active?'✅ Açıldı':'🚫 Engellendi');
+  loadUsers(); loadStats();
+}
+
+async function openModal(uid) {
+  var u = allUsers.find(function(x){return x.id===uid;});
+  if (!u) return;
+  document.getElementById('modal-title').textContent = u.full_name||u.email;
+  document.getElementById('modal-body').innerHTML = '<div style="text-align:center;padding:16px"><span class="spin" style="width:18px;height:18px;border-top-color:var(--cyan)"></span></div>';
+  document.getElementById('modal').classList.add('open');
+  try {
+    var stats = await adminFetch('/users/'+uid+'/stats');
+    var max = Math.max.apply(null, Object.values(stats.feature_counts||{}).concat([1]));
+    var fnames = {tahmin:'⚽ Gol',korner:'🚩 Korner',kart:'🟨 Kart',oranlar:'💰 Oranlar',canli:'📡 Canlı',giris:'📊 İstatistik'};
+    var html = '<div class="grid2" style="margin-bottom:12px">'
+      + '<div style="background:var(--s2);border-radius:8px;padding:10px"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">E-posta</div><div style="font-size:12px">'+u.email+'</div></div>'
+      + '<div style="background:var(--s2);border-radius:8px;padding:10px"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Telefon</div><div style="font-size:11px;font-family:var(--fm)">'+(u.phone||'—')+'</div></div>'
+      + '<div style="background:var(--s2);border-radius:8px;padding:10px"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Erişim Bitiş</div><div style="font-size:11px;color:var(--amber)">'+fmtDate(u.access_end)+'</div></div>'
+      + '<div style="background:var(--s2);border-radius:8px;padding:10px"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Kullanım</div><div style="font-size:12px;color:var(--cyan)">'+Math.round((stats.total_duration||0)/3600*10)/10+'sa</div></div>'
+      + '</div>'
+      + '<div style="margin-bottom:10px"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Özellik Kullanımı</div>'
+      + Object.entries(stats.feature_counts||{}).sort(function(a,b){return b[1]-a[1];}).map(function(e){
+          var pct=Math.round(e[1]/max*100);
+          return '<div class="feat-row"><span class="feat-nm">'+(fnames[e[0]]||e[0])+'</span><div class="feat-tr"><div class="feat-fl" style="width:'+pct+'%"></div></div><span class="feat-ct">'+e[1]+'</span></div>';
+        }).join('') + '</div>'
+      + '<div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Not</div>'
+      + '<textarea id="m-note" style="min-height:50px">'+(u.notes||'')+'</textarea>'
+      + '<div style="display:flex;gap:6px;margin-top:6px">'
+      + '<button class="btn btn-g" style="padding:5px 10px;font-size:11px" onclick="doNote(\''+uid+'\')">💾 Notu Kaydet</button>'
+      + '<button class="btn btn-r" style="padding:5px 10px;font-size:11px" onclick="doDelete(\''+uid+'\')">🗑 Sil</button>'
+      + '</div></div>';
+    document.getElementById('modal-body').innerHTML = html;
+  } catch(e) {
+    document.getElementById('modal-body').innerHTML = '<div style="color:var(--red)">Hata: '+e.message+'</div>';
+  }
+}
+
+async function doNote(uid) {
+  var note = (document.getElementById('m-note').value||'').trim();
+  var d = await adminFetch('/users/'+uid+'/note','POST',{notes:note});
+  if (d.error) { Toast.show(d.error,'err'); return; }
+  var u = allUsers.find(function(x){return x.id===uid;}); if(u) u.notes=note;
+  Toast.show('✅ Not kaydedildi');
+}
+
+async function doDelete(uid) {
+  if (!confirm('Bu kullanıcı kalıcı silinecek. Emin misiniz?')) return;
+  var d = await adminFetch('/users/'+uid,'DELETE');
+  if (d.error) { Toast.show(d.error,'err'); return; }
+  closeModal(); Toast.show('🗑 Silindi');
+  loadUsers(); loadStats();
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+function refresh() { loadUsers(); loadStats(); }
+
+// ── RAPOR ────────────────────────────────────────
+async function doReport() {
+  Toast.show('Rapor hazırlanıyor...','info');
+  try {
+    var d = await adminFetch('/report');
+    if (d.error) { Toast.show(d.error,'err'); return; }
+    var lines = [
+      '╔══════════════════════════════════════════╗',
+      '║     FUTBOL TAHMİN — GÜNLÜK RAPOR         ║',
+      '╚══════════════════════════════════════════╝',
+      'Tarih: ' + d.date,
+      '',
+      '📊 PERFORMANS',
+      '─────────────────────────────',
+      'Toplam Tahmin : ' + (d.total_predictions||0),
+      'Doğru Sonuç   : ' + (d.correct_results||0) + ' (%'+(d.accuracy_pct||0)+')',
+      'Doğru Üst/Alt : ' + (d.correct_ou||0) + ' (%'+(d.ou_accuracy_pct||0)+')',
+      '',
+      '🏆 LİG BAZLI',
+      '─────────────────────────────',
+    ];
+    Object.entries(d.league_stats||{}).forEach(function(e){
+      var st=e[1], pct=st.total?Math.round(st.correct/st.total*100):0;
+      lines.push(e[0].slice(0,25).padEnd(26)+st.correct+'/'+st.total+' (%'+pct+')');
+    });
+    lines.push('');
+    lines.push('📋 TAHMİNLER');
+    lines.push('─────────────────────────────');
+    (d.predictions||[]).forEach(function(p){
+      lines.push((p.correct_result?'✅':'❌')+' '+p.home_team+' vs '+p.away_team);
+      lines.push('   '+p.predicted_score+' → '+(p.actual_score||'?')+' | '+p.confidence+'/10');
+      if (p.insight) lines.push('   '+(p.insight||'').slice(0,80));
+      lines.push('');
+    });
+    lines.push('═══════════════════════════════════════════');
+    lines.push('oddsproapp.com | '+new Date().toLocaleString('tr-TR'));
+    var blob = new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'rapor_'+d.date.replace(/\./g,'-')+'.txt';
+    a.click();
+    Toast.show('✅ Rapor indirildi!');
+  } catch(e) { Toast.show('Rapor hatası: '+e.message,'err'); }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Futbol Tahmin — Giriş</title>
+<link rel="stylesheet" href="/css/main.css">
+<style>
+body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:16px;position:relative;z-index:1}
+.wrap{width:100%;max-width:400px}
+.logo{text-align:center;margin-bottom:24px}
+.logo-icon{width:58px;height:58px;background:linear-gradient(135deg,var(--green),var(--cyan));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 10px;box-shadow:0 0 26px rgba(0,230,118,.3)}
+.logo-title{font-family:var(--fh);font-size:28px;letter-spacing:3px}
+.logo-sub{font-size:10px;color:var(--t3);letter-spacing:3px;text-transform:uppercase;margin-top:3px}
+.tabs{display:flex;gap:3px;background:var(--s2);padding:3px;border-radius:10px;margin-bottom:18px}
+.tab{flex:1;padding:9px;border:none;background:transparent;color:var(--t2);font-family:var(--fb);font-size:13px;font-weight:600;border-radius:8px;cursor:pointer;transition:all .2s}
+.tab.active{background:linear-gradient(135deg,var(--g2),#0d3d22);color:var(--green)}
+.panel{display:none}.panel.active{display:block}
+.link-btn{background:none;border:none;color:var(--cyan);font-size:12px;cursor:pointer;text-decoration:underline;padding:4px 0;display:block;text-align:right;margin-top:4px}
+.back-btn{display:flex;align-items:center;gap:5px;background:none;border:none;color:var(--t2);font-size:12px;cursor:pointer;margin-bottom:12px;padding:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">
+    <div class="logo-icon">⚽</div>
+    <div class="logo-title">FUTBOL TAHMİN</div>
+    <div class="logo-sub">Canlı İstatistik & AI Analiz</div>
+  </div>
+
+  <div class="card">
+    <!-- Ana sekmeler -->
+    <div id="main-tabs">
+      <div class="tabs">
+        <button class="tab active" id="tab-login-btn" onclick="showPanel('login')">Giriş Yap</button>
+        <button class="tab" id="tab-reg-btn" onclick="showPanel('register')">Kayıt Ol</button>
+      </div>
+
+      <!-- GİRİŞ -->
+      <div class="panel active" id="panel-login">
+        <div class="fg"><label>E-posta</label>
+          <input type="email" id="l-email" placeholder="ornek@email.com" autocomplete="email">
+        </div>
+        <div class="fg"><label>Şifre</label>
+          <input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="link-btn" onclick="showPanel('forgot')">Şifremi unuttum</button>
+        <button class="btn btn-p btn-w" id="login-btn" style="margin-top:10px" onclick="doLogin()">Giriş Yap</button>
+        <div class="msg" id="login-msg"></div>
+      </div>
+
+      <!-- KAYIT -->
+      <div class="panel" id="panel-register">
+        <div class="fg"><label>Ad Soyad</label><input type="text" id="r-name" placeholder="Ad Soyad"></div>
+        <div class="fg"><label>E-posta</label><input type="email" id="r-email" placeholder="ornek@email.com"></div>
+        <div class="fg"><label>Telefon</label><input type="tel" id="r-phone" placeholder="05XX XXX XX XX"></div>
+        <div class="fg"><label>Şifre</label><input type="password" id="r-pass" placeholder="En az 6 karakter"></div>
+        <div class="fg"><label>Şifre Tekrar</label><input type="password" id="r-pass2" placeholder="Şifrenizi tekrar girin"></div>
+        <button class="btn btn-p btn-w" id="reg-btn" onclick="doRegister()">Kayıt Ol</button>
+        <div class="msg" id="reg-msg"></div>
+      </div>
+    </div>
+
+    <!-- ŞİFREMİ UNUTTUM -->
+    <div id="panel-forgot" style="display:none">
+      <button class="back-btn" onclick="showPanel('login')">← Geri</button>
+      <div class="fg"><label>E-posta</label><input type="email" id="f-email" placeholder="ornek@email.com"></div>
+      <button class="btn btn-p btn-w" id="forgot-btn" onclick="doForgot()">Sıfırlama Kodu İste</button>
+      <div class="msg" id="forgot-msg"></div>
+      <div id="reset-form" style="display:none;margin-top:14px;border-top:1px solid var(--bdr);padding-top:14px">
+        <div class="fg"><label>Sıfırlama Kodu</label><input type="text" id="f-code" placeholder="6 haneli kod"></div>
+        <div class="fg"><label>Yeni Şifre</label><input type="password" id="f-newpass" placeholder="En az 6 karakter"></div>
+        <button class="btn btn-p btn-w" id="reset-btn" onclick="doReset()">Şifreyi Sıfırla</button>
+        <div class="msg" id="reset-msg"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/core.js"></script>
+<script>
+// Enter ile giriş
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    var active = document.querySelector('.panel.active');
+    if (active && active.id === 'panel-login') doLogin();
+    if (active && active.id === 'panel-register') doRegister();
+  }
+});
+
+// Zaten giriş yaptıysa yönlendir
+(function() {
+  if (!AUTH.token) return;
+  AUTH.verify().then(function(ok) {
+    if (ok) window.location.href = '/';
+  });
+})();
+
+function showPanel(name) {
+  // Ana tablar
+  document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+
+  if (name === 'forgot') {
+    document.getElementById('main-tabs').style.display = 'none';
+    document.getElementById('panel-forgot').style.display = 'block';
+  } else {
+    document.getElementById('main-tabs').style.display = 'block';
+    document.getElementById('panel-forgot').style.display = 'none';
+    var panel = document.getElementById('panel-' + name);
+    var tab   = document.getElementById('tab-' + name + '-btn');
+    if (panel) panel.classList.add('active');
+    if (tab)   tab.classList.add('active');
+  }
+}
+
+async function doLogin() {
+  var email = document.getElementById('l-email').value.trim();
+  var pass  = document.getElementById('l-pass').value;
+  if (!email || !pass) { showMsg('login-msg','E-posta ve şifre girin','err'); return; }
+  btnLoad('login-btn', true, 'Giriş yapılıyor...');
+  try {
+    var r = await fetch('/api/auth/login', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email, password: pass }),
+    });
+    var d = await r.json();
+    if (d.error) { showMsg('login-msg', d.error, 'err'); btnLoad('login-btn', false, 'Giriş Yap'); return; }
+    AUTH.save(d.token, d.user);
+    showMsg('login-msg', '✅ Giriş başarılı! Yönlendiriliyorsunuz...', 'ok');
+    setTimeout(function() { window.location.href = '/'; }, 900);
+  } catch(e) {
+    showMsg('login-msg', 'Bağlantı hatası', 'err');
+    btnLoad('login-btn', false, 'Giriş Yap');
+  }
+}
+
+async function doRegister() {
+  var name  = document.getElementById('r-name').value.trim();
+  var email = document.getElementById('r-email').value.trim();
+  var phone = document.getElementById('r-phone').value.trim();
+  var pass  = document.getElementById('r-pass').value;
+  var pass2 = document.getElementById('r-pass2').value;
+  if (!name||!email||!phone||!pass) { showMsg('reg-msg','Tüm alanları doldurun','err'); return; }
+  if (pass !== pass2) { showMsg('reg-msg','Şifreler eşleşmiyor','err'); return; }
+  if (pass.length < 6) { showMsg('reg-msg','Şifre en az 6 karakter','err'); return; }
+  btnLoad('reg-btn', true, 'Kayıt yapılıyor...');
+  try {
+    var r = await fetch('/api/auth/register', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ full_name:name, email, phone, password:pass }),
+    });
+    var d = await r.json();
+    if (d.error) { showMsg('reg-msg', d.error, 'err'); btnLoad('reg-btn', false, 'Kayıt Ol'); return; }
+    showMsg('reg-msg', '✅ ' + d.message, 'ok');
+    btnLoad('reg-btn', false, 'Kayıt Ol');
+  } catch(e) {
+    showMsg('reg-msg', 'Bağlantı hatası', 'err');
+    btnLoad('reg-btn', false, 'Kayıt Ol');
+  }
+}
+
+async function doForgot() {
+  var email = document.getElementById('f-email').value.trim();
+  if (!email) { showMsg('forgot-msg','E-posta girin','err'); return; }
+  btnLoad('forgot-btn', true, 'Gönderiliyor...');
+  try {
+    var r = await fetch('/api/auth/forgot-password', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email }),
+    });
+    var d = await r.json();
+    showMsg('forgot-msg', d.message || d.error, d.error ? 'err' : 'info');
+    document.getElementById('reset-form').style.display = 'block';
+    btnLoad('forgot-btn', false, 'Tekrar Gönder');
+  } catch(e) { showMsg('forgot-msg','Hata','err'); btnLoad('forgot-btn', false, 'Sıfırlama Kodu İste'); }
+}
+
+async function doReset() {
+  var email   = document.getElementById('f-email').value.trim();
+  var code    = document.getElementById('f-code').value.trim();
+  var newPass = document.getElementById('f-newpass').value;
+  if (!code || !newPass) { showMsg('reset-msg','Kod ve yeni şifre girin','err'); return; }
+  btnLoad('reset-btn', true, 'Sıfırlanıyor...');
+  try {
+    var r = await fetch('/api/auth/reset-password', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email, code, new_password: newPass }),
+    });
+    var d = await r.json();
+    if (d.error) { showMsg('reset-msg', d.error, 'err'); btnLoad('reset-btn', false, 'Şifreyi Sıfırla'); return; }
+    showMsg('reset-msg', '✅ ' + d.message, 'ok');
+    setTimeout(function() { showPanel('login'); }, 2000);
+  } catch(e) { showMsg('reset-msg','Hata','err'); btnLoad('reset-btn', false, 'Şifreyi Sıfırla'); }
+}
+</script>
+</body>
+</html>

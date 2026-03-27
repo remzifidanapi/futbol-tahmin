@@ -1,0 +1,124 @@
+/* public/css/main.css — Ortak stiller */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+  --bg:#080c10; --s1:#0e1419; --s2:#161d24; --s3:#1e2830; --bdr:#2a3540;
+  --green:#00e676; --g2:#1a6b3c; --red:#ff3d6b; --amber:#ffab00;
+  --cyan:#00e5ff; --blue:#2979ff; --purple:#7c4dff;
+  --text:#e8edf2; --t2:#8fa3b0; --t3:#4a6070;
+  --fh:'Bebas Neue',sans-serif; --fb:'DM Sans',sans-serif; --fm:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 80% 50% at 20% 10%,rgba(0,230,118,.05) 0%,transparent 60%),
+             radial-gradient(ellipse 60% 40% at 80% 80%,rgba(41,121,255,.04) 0%,transparent 60%)}
+
+/* Butonlar */
+.btn{padding:9px 18px;border:none;border-radius:9px;font-family:var(--fb);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none!important}
+.btn-p{background:linear-gradient(135deg,var(--green),#00c853);color:#000;box-shadow:0 3px 12px rgba(0,230,118,.2)}
+.btn-p:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 5px 16px rgba(0,230,118,.3)}
+.btn-r{background:linear-gradient(135deg,var(--red),#c62828);color:#fff}
+.btn-a{background:linear-gradient(135deg,var(--amber),#e65100);color:#000}
+.btn-c{background:linear-gradient(135deg,var(--cyan),#0097a7);color:#000}
+.btn-g{background:var(--s2);color:var(--t2);border:1px solid var(--bdr)}
+.btn-g:hover:not(:disabled){border-color:var(--green);color:var(--green)}
+.btn-w{width:100%;justify-content:center}
+
+/* Form */
+.fg{margin-bottom:13px}
+label{display:block;font-size:10px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+input,select,textarea{width:100%;padding:10px 12px;background:var(--s2);border:1px solid var(--bdr);border-radius:9px;color:var(--text);font-family:var(--fb);font-size:13px;outline:none;transition:border .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--green)}
+select option{background:var(--s2)}
+textarea{resize:vertical;min-height:60px}
+
+/* Kart */
+.card{background:var(--s1);border:1px solid var(--bdr);border-radius:14px;padding:16px;margin-bottom:12px}
+.card-title{font-family:var(--fh);font-size:16px;letter-spacing:1.5px;color:var(--t2);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--bdr),transparent)}
+
+/* Mesaj */
+.msg{padding:9px 12px;border-radius:9px;font-size:12px;margin-top:8px;line-height:1.5;display:none}
+.msg.show-ok{display:block;background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.2);color:var(--green)}
+.msg.show-err{display:block;background:rgba(255,61,107,.1);border:1px solid rgba(255,61,107,.2);color:var(--red)}
+.msg.show-info{display:block;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.2);color:var(--cyan)}
+.msg.show-warn{display:block;background:rgba(255,171,0,.1);border:1px solid rgba(255,171,0,.2);color:var(--amber)}
+
+/* Spinner */
+.spin{display:inline-block;width:13px;height:13px;border-radius:50%;border:2px solid rgba(255,255,255,.2);border-top-color:currentColor;animation:spin .7s linear infinite;vertical-align:middle;margin-right:5px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Toast */
+.toast-wrap{position:fixed;bottom:20px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.toast{padding:10px 15px;border-radius:10px;font-size:13px;font-weight:600;animation:toastIn .3s ease;max-width:280px}
+.toast-ok{background:var(--green);color:#000}
+.toast-err{background:var(--red);color:#fff}
+.toast-info{background:var(--cyan);color:#000}
+.toast-warn{background:var(--amber);color:#000}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* Badge */
+.badge{display:inline-block;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700;font-family:var(--fm)}
+.b-ok{background:rgba(0,230,118,.14);color:var(--green)}
+.b-pend{background:rgba(255,171,0,.14);color:var(--amber)}
+.b-err{background:rgba(255,61,107,.14);color:var(--red)}
+.b-off{background:rgba(74,96,112,.2);color:var(--t2)}
+
+/* Sinyal */
+.sig{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.4px;white-space:nowrap}
+.sig-low{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.2)}
+.sig-watch{background:rgba(255,171,0,.1);color:var(--amber);border:1px solid rgba(255,171,0,.2)}
+.sig-strong{background:rgba(255,61,107,.15);color:var(--red);border:1px solid rgba(255,61,107,.3)}
+.sig-goal{background:rgba(255,61,107,.2);color:#fff;border:1px solid var(--red);animation:goalPulse 1s infinite}
+@keyframes goalPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,61,107,.5)}50%{box-shadow:0 0 0 5px rgba(255,61,107,0)}}
+
+/* Baskı barı */
+.press-bar{display:flex;height:22px;border-radius:11px;overflow:hidden;margin:8px 0}
+.press-h{background:linear-gradient(90deg,var(--green),#00c853);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#000;min-width:24px;transition:width .5s}
+.press-a{background:linear-gradient(90deg,#c62828,var(--red));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex:1;transition:width .5s}
+
+/* İstatistik barı */
+.stat-bar-row{display:flex;align-items:center;gap:6px;margin-bottom:7px}
+.stat-val-l{font-family:var(--fm);font-size:12px;color:var(--green);min-width:30px;text-align:right}
+.stat-val-r{font-family:var(--fm);font-size:12px;color:var(--red);min-width:30px}
+.stat-bar{flex:1;height:5px;background:var(--s3);border-radius:3px;overflow:hidden;display:flex}
+.stat-bar-l{height:100%;background:var(--green);border-radius:3px;transition:width .4s}
+.stat-bar-r{height:100%;background:var(--red);border-radius:3px;transition:width .4s}
+.stat-lbl{font-size:10px;color:var(--t3);min-width:80px;text-align:center}
+
+/* Maç kartı */
+.mc{background:var(--s2);border:1px solid var(--bdr);border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer;transition:all .2s}
+.mc:hover{border-color:var(--green);background:var(--s3)}
+.mc-teams{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mc-team{font-size:14px;font-weight:600;flex:1}
+.mc-team-r{text-align:right}
+.mc-score{background:var(--s1);border:1px solid var(--bdr);border-radius:8px;padding:4px 12px;text-align:center;min-width:60px}
+.mc-score-num{font-family:var(--fm);font-size:18px;font-weight:700;color:var(--green)}
+.mc-score-min{font-size:10px;color:var(--t3)}
+.mc-signal{display:flex;align-items:center;gap:6px;margin-top:7px;flex-wrap:wrap}
+.mc-meter{flex:1;height:4px;background:var(--s3);border-radius:2px;overflow:hidden;min-width:40px}
+.mc-meter-fill{height:100%;border-radius:2px;transition:width .6s}
+.mc-league{font-size:10px;color:var(--t3);letter-spacing:.5px;margin-bottom:5px}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;background:var(--s1);padding:4px;border-radius:12px;border:1px solid var(--bdr);margin-bottom:16px;overflow-x:auto}
+.tab{flex:1;min-width:80px;padding:8px 12px;border:none;background:transparent;color:var(--t2);font-family:var(--fb);font-size:12px;font-weight:500;border-radius:9px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tab.active{background:linear-gradient(135deg,var(--g2),#0d3d22);color:var(--green)}
+.tab:hover:not(.active){color:var(--text);background:var(--s2)}
+
+/* Sub-tabs */
+.sub-tabs{display:flex;gap:3px;background:var(--s2);padding:3px;border-radius:10px;margin-bottom:12px}
+.sub-tab{flex:1;padding:7px;border:none;background:transparent;color:var(--t3);font-family:var(--fb);font-size:12px;border-radius:8px;cursor:pointer;transition:all .2s;text-align:center}
+.sub-tab.active{background:var(--s1);color:var(--green);box-shadow:0 0 10px rgba(0,230,118,.1)}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--s1)}
+::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:3px}
+
+/* Responsive */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:600px){.grid2,.grid3{grid-template-columns:1fr}}

@@ -1,0 +1,69 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+# Auth
+[[redirects]]
+  from = "/api/auth/*"
+  to = "/.netlify/functions/auth"
+  status = 200
+
+# Admin — gizli path, tahmin edilemez
+[[redirects]]
+  from = "/api/admin/*"
+  to = "/.netlify/functions/admin"
+  status = 200
+
+# Football API
+[[redirects]]
+  from = "/api/football"
+  to = "/.netlify/functions/football"
+  status = 200
+
+# Claude AI
+[[redirects]]
+  from = "/api/ai"
+  to = "/.netlify/functions/claude"
+  status = 200
+
+# Live cache
+[[redirects]]
+  from = "/api/live"
+  to = "/.netlify/functions/live"
+  status = 200
+
+# Admin panel — gizli URL (hash tabanlı)
+[[redirects]]
+  from = "/x7k9m2p4q8r"
+  to = "/pages/admin.html"
+  status = 200
+
+# Login
+[[redirects]]
+  from = "/giris"
+  to = "/pages/login.html"
+  status = 200
+
+# Ana sayfa — oturum kontrolü JS yapar
+[[redirects]]
+  from = "/"
+  to = "/pages/app.html"
+  status = 200
+
+# SPA fallback
+[[redirects]]
+  from = "/*"
+  to = "/pages/app.html"
+  status = 200
