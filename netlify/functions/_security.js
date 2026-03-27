@@ -11,7 +11,8 @@ const ALLOWED_ORIGINS = [
 ];
 
 function getCORS(origin) {
-  const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  // Origin boş gelirse veya listede yoksa wildcard kullan
+  const allowed = (origin && ALLOWED_ORIGINS.includes(origin)) ? origin : '*';
   return {
     'Access-Control-Allow-Origin': allowed,
     'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Request-ID',
