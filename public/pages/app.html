@@ -421,6 +421,15 @@ body{position:relative;z-index:1;padding-bottom:60px}
 <script>
 // ── SESSION KONTROL ───────────────────────────────
 (function(){
+  // Admin token kontrolü
+  var adminToken = localStorage.getItem('ft_admin_token') || '';
+  if(adminToken) {
+    // Admin olarak giriş yapılmış - direkt başlat
+    AUTH.token = adminToken;
+    AUTH.user  = { email: 'Admin', full_name: 'Admin', days_left: null };
+    initApp();
+    return;
+  }
   if(!AUTH.token){ window.location.href='/giris'; return; }
   AUTH.verify().then(function(ok){
     if(!ok){ window.location.href='/giris'; return; }
@@ -501,21 +510,16 @@ function backToMatches(){
 var autoTimer=null, cdTimer=null, autoTotal=0, autoCd=0;
 
 async function loadMatches(){
+  // Önce direkt API'den çek (cache dolana kadar)
+  await loadMatchesDirect();
+  // Arka planda cache'i de kontrol et
   try{
     var d = await API.live('/matches');
-    trackApi(0);
-    if(d.matches&&d.matches.length){
+    if(d.matches && d.matches.length){
       S.matches = convertMatches(d.matches);
       renderMatches();
-      var lastEl=document.getElementById('ref-last');
-      if(lastEl) lastEl.textContent='Son: '+new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    } else {
-      // Fallback: direkt API'den çek
-      await loadMatchesDirect();
     }
-  }catch(e){
-    await loadMatchesDirect();
-  }
+  }catch(e){}
 }
 
 async function loadMatchesDirect(){
