@@ -17,8 +17,9 @@ exports.handler = async function(event) {
   try { body = JSON.parse(event.body || '{}'); } catch {}
   const getToken = () => (event.headers['authorization'] || '').replace('Bearer ','').trim();
 
-  // ── ADMIN GİRİŞ ──
-  if (path === '/login' && method === 'POST') {
+  // ── ADMIN GİRİŞ ── path /login veya boş, method POST, token yok
+  const hasAuthHeader = !!(event.headers['authorization'] || '').replace('Bearer ','').trim();
+  if (method === 'POST' && !hasAuthHeader && (path === '/login' || path === '' || path === '/')) {
     const rl = checkRateLimit(`adminlogin:${ip}`, 'admin_login');
     if (rl.blocked) return err(`Çok fazla deneme. ${rl.remaining} dk bekleyin.`, 429, cors);
 
