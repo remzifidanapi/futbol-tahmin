@@ -143,6 +143,14 @@ exports.handler = async function(event) {
     return ok({ message:'Kullanıcı silindi' }, 200, cors);
   }
 
+  // ── ŞİFRE SIFIRLAMA KODLARI ──
+  if (path === '/reset-codes' && method === 'GET') {
+    const res = await db('GET', 'users', null,
+      '?reset_code=not.is.null&select=email,full_name,reset_code,reset_expiry&order=reset_expiry.desc'
+    );
+    return ok(res.data || [], 200, cors);
+  }
+
   // ── RAPOR ──
   if (path === '/report' && method === 'GET') {
     const yesterday = new Date(Date.now()-86400000).toISOString();
