@@ -374,7 +374,7 @@ function initApp() {
   updateHeader();
   startIdleTimer();
   loadPerformance();
-  loadMatches();
+  setTimeout(loadMatches, 300); // DOM hazır olsun
 }
 
 function updateHeader() {
@@ -456,14 +456,18 @@ async function loadPerformance() {
 function switchTab(tab) {
   ['maclar','oranlar','profil','stat'].forEach(function(t) {
     var el = document.getElementById('panel-'+t);
-    if(el){ el.classList.remove('active'); el.style.display='none'; }
+    if(el){ el.style.display='none'; }
   });
   document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
   var panel = document.getElementById('panel-'+tab);
-  if(panel){ panel.style.display='block'; panel.classList.add('active'); }
+  if(panel){ panel.style.display='block'; }
   var tb = document.getElementById('tab-'+tab);
   if(tb) tb.classList.add('active');
   if(tab==='profil') fillProfForm();
+  if(tab==='maclar') {
+    if(S.matches.length===0) loadMatches();
+    else renderMatches();
+  }
 }
 
 function switchSub(sub) {
@@ -482,21 +486,25 @@ function switchSub(sub) {
 }
 
 function backToList() {
-  document.querySelectorAll('.panel').forEach(function(p){p.style.display='none';p.classList.remove('active');});
+  document.getElementById('panel-stat').style.display='none';
   document.getElementById('panel-maclar').style.display='block';
-  document.getElementById('panel-maclar').classList.add('active');
   document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
   document.getElementById('tab-maclar').classList.add('active');
+  renderMatches();
 }
 
 // ── MAÇLAR ───────────────────────────────────────
 var S = { matches: [], lig: '', search: '', curFid: null, curHome: '', curAway: '', curMin: 45, curH: {}, curA: {}, curGols: {h:[],a:[]} };
 
 async function loadMatches() {
+  document.getElementById('mac-list').innerHTML = '<div style="text-align:center;padding:32px;color:var(--t3)"><span style="display:inline-block;width:20px;height:20px;border-radius:50%;border:2px solid rgba(0,230,118,.2);border-top-color:var(--green);animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px"></span>Maçlar yükleniyor...</div>';
   try {
     var d = await apiFetch('/fixtures?live=all');
     if (d.response && d.response.length) {
       S.matches = d.response;
+      S.lig = '';
+      S.search = '';
+      S.matchCache = {};
       renderMatches();
     } else {
       document.getElementById('mac-list').innerHTML = '<div style="text-align:center;padding:32px;color:var(--t3)"><div style="font-size:28px;margin-bottom:8px">🌙</div>Şu an canlı maç yok</div>';
