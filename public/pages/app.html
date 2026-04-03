@@ -794,6 +794,23 @@ function renderGolTimeline(){
   tl.innerHTML=all.map(function(g){var pct=Math.min(99,Math.round(g.dk/90*100));return '<div style="position:absolute;left:'+pct+'%;width:3px;height:100%;background:'+(g.t==='h'?'var(--green)':'var(--red)')+';border-radius:1px" title="'+g.dk+"'></div>";}).join('');
 }
 
+// ── TAHMİN KAYDET ────────────────────────────────
+function savePrediction(type, res, home, away, fid) {
+  try {
+    var key = 'predictions_' + new Date().toISOString().slice(0,10);
+    var preds = JSON.parse(localStorage.getItem(key) || '[]');
+    preds.push({
+      time: new Date().toLocaleTimeString('tr-TR'),
+      type: type,
+      home: home,
+      away: away,
+      fid: fid,
+      result: res,
+    });
+    localStorage.setItem(key, JSON.stringify(preds));
+  } catch(e) {}
+}
+
 // ── AI TAHMİN ────────────────────────────────────
 async function doAI(type) {
   var h=S.curH,a=S.curA,mn=S.curMin;
@@ -812,8 +829,15 @@ async function doAI(type) {
   }
   try{
     var d=await apiAI([{role:'user',content:prompt}],700);
+    if(d.error){throw new Error(d.error);}
     var txt=d.content&&d.content.map(function(c){return c.text||'';}).join('')||'';
-    var res=JSON.parse(txt.replace(/```json|```/g,'').trim());
+    // JSON'u metinden çıkar
+    var jsonMatch = txt.match(/\{[\s\S]*\}/);
+    if(!jsonMatch) throw new Error('AI yanıt formatı hatalı');
+    var res=JSON.parse(jsonMatch[0]);
+    
+    // Tahminleri kaydet (gün sonu raporu için)
+    savePrediction(type, res, S.curHome, S.curAway, S.curFid);
     btnLoad(btnId,false);
     var resId='ai-'+type+'-res';
     document.getElementById(resId).style.display='block';
@@ -877,7 +901,9 @@ async function doOddsAI(){
   try{
     var d=await apiAI([{role:'user',content:prompt}],600);
     var txt=d.content&&d.content.map(function(c){return c.text||'';}).join('')||'';
-    var res=JSON.parse(txt.replace(/```json|```/g,'').trim());
+    var jsonMatch2=txt.match(/\{[\s\S]*\}/);
+    if(!jsonMatch2) throw new Error('AI yanıt formatı hatalı');
+    var res=JSON.parse(jsonMatch2[0]);
     document.getElementById('odds-ai-res').style.display='block';
     document.getElementById('odds-ai-res').innerHTML='<div class="pred-box"><div class="pred-grid">'
       +'<div class="pred-item"><div class="pred-lbl">Ev</div><div class="pred-val" style="color:var(--green)">'+(res.win_home||0)+'%</div></div>'
