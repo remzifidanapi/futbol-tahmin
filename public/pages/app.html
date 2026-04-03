@@ -579,7 +579,10 @@ function renderMatches() {
         var mC = sig.score>70?'var(--red)':sig.score>50?'var(--amber)':'var(--green)';
         var homeN = m.teams&&m.teams.home&&m.teams.home.name||'Ev';
         var awayN = m.teams&&m.teams.away&&m.teams.away.name||'Dep';
-        return '<div class="mc" data-fid="'+m.fixture.id+'" data-home="'+encodeURIComponent(homeN)+'" data-away="'+encodeURIComponent(awayN)+'" data-league="'+encodeURIComponent(lg)+'" onclick="onMacClick(this)">'
+        // Maçı global cache'e kaydet
+        S.matchCache = S.matchCache || {};
+        S.matchCache[m.fixture.id] = m;
+        return '<div class="mc" onclick="onMacClick('+m.fixture.id+')" style="cursor:pointer">'
           +'<div class="mc-league">'+lg+'</div>'
           +'<div class="mc-teams">'
           +'<div class="mc-team">'+homeN+'</div>'
@@ -601,15 +604,18 @@ function toggleLg(id) {
 }
 
 // ── MAÇ SEÇ ──────────────────────────────────────
-async function onMacClick(el) {
-  var fid = el.dataset.fid;
+async function onMacClick(fid) {
   S.curFid = fid;
-  S.curHome = decodeURIComponent(el.dataset.home || '');
-  S.curAway = decodeURIComponent(el.dataset.away || '');
+  // Cache'den maç bilgisini al
+  var m = S.matchCache && S.matchCache[fid];
+  S.curHome = m && m.teams && m.teams.home && m.teams.home.name || '';
+  S.curAway = m && m.teams && m.teams.away && m.teams.away.name || '';
   document.getElementById('stat-title').textContent = S.curHome + ' vs ' + S.curAway;
   document.getElementById('odds-fid').value = fid;
   document.getElementById('gm-lh').textContent = S.curHome;
   document.getElementById('gm-la').textContent = S.curAway;
+  document.getElementById('gol-hl').textContent = S.curHome;
+  document.getElementById('gol-al').textContent = S.curAway;
   S.curGols = {h:[],a:[]};
   renderGolChips();
 
