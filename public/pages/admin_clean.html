@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Futbol Tahmin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080c10;--s1:#0e1419;--s2:#161d24;--s3:#1e2830;--bdr:#2a3540;--green:#00e676;--red:#ff3d6b;--amber:#ffab00;--cyan:#00e5ff;--text:#e8edf2;--t2:#8fa3b0;--t3:#4a6070;--fh:'Bebas Neue',sans-serif;--fb:'DM Sans',sans-serif;--fm:'JetBrains Mono',monospace}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 80% 50% at 20% 10%,rgba(255,61,107,.04) 0%,transparent 60%)}
+#login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:16px;position:relative;z-index:1}
+.lbox{width:100%;max-width:360px}
+.logo{text-align:center;margin-bottom:24px}
+.logo-icon{width:56px;height:56px;background:linear-gradient(135deg,var(--red),#c62828);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 10px;box-shadow:0 0 24px rgba(255,61,107,.3)}
+.logo-title{font-family:var(--fh);font-size:26px;letter-spacing:2px;color:var(--red)}
+.card{background:var(--s1);border:1px solid var(--bdr);border-radius:16px;padding:20px;margin-bottom:12px}
+label{display:block;font-size:10px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+input{width:100%;padding:10px 13px;background:var(--s2);border:1px solid var(--bdr);border-radius:9px;color:var(--text);font-family:var(--fb);font-size:14px;outline:none;transition:border .2s;margin-bottom:12px}
+input:focus{border-color:var(--red)}
+.btn{padding:11px 20px;border:none;border-radius:9px;font-family:var(--fb);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%}
+.btn-r{background:linear-gradient(135deg,var(--red),#c62828);color:#fff}
+.btn-g{background:var(--s2);color:var(--t2);border:1px solid var(--bdr);width:auto;padding:6px 12px;font-size:11px}
+.btn-g:hover{border-color:var(--green);color:var(--green)}
+.btn-a{background:linear-gradient(135deg,var(--amber),#e65100);color:#000;width:auto;padding:6px 12px;font-size:11px}
+.btn-p{background:linear-gradient(135deg,var(--green),#00c853);color:#000;width:auto;padding:6px 12px;font-size:11px}
+.msg{padding:9px 12px;border-radius:9px;font-size:12px;margin-top:8px;display:none}
+.msg.err{display:block;background:rgba(255,61,107,.1);border:1px solid rgba(255,61,107,.2);color:var(--red)}
+.msg.ok{display:block;background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.2);color:var(--green)}
+.spin{display:inline-block;width:13px;height:13px;border-radius:50%;border:2px solid rgba(255,255,255,.2);border-top-color:currentColor;animation:spin .7s linear infinite;vertical-align:middle;margin-right:5px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+#app{display:none;padding:14px;max-width:1400px;margin:0 auto;position:relative;z-index:1}
+header{display:flex;align-items:center;justify-content:space-between;padding:10px 0 16px;border-bottom:1px solid var(--bdr);margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.h-title{font-family:var(--fh);font-size:20px;letter-spacing:2px;color:var(--red);display:flex;align-items:center;gap:8px}
+.h-btns{display:flex;gap:6px;flex-wrap:wrap}
+.tabs{display:flex;gap:4px;background:var(--s1);padding:4px;border-radius:12px;border:1px solid var(--bdr);margin-bottom:16px;overflow-x:auto}
+.tab{flex:1;min-width:80px;padding:8px 14px;border:none;background:transparent;color:var(--t2);font-family:var(--fb);font-size:12px;font-weight:600;border-radius:9px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tab.active{background:rgba(255,61,107,.15);color:var(--red)}
+.panel{display:none}.panel.active{display:block}
+.stat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px}
+@media(max-width:700px){.stat-grid{grid-template-columns:repeat(3,1fr)}}
+.stat-card{background:var(--s1);border:1px solid var(--bdr);border-radius:11px;padding:12px;text-align:center}
+.stat-v{font-family:var(--fh);font-size:28px;margin-bottom:3px}
+.stat-l{font-size:9px;color:var(--t3);letter-spacing:1px;text-transform:uppercase}
+.filter-bar{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.fc{padding:5px 12px;border-radius:16px;border:1px solid var(--bdr);background:var(--s2);font-size:11px;color:var(--t2);cursor:pointer;transition:all .2s}
+.fc.active,.fc:hover{border-color:var(--red);color:var(--red)}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:separate;border-spacing:0 3px;font-size:12px}
+th{font-size:9px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;padding:6px 10px;text-align:left;border-bottom:1px solid var(--bdr);white-space:nowrap}
+td{padding:8px 10px;background:var(--s2);vertical-align:middle}
+tr td:first-child{border-radius:7px 0 0 7px}
+tr td:last-child{border-radius:0 7px 7px 0}
+tr:hover td{background:var(--s3)}
+.badge{display:inline-block;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700}
+.b-ok{background:rgba(0,230,118,.14);color:var(--green)}
+.b-pend{background:rgba(255,171,0,.14);color:var(--amber)}
+.b-err{background:rgba(255,61,107,.14);color:var(--red)}
+.b-off{background:rgba(74,96,112,.2);color:var(--t2)}
+.inp-sm{width:60px;padding:4px 6px;background:var(--bg);border:1px solid var(--bdr);border-radius:6px;color:var(--text);font-family:var(--fm);font-size:11px;text-align:center;outline:none}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:999;align-items:center;justify-content:center;padding:16px}
+.modal-bg.open{display:flex}
+.modal{background:var(--s1);border:1px solid var(--bdr);border-radius:16px;padding:20px;width:100%;max-width:560px;max-height:85vh;overflow-y:auto}
+.mc-item{background:var(--s2);border:1px solid var(--bdr);border-radius:10px;padding:10px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.code-box{background:rgba(255,171,0,.08);border:1px solid rgba(255,171,0,.2);border-radius:10px;padding:12px;margin-bottom:8px}
+.toast-wrap{position:fixed;bottom:20px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.toast{padding:10px 15px;border-radius:10px;font-size:13px;font-weight:600;animation:toastIn .3s ease;max-width:280px}
+.toast-ok{background:var(--green);color:#000}
+.toast-err{background:var(--red);color:#fff}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="toast-wrap" id="toasts"></div>
+
+<!-- GİRİŞ -->
+<div id="login">
+  <div class="lbox">
+    <div class="logo">
+      <div class="logo-icon">🔐</div>
+      <div class="logo-title">ADMİN PANELİ</div>
+    </div>
+    <div class="card">
+      <div><label>E-posta</label><input type="email" id="a-email" placeholder="admin@email.com" autocomplete="username"></div>
+      <div><label>Şifre</label><input type="password" id="a-pass" placeholder="••••••••" autocomplete="current-password"></div>
+      <button class="btn btn-r" id="a-btn" onclick="doLogin()">Giriş Yap</button>
+      <div class="msg" id="a-msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- UYGULAMA -->
+<div id="app">
+  <header>
+    <div class="h-title">🔐 ADMİN PANELİ</div>
+    <div class="h-btns">
+      <button class="btn btn-a" onclick="doReport()">📊 Rapor İndir</button>
+      <button class="btn btn-g" onclick="refresh()">🔄 Yenile</button>
+      <button class="btn btn-g" onclick="doLogout()">🚪 Çıkış</button>
+    </div>
+  </header>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-v" style="color:var(--cyan)"  id="s-total">—</div><div class="stat-l">Toplam</div></div>
+    <div class="stat-card"><div class="stat-v" style="color:var(--green)" id="s-active">—</div><div class="stat-l">Aktif</div></div>
+    <div class="stat-card"><div class="stat-v" style="color:var(--amber)" id="s-pend">—</div><div class="stat-l">Bekleyen</div></div>
+    <div class="stat-card"><div class="stat-v" style="color:var(--red)"   id="s-susp">—</div><div class="stat-l">Askıda</div></div>
+    <div class="stat-card"><div class="stat-v" style="color:var(--t3)"    id="s-exp">—</div><div class="stat-l">Dolmuş</div></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('users',this)">👥 Kullanıcılar</button>
+    <button class="tab"        onclick="switchTab('live',this)">📡 Canlı Maçlar</button>
+    <button class="tab"        onclick="switchTab('codes',this)">🔑 Şifre Kodları</button>
+  </div>
+
+  <!-- KULLANICILAR -->
+  <div class="panel active" id="panel-users">
+    <div class="filter-bar">
+      <span class="fc active" onclick="setFilter('all',this)">Tümü</span>
+      <span class="fc" onclick="setFilter('pending',this)">⏳ Bekleyen</span>
+      <span class="fc" onclick="setFilter('active',this)">✅ Aktif</span>
+      <span class="fc" onclick="setFilter('suspended',this)">🚫 Askıda</span>
+      <span class="fc" onclick="setFilter('expired',this)">⌛ Dolmuş</span>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Üye</th><th>Telefon</th><th>Durum</th><th>Kalan</th><th>Son Giriş</th><th>İşlemler</th></tr></thead>
+          <tbody id="tbody"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--t3)">Yükleniyor...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- CANLI MAÇLAR -->
+  <div class="panel" id="panel-live">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="font-family:var(--fh);font-size:16px;letter-spacing:1px">📡 CANLI MAÇLAR</div>
+        <button class="btn btn-g" onclick="loadLive()">🔄 Yenile</button>
+      </div>
+      <div id="live-list"><div style="text-align:center;padding:20px;color:var(--t3)">Yükleniyor...</div></div>
+    </div>
+  </div>
+
+  <!-- ŞİFRE KODLARI -->
+  <div class="panel" id="panel-codes">
+    <div class="card">
+      <div style="font-family:var(--fh);font-size:16px;letter-spacing:1px;margin-bottom:8px">🔑 ŞİFRE SIFIRLAMA KODLARI</div>
+      <p style="font-size:12px;color:var(--t3);margin-bottom:12px">Kullanıcıların "Şifremi Unuttum" ile oluşturduğu aktif kodlar (30 dk geçerli)</p>
+      <div id="codes-list"><div style="text-align:center;padding:20px;color:var(--t3)">Yükleniyor...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div style="font-family:var(--fh);font-size:17px" id="modal-title">Detay</div>
+      <button class="btn btn-g" onclick="closeModal()" style="padding:4px 10px">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+var TOKEN = localStorage.getItem('ft_admin_token') || '';
+var USERS = [], FILTER = 'all';
+var FN = '/.netlify/functions/admin';
+
+function toast(msg, type) {
+  var t = document.createElement('div');
+  t.className = 'toast toast-' + (type || 'ok');
+  t.textContent = msg;
+  document.getElementById('toasts').appendChild(t);
+  setTimeout(function() { t.style.opacity='0'; t.style.transition='.3s'; setTimeout(function(){t.remove();},300); }, 2500);
+}
+
+function showMsg(id, text, type) {
+  var el = document.getElementById(id);
+  el.textContent = text;
+  el.className = 'msg ' + type;
+}
+
+// ── GİRİŞ ──
+if (TOKEN) initApp();
+
+document.getElementById('a-pass').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') doLogin();
+});
+
+async function doLogin() {
+  var email = (document.getElementById('a-email').value || '').trim();
+  var pass  = document.getElementById('a-pass').value || '';
+  if (!email || !pass) { showMsg('a-msg', 'E-posta ve şifre girin', 'err'); return; }
+  var btn = document.getElementById('a-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>Giriş yapılıyor...';
+  document.getElementById('a-msg').className = 'msg';
+  try {
+    var r = await fetch(FN, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, password: pass }),
+    });
+    var d = await r.json();
+    if (d.error) { showMsg('a-msg', d.error, 'err'); btn.disabled=false; btn.textContent='Giriş Yap'; return; }
+    TOKEN = d.token;
+    localStorage.setItem('ft_admin_token', TOKEN);
+    initApp();
+  } catch(e) {
+    showMsg('a-msg', 'Bağlantı hatası: ' + e.message, 'err');
+    btn.disabled = false; btn.textContent = 'Giriş Yap';
+  }
+}
+
+function doLogout() {
+  localStorage.removeItem('ft_admin_token');
+  TOKEN = '';
+  location.reload();
+}
+
+function initApp() {
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  loadStats();
+  loadUsers();
+}
+
+// ── API ──
+async function api(path, method, body) {
+  var opts = { method: method || 'GET', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN } };
+  if (body) opts.body = JSON.stringify(body);
+  var r = await fetch(FN + path, opts);
+  var text = await r.text();
+  try { return JSON.parse(text); } catch { return { error: text }; }
+}
+
+// ── STATS ──
+async function loadStats() {
+  var d = await api('/stats');
+  if (d.error) return;
+  document.getElementById('s-total').textContent  = d.total_users  || 0;
+  document.getElementById('s-active').textContent = d.active       || 0;
+  document.getElementById('s-pend').textContent   = d.pending      || 0;
+  document.getElementById('s-susp').textContent   = d.suspended    || 0;
+  document.getElementById('s-exp').textContent    = d.expired      || 0;
+}
+
+// ── KULLANICILAR ──
+async function loadUsers() {
+  document.getElementById('tbody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:18px;color:var(--t3)"><span class="spin" style="border-top-color:var(--green)"></span> Yükleniyor...</td></tr>';
+  var d = await api('/users');
+  if (d.error) { document.getElementById('tbody').innerHTML = '<tr><td colspan="6" style="color:var(--red);padding:12px">' + d.error + '</td></tr>'; return; }
+  USERS = Array.isArray(d) ? d : [];
+  renderUsers();
+}
+
+function getStatus(u) {
+  if (!u.is_active) return 'suspended';
+  if (!u.is_approved) return 'pending';
+  if (u.access_end && new Date(u.access_end) < new Date()) return 'expired';
+  return 'active';
+}
+
+function setFilter(f, el) {
+  FILTER = f;
+  document.querySelectorAll('.fc').forEach(function(c) { c.classList.remove('active'); });
+  el.classList.add('active');
+  renderUsers();
+}
+
+function renderUsers() {
+  var list = FILTER === 'all' ? USERS : USERS.filter(function(u) { return getStatus(u) === FILTER; });
+  if (!list.length) { document.getElementById('tbody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:18px;color:var(--t3)">Kullanıcı yok</td></tr>'; return; }
+  document.getElementById('tbody').innerHTML = list.map(function(u) {
+    var st = getStatus(u);
+    var badge = st==='active'?'<span class="badge b-ok">AKTİF</span>':st==='pending'?'<span class="badge b-pend">BEKLEMEDE</span>':st==='suspended'?'<span class="badge b-err">ASKIDA</span>':'<span class="badge b-off">DOLMUŞ</span>';
+    var dl = u.days_left;
+    var days = dl!==null ? '<span style="font-family:var(--fm);color:'+(dl>7?'var(--green)':dl>0?'var(--amber)':'var(--red)')+'">'+dl+'g</span>' : '—';
+    var lastLogin = u.last_login ? new Date(u.last_login).toLocaleDateString('tr-TR',{day:'2-digit',month:'2-digit',year:'2-digit'}) : '—';
+    var acts = '<div style="display:flex;gap:3px;flex-wrap:wrap">';
+    if (st === 'pending') {
+      acts += '<input class="inp-sm" id="d-'+u.id+'" type="number" min="1" placeholder="gün"><button class="btn btn-p" onclick="doApprove(\''+u.id+'\')" style="padding:4px 7px;font-size:10px">✅</button>';
+    } else {
+      acts += '<input class="inp-sm" id="e-'+u.id+'" type="number" min="1" placeholder="gün"><button class="btn btn-a" onclick="doExtend(\''+u.id+'\')" style="padding:4px 7px;font-size:10px">+</button>';
+    }
+    acts += '<button class="btn '+(u.is_active?'btn-r':'btn-p')+'" onclick="doToggle(\''+u.id+'\','+(!u.is_active)+')" style="padding:4px 7px;font-size:10px">'+(u.is_active?'🚫':'✅')+'</button>';
+    acts += '<button class="btn btn-g" onclick="openModal(\''+u.id+'\')" style="padding:4px 7px;font-size:10px">📊</button></div>';
+    return '<tr><td><div style="font-weight:600;font-size:12px">'+(u.full_name||'—')+'</div><div style="font-size:10px;color:var(--t3)">'+u.email+'</div></td><td style="font-family:var(--fm);font-size:10px">'+(u.phone||'—')+'</td><td>'+badge+'</td><td>'+days+'</td><td style="font-size:10px;color:var(--t3)">'+lastLogin+'</td><td>'+acts+'</td></tr>';
+  }).join('');
+}
+
+async function doApprove(uid) {
+  var el = document.getElementById('d-'+uid);
+  var days = parseInt(el&&el.value)||0;
+  if (!days) { toast('Gün sayısı girin', 'err'); return; }
+  var d = await api('/users/'+uid+'/approve', 'POST', { days: days });
+  if (d.error) { toast(d.error, 'err'); return; }
+  toast('✅ ' + days + ' gün onaylandı');
+  loadUsers(); loadStats();
+}
+
+async function doExtend(uid) {
+  var el = document.getElementById('e-'+uid);
+  var days = parseInt(el&&el.value)||0;
+  if (!days) { toast('Gün sayısı girin', 'err'); return; }
+  var d = await api('/users/'+uid+'/extend', 'POST', { days: days });
+  if (d.error) { toast(d.error, 'err'); return; }
+  toast('✅ ' + days + ' gün eklendi');
+  loadUsers();
+}
+
+async function doToggle(uid, active) {
+  var d = await api('/users/'+uid+'/toggle', 'POST', { is_active: active });
+  if (d.error) { toast(d.error, 'err'); return; }
+  toast(active ? '✅ Açıldı' : '🚫 Engellendi');
+  loadUsers(); loadStats();
+}
+
+async function openModal(uid) {
+  var u = USERS.find(function(x){return x.id===uid;});
+  if (!u) return;
+  document.getElementById('modal-title').textContent = u.full_name || u.email;
+  document.getElementById('modal-body').innerHTML = '<div style="text-align:center;padding:16px"><span class="spin" style="width:18px;height:18px;border-top-color:var(--cyan)"></span></div>';
+  document.getElementById('modal').classList.add('open');
+  var stats = await api('/users/'+uid+'/stats');
+  var end = u.access_end ? new Date(u.access_end).toLocaleDateString('tr-TR') : '—';
+  var fc = stats.feature_counts || {};
+  var max = Math.max.apply(null, Object.values(fc).concat([1]));
+  document.getElementById('modal-body').innerHTML =
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">'
+    +'<div style="background:var(--s2);border-radius:8px;padding:10px"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">E-posta</div><div style="font-size:12px">'+u.email+'</div></div>'
+    +'<div style="background:var(--s2);border-radius:8px;padding:10px"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Erişim Bitiş</div><div style="font-size:12px;color:var(--amber)">'+end+'</div></div>'
+    +'</div>'
+    +'<div style="margin-bottom:10px"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px">Özellik Kullanımı</div>'
+    +Object.entries(fc).sort(function(a,b){return b[1]-a[1];}).map(function(e){
+      return '<div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">'
+        +'<span style="font-size:11px;color:var(--t2);min-width:100px">'+e[0]+'</span>'
+        +'<div style="flex:1;height:4px;background:var(--s3);border-radius:2px;overflow:hidden"><div style="height:100%;background:var(--cyan);border-radius:2px;width:'+Math.round(e[1]/max*100)+'%"></div></div>'
+        +'<span style="font-size:10px;font-family:var(--fm);color:var(--t3)">'+e[1]+'</span></div>';
+    }).join('') + '</div>'
+    +'<div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Not</div>'
+    +'<textarea id="m-note" style="width:100%;min-height:50px;padding:8px;background:var(--s2);border:1px solid var(--bdr);border-radius:8px;color:var(--text);font-family:var(--fb);font-size:12px;outline:none;resize:vertical">'+(u.notes||'')+'</textarea>'
+    +'<div style="display:flex;gap:6px;margin-top:6px">'
+    +'<button class="btn btn-g" onclick="doNote(\''+uid+'\')" style="padding:5px 10px;font-size:11px">💾 Not Kaydet</button>'
+    +'<button class="btn btn-r" onclick="doDelete(\''+uid+'\')" style="padding:5px 10px;font-size:11px">🗑 Sil</button>'
+    +'</div></div>';
+}
+
+async function doNote(uid) {
+  var note = (document.getElementById('m-note').value||'').trim();
+  var d = await api('/users/'+uid+'/note', 'POST', { notes: note });
+  if (d.error) { toast(d.error, 'err'); return; }
+  var u = USERS.find(function(x){return x.id===uid;}); if(u) u.notes=note;
+  toast('✅ Not kaydedildi');
+}
+
+async function doDelete(uid) {
+  if (!confirm('Kalıcı silinecek. Emin misiniz?')) return;
+  var d = await api('/users/'+uid, 'DELETE');
+  if (d.error) { toast(d.error, 'err'); return; }
+  closeModal(); toast('🗑 Silindi');
+  loadUsers(); loadStats();
+}
+
+// ── TABS ──
+function switchTab(name, el) {
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('panel-'+name).classList.add('active');
+  el.classList.add('active');
+  if (name==='live') loadLive();
+  if (name==='codes') loadCodes();
+}
+
+// ── CANLI MAÇLAR ──
+async function loadLive() {
+  document.getElementById('live-list').innerHTML='<div style="text-align:center;padding:16px;color:var(--t3)"><span class="spin" style="border-top-color:var(--green)"></span> Yükleniyor...</div>';
+  var d = await api('/live');
+  if (d.error) { document.getElementById('live-list').innerHTML='<div style="color:var(--red);padding:12px">'+d.error+'</div>'; return; }
+  if (!d.length) { document.getElementById('live-list').innerHTML='<div style="text-align:center;padding:20px;color:var(--t3)">Şu an canlı maç cache yok. Scheduler her 3 dk veri dolduruyor.</div>'; return; }
+  document.getElementById('live-list').innerHTML = d.map(function(m) {
+    var sig = m.home_signal && m.home_signal.decision ? m.home_signal.decision : 'LOW';
+    var badge = sig==='STRONG GOAL'?'<span class="badge b-err">🔴 STRONG</span>':sig==='GOL GELİYOR'?'<span class="badge b-err">🔥 GOL</span>':sig==='WATCH'?'<span class="badge b-pend">🟡 WATCH</span>':'<span class="badge b-ok">🟢 LOW</span>';
+    return '<div class="mc-item"><div><div style="font-size:13px;font-weight:600">'+m.home_team+' <span style="color:var(--green);font-family:var(--fm)">'+m.score_home+'-'+m.score_away+'</span> '+m.away_team+'</div><div style="font-size:10px;color:var(--t3)">'+m.league+' · '+m.minute+"'</div></div>"+badge+'</div>';
+  }).join('');
+}
+
+// ── ŞİFRE KODLARI ──
+async function loadCodes() {
+  document.getElementById('codes-list').innerHTML='<div style="text-align:center;padding:16px;color:var(--t3)"><span class="spin" style="border-top-color:var(--amber)"></span> Yükleniyor...</div>';
+  var d = await api('/reset-codes');
+  if (d.error) { document.getElementById('codes-list').innerHTML='<div style="color:var(--red);padding:12px">'+d.error+'</div>'; return; }
+  if (!d.length) { document.getElementById('codes-list').innerHTML='<div style="text-align:center;padding:20px;color:var(--t3)">Aktif şifre sıfırlama kodu yok</div>'; return; }
+  document.getElementById('codes-list').innerHTML = d.map(function(r) {
+    var exp = new Date(r.reset_expiry);
+    var left = Math.max(0, Math.round((exp-new Date())/60000));
+    return '<div class="code-box"><div style="font-weight:600;margin-bottom:4px">'+(r.full_name||r.email)+'</div><div style="font-size:11px;color:var(--t3);margin-bottom:8px">'+r.email+'</div><div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--fm);font-size:20px;color:var(--amber)">'+r.reset_code+'</span><span style="font-size:11px;color:var(--t3)">'+left+' dk kaldı</span></div></div>';
+  }).join('');
+}
+
+// ── RAPOR ──
+async function doReport() {
+  toast('Rapor hazırlanıyor...', 'ok');
+  var d = await api('/report');
+  if (d.error) { toast(d.error, 'err'); return; }
+  var lines = [
+    '╔══════════════════════════════════════════╗',
+    '║     FUTBOL TAHMİN — GÜNLÜK RAPOR         ║',
+    '╚══════════════════════════════════════════╝',
+    'Tarih: ' + d.date, '',
+    '📊 PERFORMANS',
+    '──────────────────────────────',
+    'Toplam Tahmin : ' + d.total,
+    'Doğru Sonuç   : ' + d.correct + ' (%' + d.accuracy + ')',
+    'Doğru Üst/Alt : ' + d.correct_ou + ' (%' + d.ou_accuracy + ')',
+    '', '🏆 LİG BAZLI', '──────────────────────────────',
+  ];
+  Object.entries(d.leagues||{}).forEach(function(e) {
+    var st = e[1], pct = st.total ? Math.round(st.correct/st.total*100) : 0;
+    lines.push(e[0].slice(0,25).padEnd(26)+st.correct+'/'+st.total+' (%'+pct+')');
+  });
+  lines.push('', '📋 TAHMİNLER', '──────────────────────────────');
+  (d.predictions||[]).forEach(function(p) {
+    lines.push((p.correct_result?'✅':'❌')+' '+p.home_team+' vs '+p.away_team);
+    lines.push('   '+p.predicted_score+' → '+(p.actual_score||'?')+' | '+p.confidence+'/10');
+    lines.push('');
+  });
+  lines.push('══════════════════════════════════════════');
+  lines.push('oddsproapp.com | '+new Date().toLocaleString('tr-TR'));
+  var blob = new Blob([lines.join('\n')], {type:'text/plain;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'rapor_'+d.date.replace(/\./g,'-')+'.txt';
+  a.click();
+  toast('✅ Rapor indirildi!');
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+document.getElementById('modal').addEventListener('click', function(e) { if(e.target===this) closeModal(); });
+function refresh() { loadStats(); loadUsers(); }
+</script>
+</body>
+</html>
