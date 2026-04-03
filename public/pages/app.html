@@ -570,7 +570,7 @@ function renderMatches() {
       +'<span class="lg-name">'+lg+'</span>'
       +'<span style="font-size:11px;color:var(--t3)">'+groups[lg].length+' maç ▼</span>'
       +'</div>'
-      +'<div id="'+lgKey+'">'
+      +'<div id="'+lgKey+'" style="display:block">'
       +groups[lg].map(function(m){
         var hg=m.goals&&m.goals.home!=null?m.goals.home:0;
         var ag=m.goals&&m.goals.away!=null?m.goals.away:0;
@@ -600,7 +600,9 @@ function renderMatches() {
 
 function toggleLg(id) {
   var el = document.getElementById(id);
-  if(el) el.style.display = el.style.display==='none'?'block':'none';
+  if(!el) return;
+  var hidden = el.style.display==='none';
+  el.style.display = hidden?'block':'none';
 }
 
 // ── MAÇ SEÇ ──────────────────────────────────────
@@ -655,11 +657,13 @@ async function onMacClick(fid) {
     if(!S.curH.top&&!S.curA.top){S.curH.top=50;S.curA.top=50;}
 
     fillStatView();
-    // Panel geçişi
-    document.querySelectorAll('.panel').forEach(function(p){p.style.display='none';p.classList.remove('active');});
+    // İstatistik paneline geç
+    var allPanels = document.querySelectorAll('.panel');
+    allPanels.forEach(function(p){p.style.display='none';p.classList.remove('active');});
     document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
-    document.getElementById('panel-stat').style.display='block';
-    document.getElementById('panel-stat').classList.add('active');
+    var statPanel = document.getElementById('panel-stat');
+    statPanel.style.display = 'block';
+    statPanel.classList.add('active');
     switchSub('gol');
     renderGolChips();
     renderGolTimeline();
