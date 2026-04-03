@@ -178,7 +178,7 @@ textarea{resize:vertical;min-height:60px;margin-bottom:0}
 </div>
 
 <!-- İSTATİSTİK (maça tıklayınca) -->
-<div id="panel-stat" class="panel">
+<div id="panel-stat" style="display:none">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
     <button class="btn btn-g" onclick="backToList()" style="padding:7px 14px;font-size:12px">← Geri</button>
     <div style="font-family:var(--fh);font-size:17px;letter-spacing:1px" id="stat-title">—</div>
@@ -850,7 +850,7 @@ async function doAI(type) {
         +'<div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px">'
         +(res.predicted_scores||[]).map(function(s){var b=s===res.best_score;return '<span style="background:'+(b?'rgba(0,230,118,.15)':'var(--s2)')+';border:1px solid '+(b?'var(--green)':'var(--bdr)')+';border-radius:8px;padding:6px 14px;font-family:var(--fm);font-size:16px;color:'+(b?'var(--green)':'var(--text)')+'">'+s+'</span>';}).join('')
         +'</div>'
-        +'<div class="insight-box">'+(res.insight||'—')+'<div style="display:flex;gap:6px;margin-top:7px">'
+        +'<div class="insight-box">'+(typeof res.insight==='string'?res.insight:JSON.stringify(res.insight)||'—')+'<div style="display:flex;gap:6px;margin-top:7px">'
         +(res.ou_pred?'<span style="background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.2);border-radius:5px;padding:2px 8px;font-size:10px;color:var(--green)">'+res.ou_pred+'</span>':'')
         +(res.btts?'<span style="background:rgba(255,171,0,.1);border:1px solid rgba(255,171,0,.2);border-radius:5px;padding:2px 8px;font-size:10px;color:var(--amber)">KG '+res.btts+'</span>':'')
         +'</div></div></div>';
