@@ -482,10 +482,10 @@ function switchSub(sub) {
 }
 
 function backToList() {
-  document.getElementById('panel-stat').style.display='none';
-  document.getElementById('panel-stat').classList.remove('active');
+  document.querySelectorAll('.panel').forEach(function(p){p.style.display='none';p.classList.remove('active');});
   document.getElementById('panel-maclar').style.display='block';
   document.getElementById('panel-maclar').classList.add('active');
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
   document.getElementById('tab-maclar').classList.add('active');
 }
 
@@ -649,7 +649,9 @@ async function onMacClick(el) {
     if(!S.curH.top&&!S.curA.top){S.curH.top=50;S.curA.top=50;}
 
     fillStatView();
-    document.getElementById('panel-maclar').style.display='none';
+    // Panel geçişi
+    document.querySelectorAll('.panel').forEach(function(p){p.style.display='none';p.classList.remove('active');});
+    document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
     document.getElementById('panel-stat').style.display='block';
     document.getElementById('panel-stat').classList.add('active');
     switchSub('gol');
