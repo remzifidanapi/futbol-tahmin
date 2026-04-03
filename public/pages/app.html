@@ -4,163 +4,185 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>⚽ Futbol Tahmin</title>
-<link rel="stylesheet" href="/css/main.css">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-body{position:relative;z-index:1;padding-bottom:60px}
-.app{max-width:1400px;margin:0 auto;padding:0 12px}
-
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080c10;--s1:#0e1419;--s2:#161d24;--s3:#1e2830;--bdr:#2a3540;--green:#00e676;--g2:#1a6b3c;--red:#ff3d6b;--amber:#ffab00;--cyan:#00e5ff;--text:#e8edf2;--t2:#8fa3b0;--t3:#4a6070;--fh:'Bebas Neue',sans-serif;--fb:'DM Sans',sans-serif;--fm:'JetBrains Mono',monospace}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);min-height:100vh;padding-bottom:40px}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 80% 50% at 20% 10%,rgba(0,230,118,.05) 0%,transparent 60%)}
+.app{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:0 12px}
 /* Header */
-.hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 0 18px;border-bottom:1px solid var(--bdr);margin-bottom:18px;flex-wrap:wrap;gap:10px}
-.hdr-logo{display:flex;align-items:center;gap:10px}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 18px;border-bottom:1px solid var(--bdr);margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.logo{display:flex;align-items:center;gap:10px}
 .logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--green),var(--cyan));border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 16px rgba(0,230,118,.25)}
-.logo-text{font-family:var(--fh);font-size:22px;letter-spacing:2px}
+.logo-txt{font-family:var(--fh);font-size:20px;letter-spacing:2px}
 .logo-sub{font-size:9px;color:var(--t3);letter-spacing:2px;text-transform:uppercase}
 .hdr-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.perf-bar{display:flex;gap:6px}
+.perf-box{display:flex;gap:5px}
 .perf-item{background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:5px 10px;text-align:center}
-.perf-pct{font-family:var(--fh);font-size:16px;color:var(--green)}
-.perf-lbl{font-size:9px;color:var(--t3);letter-spacing:1px}
-.user-info{display:flex;align-items:center;gap:6px;background:var(--s2);padding:6px 10px;border-radius:20px;border:1px solid var(--bdr)}
-.days-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,230,118,.4)}50%{opacity:.7;box-shadow:0 0 0 5px rgba(0,230,118,0)}}
-
-/* Oto yenileme */
-.refresh-bar{background:var(--s1);border:1px solid rgba(0,230,118,.15);border-radius:10px;padding:9px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.refresh-prog{flex:1;height:3px;background:var(--s3);border-radius:2px;overflow:hidden;min-width:80px}
-.refresh-fill{height:100%;background:var(--green);border-radius:2px;transition:width 1s linear}
-
-/* Lig başlık */
-.lg-hdr{display:flex;align-items:center;justify-content:space-between;padding:7px 11px;background:var(--s2);border:1px solid var(--bdr);border-radius:9px;cursor:pointer;margin-bottom:4px;transition:all .2s}
-.lg-hdr:hover{border-color:var(--cyan)}
+.perf-v{font-family:var(--fh);font-size:16px;color:var(--green)}
+.perf-l{font-size:9px;color:var(--t3);letter-spacing:1px}
+.user-pill{display:flex;align-items:center;gap:6px;background:var(--s2);padding:6px 10px;border-radius:20px;border:1px solid var(--bdr);font-size:12px;color:var(--t2)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,230,118,.4)}50%{box-shadow:0 0 0 5px rgba(0,230,118,0)}}
+/* Tabs */
+.tabs{display:flex;gap:4px;background:var(--s1);padding:4px;border-radius:12px;border:1px solid var(--bdr);margin-bottom:16px;overflow-x:auto}
+.tab{flex:1;min-width:80px;padding:8px 12px;border:none;background:transparent;color:var(--t2);font-family:var(--fb);font-size:12px;font-weight:500;border-radius:9px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tab.active{background:linear-gradient(135deg,var(--g2),#0d3d22);color:var(--green)}
+.panel{display:none}.panel.active{display:block}
+/* Cards */
+.card{background:var(--s1);border:1px solid var(--bdr);border-radius:14px;padding:16px;margin-bottom:12px}
+.card-title{font-family:var(--fh);font-size:16px;letter-spacing:1.5px;color:var(--t2);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--bdr),transparent)}
+/* Form */
+label{display:block;font-size:10px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+input,select,textarea{width:100%;padding:10px 12px;background:var(--s2);border:1px solid var(--bdr);border-radius:9px;color:var(--text);font-family:var(--fb);font-size:13px;outline:none;transition:border .2s;margin-bottom:12px}
+input:focus,select:focus,textarea:focus{border-color:var(--green)}
+textarea{resize:vertical;min-height:60px;margin-bottom:0}
+/* Buttons */
+.btn{padding:9px 18px;border:none;border-radius:9px;font-family:var(--fb);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-p{background:linear-gradient(135deg,var(--green),#00c853);color:#000}
+.btn-r{background:linear-gradient(135deg,var(--red),#c62828);color:#fff}
+.btn-a{background:linear-gradient(135deg,var(--amber),#e65100);color:#000}
+.btn-g{background:var(--s2);color:var(--t2);border:1px solid var(--bdr)}
+.btn-g:hover{border-color:var(--green);color:var(--green)}
+.btn-w{width:100%;justify-content:center}
+/* Msg */
+.msg{padding:9px 12px;border-radius:9px;font-size:12px;margin-top:8px;display:none;margin-bottom:0}
+.msg.ok{display:block;background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.2);color:var(--green)}
+.msg.err{display:block;background:rgba(255,61,107,.1);border:1px solid rgba(255,61,107,.2);color:var(--red)}
+.msg.info{display:block;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.2);color:var(--cyan)}
+/* Spinner */
+.spin{display:inline-block;width:13px;height:13px;border-radius:50%;border:2px solid rgba(255,255,255,.2);border-top-color:currentColor;animation:spin .7s linear infinite;vertical-align:middle;margin-right:5px}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* Toast */
+.toast-wrap{position:fixed;bottom:20px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.toast{padding:10px 15px;border-radius:10px;font-size:13px;font-weight:600;animation:toastIn .3s ease;max-width:280px}
+.toast-ok{background:var(--green);color:#000}
+.toast-err{background:var(--red);color:#fff}
+.toast-info{background:var(--cyan);color:#000}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* Maç listesi */
+.lg-header{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:var(--s2);border:1px solid var(--bdr);border-radius:9px;cursor:pointer;margin-bottom:4px;transition:all .2s}
+.lg-header:hover{border-color:var(--cyan)}
 .lg-name{font-size:11px;color:var(--cyan);letter-spacing:1px;font-weight:600}
-.lg-meta{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--t3)}
-
-/* Panel-stat */
-#panel-stat .si-wrap{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--bdr);border-radius:12px;overflow:hidden;margin-bottom:12px}
-#panel-stat .si-col{padding:12px}
-#panel-stat .si-col-h{background:rgba(0,230,118,.02);border-right:1px solid var(--bdr)}
-#panel-stat .si-col-a{background:rgba(255,61,107,.02)}
-.si-hdr{font-family:var(--fh);font-size:13px;margin-bottom:8px}
-.si-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
-.si-lbl{font-size:11px;color:var(--t2);flex:1}
-.si-inp{width:70px;padding:4px 7px;background:var(--bg);border:1px solid var(--bdr);border-radius:6px;color:var(--text);font-family:var(--fm);font-size:11px;text-align:center;outline:none}
-.si-inp:focus{border-color:var(--green)}
-
-/* Gol dakika */
-.gol-chip{background:var(--s2);border:1px solid var(--bdr);border-radius:5px;padding:3px 7px;font-size:11px;font-family:var(--fm);cursor:pointer}
-.gol-chip:hover{border-color:var(--red);color:var(--red)}
-.gt{display:flex;align-items:center;height:20px;background:var(--s3);border-radius:10px;overflow:hidden;position:relative;margin:6px 0}
-.gt-mark{position:absolute;width:3px;height:100%;border-radius:1px}
-
+.mc{background:var(--s2);border:1px solid var(--bdr);border-radius:11px;padding:12px;margin-bottom:7px;cursor:pointer;transition:all .2s}
+.mc:hover{border-color:var(--green);background:var(--s3)}
+.mc-teams{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mc-team{font-size:14px;font-weight:600;flex:1}
+.mc-team-r{text-align:right}
+.mc-score-box{background:var(--s1);border:1px solid var(--bdr);border-radius:8px;padding:4px 14px;text-align:center;min-width:64px}
+.mc-score{font-family:var(--fm);font-size:18px;font-weight:700;color:var(--green)}
+.mc-min{font-size:10px;color:var(--t3)}
+.mc-league{font-size:10px;color:var(--t3);margin-bottom:6px}
+.mc-signal{display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap}
+.mc-bar{flex:1;height:4px;background:var(--s3);border-radius:2px;overflow:hidden;min-width:40px}
+.mc-bar-fill{height:100%;border-radius:2px;transition:width .6s}
+.sig{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;white-space:nowrap}
+.sig-low{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.2)}
+.sig-watch{background:rgba(255,171,0,.1);color:var(--amber);border:1px solid rgba(255,171,0,.2)}
+.sig-strong{background:rgba(255,61,107,.15);color:var(--red);border:1px solid rgba(255,61,107,.3)}
+.sig-goal{background:rgba(255,61,107,.2);color:#fff;border:1px solid var(--red);animation:gp 1s infinite}
+@keyframes gp{0%,100%{box-shadow:0 0 0 0 rgba(255,61,107,.5)}50%{box-shadow:0 0 0 5px rgba(255,61,107,0)}}
+/* İstatistik */
+.stat-row{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+.stat-vl{font-family:var(--fm);font-size:12px;color:var(--green);min-width:32px;text-align:right}
+.stat-vr{font-family:var(--fm);font-size:12px;color:var(--red);min-width:32px}
+.stat-bar{flex:1;height:5px;background:var(--s3);border-radius:3px;overflow:hidden;display:flex}
+.stat-bar-l{height:100%;background:var(--green);border-radius:3px}
+.stat-bar-r{height:100%;background:var(--red);border-radius:3px}
+.stat-lbl{font-size:10px;color:var(--t3);min-width:90px;text-align:center}
+/* Baskı barı */
+.press-bar{display:flex;height:24px;border-radius:12px;overflow:hidden;margin:8px 0}
+.press-h{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#000;min-width:24px;transition:width .5s;background:linear-gradient(90deg,var(--green),#00c853)}
+.press-a{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex:1;transition:width .5s;background:linear-gradient(90deg,#c62828,var(--red))}
 /* AI kutu */
-.pred-card{background:var(--s1);border:1px solid rgba(0,230,118,.2);border-radius:14px;padding:16px;margin-bottom:12px}
-.po-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
-.po{background:var(--s2);border:1px solid var(--bdr);border-radius:10px;padding:10px;text-align:center}
-.po-l{font-size:9px;color:var(--t3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px}
-.po-v{font-family:var(--fh);font-size:22px}
-
+.pred-box{background:var(--s1);border:1px solid rgba(0,230,118,.2);border-radius:12px;padding:14px;margin-top:10px}
+.pred-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.pred-item{background:var(--s2);border:1px solid var(--bdr);border-radius:9px;padding:9px;text-align:center}
+.pred-lbl{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.pred-val{font-family:var(--fh);font-size:22px}
+.insight-box{background:var(--s2);border-left:3px solid var(--cyan);border-radius:0 9px 9px 0;padding:10px;font-size:12px;color:var(--t2);line-height:1.6}
+/* Sub-tabs */
+.sub-tabs{display:flex;gap:3px;background:var(--s2);padding:3px;border-radius:10px;margin-bottom:12px}
+.sub-tab{flex:1;padding:7px;border:none;background:transparent;color:var(--t3);font-family:var(--fb);font-size:12px;border-radius:8px;cursor:pointer;transition:all .2s;text-align:center}
+.sub-tab.active{background:var(--s1);color:var(--green);box-shadow:0 0 8px rgba(0,230,118,.1)}
+/* Gol chip */
+.gol-chip{background:var(--s2);border:1px solid var(--bdr);border-radius:5px;padding:3px 8px;font-size:11px;font-family:var(--fm);cursor:pointer;display:inline-block;margin:2px}
+.gol-chip:hover{border-color:var(--red);color:var(--red)}
 /* Profil */
 .prof-item{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--s2);border:1px solid var(--bdr);border-radius:10px;cursor:pointer;margin-bottom:8px;transition:all .2s}
 .prof-item:hover{border-color:var(--green)}
-.prof-icon{font-size:18px;min-width:24px}
-.prof-text strong{display:block;font-size:13px}
-.prof-text span{font-size:11px;color:var(--t3)}
-.prof-arrow{color:var(--t3);margin-left:auto}
-.prof-section{display:none}
-.prof-section.active{display:block}
-.back-btn{display:flex;align-items:center;gap:5px;background:none;border:none;color:var(--t2);font-size:12px;cursor:pointer;margin-bottom:12px;padding:0}
-
-/* Oranlar tablosu */
+.prof-sec{display:none}.prof-sec.active{display:block}
+/* Odds */
 .odds-tbl{width:100%;border-collapse:separate;border-spacing:0 3px;font-size:12px}
 .odds-tbl th{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;padding:6px 9px;border-bottom:1px solid var(--bdr)}
 .odds-tbl td{padding:8px 9px;background:var(--s2)}
 .odds-tbl tr td:first-child{border-radius:7px 0 0 7px}
 .odds-tbl tr td:last-child{border-radius:0 7px 7px 0}
+/* Grid */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:600px){.g2,.g3{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+<div class="toast-wrap" id="toasts"></div>
 <div class="app">
 
-<!-- ── HEADER ──────────────────────────────────── -->
-<div class="hdr">
-  <div class="hdr-logo">
+<!-- HEADER -->
+<header>
+  <div class="logo">
     <div class="logo-icon">⚽</div>
     <div>
-      <div class="logo-text">FUTBOL TAHMİN</div>
+      <div class="logo-txt">FUTBOL TAHMİN</div>
       <div class="logo-sub">Canlı İstatistik & AI Analiz</div>
     </div>
   </div>
   <div class="hdr-right">
-    <!-- Başarı yüzdeleri -->
-    <div class="perf-bar" id="perf-bar" style="display:none">
-      <div class="perf-item"><div class="perf-pct" id="perf-day">—</div><div class="perf-lbl">Bugün</div></div>
-      <div class="perf-item"><div class="perf-pct" id="perf-week">—</div><div class="perf-lbl">Haftalık</div></div>
-      <div class="perf-item"><div class="perf-pct" id="perf-month">—</div><div class="perf-lbl">Aylık</div></div>
+    <div class="perf-box" id="perf-box" style="display:none">
+      <div class="perf-item"><div class="perf-v" id="p-day">—</div><div class="perf-l">Bugün</div></div>
+      <div class="perf-item"><div class="perf-v" id="p-week">—</div><div class="perf-l">Hafta</div></div>
+      <div class="perf-item"><div class="perf-v" id="p-month">—</div><div class="perf-l">Ay</div></div>
     </div>
-    <div class="user-info" id="user-info">
-      <div class="days-dot"></div>
-      <span style="font-size:12px;color:var(--t2)" id="user-name">—</span>
-      <span style="font-size:10px" id="user-days"></span>
-      <button onclick="switchTab('profil')" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;padding:0 2px">👤</button>
-      <button onclick="AUTH.logout()" style="background:none;border:1px solid var(--bdr);border-radius:6px;padding:2px 7px;font-size:10px;color:var(--t3);cursor:pointer">Çıkış</button>
+    <div class="user-pill">
+      <div class="dot"></div>
+      <span id="u-name">—</span>
+      <span id="u-days" style="font-size:11px;font-family:var(--fm)"></span>
+      <button onclick="switchTab('profil')" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:15px;padding:0 2px">👤</button>
+      <button onclick="doLogout()" style="background:none;border:1px solid var(--bdr);border-radius:6px;padding:2px 8px;font-size:10px;color:var(--t3);cursor:pointer">Çıkış</button>
     </div>
   </div>
-</div>
+</header>
 
-<!-- ── TABS ────────────────────────────────────── -->
+<!-- TABS -->
 <div class="tabs">
   <button class="tab active" id="tab-maclar"  onclick="switchTab('maclar')">📡 Maçlar</button>
   <button class="tab"        id="tab-oranlar" onclick="switchTab('oranlar')">💰 Oranlar</button>
   <button class="tab"        id="tab-profil"  onclick="switchTab('profil')">👤 Profil</button>
 </div>
 
-<!-- ── MAÇLAR ──────────────────────────────────── -->
-<div id="panel-maclar">
-  <!-- Oto yenileme -->
-  <div class="refresh-bar">
-    <span style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;white-space:nowrap">🔄 Yenileme</span>
-    <select id="ref-interval" onchange="setAutoRefresh()" style="width:auto;padding:4px 8px;font-size:11px;flex:0">
-      <option value="0">Kapalı</option>
-      <option value="60">1 dk</option>
-      <option value="120">2 dk</option>
-      <option value="180" selected>3 dk</option>
-      <option value="300">5 dk</option>
-      <option value="600">10 dk</option>
-      <option value="900">15 dk</option>
-      <option value="1200">20 dk</option>
-    </select>
-    <div id="ref-status" style="font-size:11px;color:var(--t3)">Kapalı</div>
-    <div id="ref-cd" style="font-family:var(--fm);font-size:12px;color:var(--amber);min-width:28px"></div>
-    <div class="refresh-prog"><div class="refresh-fill" id="ref-prog" style="width:0%"></div></div>
-    <span style="font-size:10px;color:var(--t3)" id="ref-last"></span>
-    <span style="font-size:10px;background:rgba(255,171,0,.1);border:1px solid rgba(255,171,0,.2);border-radius:5px;padding:3px 7px;color:var(--amber)" id="api-cnt">0 istek</span>
-  </div>
-
-  <!-- Arama -->
-  <input type="text" id="mac-search" placeholder="🔍 Takım veya lig ara..." oninput="onSearch()" style="margin-bottom:8px">
-
-  <!-- Lig filtresi (dinamik) -->
+<!-- MAÇLAR -->
+<div id="panel-maclar" class="panel active">
+  <input type="text" id="mac-search" placeholder="🔍 Takım veya lig ara..." oninput="onSearch()" style="margin-bottom:10px">
   <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px" id="lig-bar">
-    <span class="fc active" data-lg="all" onclick="setLigFilter('all',this)">Tümü</span>
+    <span class="sig sig-low" style="cursor:pointer" onclick="setLig('',this)">Tümü</span>
   </div>
-
-  <!-- Maç listesi -->
   <div id="mac-list">
-    <div style="text-align:center;padding:28px;color:var(--t3)">
-      <div style="font-size:28px;margin-bottom:8px">📡</div>
-      Maçlar yükleniyor...
+    <div style="text-align:center;padding:32px;color:var(--t3)">
+      <div style="font-size:32px;margin-bottom:10px">📡</div>
+      <div>Canlı maçlar yükleniyor...</div>
     </div>
   </div>
 </div>
 
-<!-- ── İSTATİSTİK (maça tıklayınca açılır) ──────── -->
-<div id="panel-stat" style="display:none">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-    <button class="btn btn-g" style="padding:7px 14px;font-size:12px" onclick="backToMatches()">← Maçlara Dön</button>
-    <div style="font-family:var(--fh);font-size:16px;letter-spacing:1px" id="stat-match-title">—</div>
+<!-- İSTATİSTİK (maça tıklayınca) -->
+<div id="panel-stat" class="panel">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    <button class="btn btn-g" onclick="backToList()" style="padding:7px 14px;font-size:12px">← Geri</button>
+    <div style="font-family:var(--fh);font-size:17px;letter-spacing:1px" id="stat-title">—</div>
   </div>
-
-  <!-- Alt sekmeler -->
   <div class="sub-tabs">
     <button class="sub-tab active" id="sub-gol"    onclick="switchSub('gol')">⚽ Gol</button>
     <button class="sub-tab"        id="sub-korner"  onclick="switchSub('korner')">🚩 Korner</button>
@@ -169,874 +191,694 @@ body{position:relative;z-index:1;padding-bottom:60px}
   </div>
 
   <!-- GOL -->
-  <div id="sub-panel-gol">
+  <div id="sub-gol">
     <div class="card">
       <div class="card-title">⚽ GOL ANALİZİ</div>
-      <div id="gol-bars"></div>
-      <div id="gol-press-wrap" style="display:none;margin-top:10px">
-        <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;text-align:center;margin-bottom:5px">GOL TEHLİKE</div>
-        <div class="press-bar"><div class="press-h" id="gp-h" style="width:50%">50%</div><div class="press-a" id="gp-a">50%</div></div>
-        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:4px">
-          <span id="gp-hl">Ev</span><span id="gol-dom" style="font-family:var(--fh);font-size:13px"></span><span id="gp-al">Dep</span>
-        </div>
-        <!-- xG projeksiyon -->
-        <div id="xg-proj" style="display:none;margin-top:10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
-          <div class="po"><div class="po-l">Ev xG Proj.</div><div class="po-v" style="color:var(--green);font-size:18px" id="xg-h">—</div></div>
-          <div class="po"><div class="po-l">Tahmini Skor</div><div class="po-v" style="color:var(--amber);font-size:18px" id="xg-skor">—</div></div>
-          <div class="po"><div class="po-l">Dep xG Proj.</div><div class="po-v" style="color:var(--red);font-size:18px" id="xg-a">—</div></div>
-        </div>
+      <div id="gol-stat-bars"></div>
+      <div style="margin-top:10px">
+        <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;text-align:center;margin-bottom:5px">GOL TEHLİKE BAROMETRES</div>
+        <div class="press-bar"><div class="press-h" id="gol-ph" style="width:50%">50%</div><div class="press-a" id="gol-pa">50%</div></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:4px"><span id="gol-hl">Ev</span><span id="gol-dom" style="font-family:var(--fh);font-size:13px"></span><span id="gol-al">Dep</span></div>
+      </div>
+      <div id="xg-row" style="display:none;margin-top:10px" class="g3">
+        <div class="pred-item"><div class="pred-lbl">Ev xG Proj.</div><div class="pred-val" style="color:var(--green);font-size:16px" id="xg-h">—</div></div>
+        <div class="pred-item"><div class="pred-lbl">Tahmini Skor</div><div class="pred-val" style="color:var(--amber);font-size:16px" id="xg-skor">—</div></div>
+        <div class="pred-item"><div class="pred-lbl">Dep xG Proj.</div><div class="pred-val" style="color:var(--red);font-size:16px" id="xg-a">—</div></div>
       </div>
     </div>
-
-    <!-- Gol dakikaları -->
     <div class="card">
       <div class="card-title">⏱ GOL DAKİKALARI</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div class="g2">
         <div>
-          <div style="font-size:10px;color:var(--green);margin-bottom:5px">🏠 <span id="gm-lbl-h">Ev</span></div>
-          <div style="display:flex;flex-wrap:wrap;gap:4px" id="gm-h"></div>
-          <div style="display:flex;gap:5px;margin-top:6px">
-            <input type="number" id="gm-hi" min="1" max="120" placeholder="dk" style="width:55px;padding:4px 6px;font-size:11px">
-            <button class="btn btn-g" style="padding:4px 9px;font-size:11px" onclick="addGol('h')">+</button>
-          </div>
+          <div style="font-size:10px;color:var(--green);margin-bottom:6px">🏠 <span id="gm-lh">Ev</span></div>
+          <div id="gm-h" style="min-height:28px"></div>
+          <div style="display:flex;gap:5px;margin-top:6px"><input type="number" id="gm-hi" min="1" max="120" placeholder="dk" style="width:60px;padding:4px 7px;font-size:11px;margin:0"><button class="btn btn-g" onclick="addGol('h')" style="padding:4px 9px;font-size:11px">+</button></div>
         </div>
         <div>
-          <div style="font-size:10px;color:var(--red);margin-bottom:5px">✈️ <span id="gm-lbl-a">Dep</span></div>
-          <div style="display:flex;flex-wrap:wrap;gap:4px" id="gm-a"></div>
-          <div style="display:flex;gap:5px;margin-top:6px">
-            <input type="number" id="gm-ai" min="1" max="120" placeholder="dk" style="width:55px;padding:4px 6px;font-size:11px">
-            <button class="btn btn-g" style="padding:4px 9px;font-size:11px" onclick="addGol('a')">+</button>
-          </div>
+          <div style="font-size:10px;color:var(--red);margin-bottom:6px">✈️ <span id="gm-la">Dep</span></div>
+          <div id="gm-a" style="min-height:28px"></div>
+          <div style="display:flex;gap:5px;margin-top:6px"><input type="number" id="gm-ai" min="1" max="120" placeholder="dk" style="width:60px;padding:4px 7px;font-size:11px;margin:0"><button class="btn btn-g" onclick="addGol('a')" style="padding:4px 9px;font-size:11px">+</button></div>
         </div>
       </div>
-      <!-- Timeline -->
-      <div class="gt" id="gol-tl"></div>
-      <div style="display:flex;gap:10px;font-size:10px;color:var(--t3);margin-top:5px"><span>🟢 Ev</span><span>🔴 Dep</span></div>
+      <div style="position:relative;height:20px;background:var(--s3);border-radius:10px;margin:10px 0;overflow:hidden" id="gol-tl"></div>
+      <div style="display:flex;gap:10px;font-size:10px;color:var(--t3)"><span>🟢 Ev</span><span>🔴 Dep</span></div>
     </div>
-
-    <!-- AI Gol Tahmini -->
     <div class="card">
-      <button class="btn btn-p btn-w" onclick="doAITahmin('gol')" id="ai-gol-btn">🤖 AI Gol Tahmini</button>
-      <div id="ai-gol-result" style="margin-top:12px;display:none">
-        <div class="pred-card">
-          <div class="po-grid">
-            <div class="po"><div class="po-l">Ev Kazanır</div><div class="po-v" style="color:var(--green)" id="ag-h">—</div></div>
-            <div class="po"><div class="po-l">Beraberlik</div><div class="po-v" style="color:var(--amber)" id="ag-d">—</div></div>
-            <div class="po"><div class="po-l">Dep Kazanır</div><div class="po-v" style="color:var(--red)" id="ag-a">—</div></div>
-          </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px" id="ag-scores"></div>
-          <div style="background:var(--s2);border-left:3px solid var(--cyan);border-radius:0 9px 9px 0;padding:10px;font-size:12px;color:var(--t2);line-height:1.6" id="ag-insight">—</div>
-        </div>
-      </div>
+      <button class="btn btn-p btn-w" id="ai-gol-btn" onclick="doAI('gol')">🤖 AI Gol Tahmini</button>
+      <div id="ai-gol-res" style="display:none"></div>
     </div>
   </div>
 
   <!-- KORNER -->
-  <div id="sub-panel-korner" style="display:none">
+  <div id="sub-korner" style="display:none">
     <div class="card">
       <div class="card-title">🚩 KORNER ANALİZİ</div>
-      <div id="kor-bars"></div>
-      <div id="kor-press-wrap" style="display:none;margin-top:10px">
-        <div class="press-bar"><div class="press-h" id="kp-h" style="width:50%">50%</div><div class="press-a" id="kp-a" style="background:linear-gradient(90deg,#ff6d00,var(--amber))">50%</div></div>
-        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:4px"><span id="kp-hl">Ev</span><span id="kor-dom" style="font-family:var(--fh);font-size:13px"></span><span id="kp-al">Dep</span></div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px" id="kor-proj"></div>
+      <div id="kor-stat-bars"></div>
+      <div style="margin-top:10px">
+        <div class="press-bar" style="background:transparent">
+          <div class="press-h" id="kor-ph" style="width:50%;background:linear-gradient(90deg,var(--amber),#e65100)">50%</div>
+          <div class="press-a" id="kor-pa" style="background:linear-gradient(90deg,#7b1fa2,#9c27b0)">50%</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:4px"><span id="kor-hl">Ev</span><span id="kor-dom" style="font-family:var(--fh);font-size:13px"></span><span id="kor-al">Dep</span></div>
       </div>
+      <div id="kor-proj" class="g3" style="margin-top:10px"></div>
     </div>
     <div class="card">
-      <button class="btn btn-p btn-w" style="background:linear-gradient(135deg,var(--amber),#e65100);color:#000" onclick="doAITahmin('korner')" id="ai-kor-btn">🤖 AI Korner Tahmini</button>
-      <div id="ai-kor-result" style="margin-top:12px;display:none">
-        <div class="pred-card" style="border-color:rgba(255,171,0,.25)">
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
-            <div class="po"><div class="po-l">Toplam</div><div class="po-v" style="color:var(--amber)" id="ak-total">—</div></div>
-            <div class="po"><div class="po-l">8.5 Üst</div><div class="po-v" id="ak-85">—</div></div>
-            <div class="po"><div class="po-l">10.5 Üst</div><div class="po-v" id="ak-105">—</div></div>
-          </div>
-          <div style="background:var(--s2);border-left:3px solid var(--amber);border-radius:0 9px 9px 0;padding:10px;font-size:12px;color:var(--t2);line-height:1.6" id="ak-insight">—</div>
-        </div>
-      </div>
+      <button class="btn btn-w" id="ai-kor-btn" onclick="doAI('korner')" style="background:linear-gradient(135deg,var(--amber),#e65100);color:#000;justify-content:center">🤖 AI Korner Tahmini</button>
+      <div id="ai-kor-res" style="display:none"></div>
     </div>
   </div>
 
   <!-- KART -->
-  <div id="sub-panel-kart" style="display:none">
+  <div id="sub-kart" style="display:none">
     <div class="card">
       <div class="card-title">🟨 KART ANALİZİ</div>
-      <div id="krt-bars"></div>
-      <div id="krt-risk-wrap" style="display:none;margin-top:10px">
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-          <div class="po"><div class="po-l">Faul Riski</div><div class="po-v" style="font-size:16px" id="krt-faul-r">—</div></div>
-          <div class="po"><div class="po-l">Sarı Risk</div><div class="po-v" style="font-size:16px" id="krt-sari-r">—</div></div>
-          <div class="po"><div class="po-l">Kırmızı</div><div class="po-v" style="font-size:16px" id="krt-kir-r">—</div></div>
-        </div>
+      <div id="krt-stat-bars"></div>
+      <div id="krt-risk" style="display:none;margin-top:10px" class="g3">
+        <div class="pred-item"><div class="pred-lbl">Faul Riski</div><div class="pred-val" style="font-size:16px" id="krt-f">—</div></div>
+        <div class="pred-item"><div class="pred-lbl">Sarı Risk</div><div class="pred-val" style="font-size:16px" id="krt-s">—</div></div>
+        <div class="pred-item"><div class="pred-lbl">Kırmızı</div><div class="pred-val" style="font-size:16px" id="krt-k">—</div></div>
       </div>
     </div>
     <div class="card">
-      <div style="margin-bottom:10px">
-        <label>Hakem Adı</label>
-        <input type="text" id="hakem-adi" placeholder="Hakem adı..." style="margin-bottom:8px">
-        <div class="grid2" style="gap:8px">
-          <div><label>Ort Kart/Maç</label><input type="number" id="hakem-avg" placeholder="3.5" step="0.1"></div>
-          <div><label>Sarı/Maç</label><input type="number" id="hakem-sari" placeholder="4.2" step="0.1"></div>
-        </div>
+      <div style="margin-bottom:10px" class="g2">
+        <div><label>Hakem</label><input type="text" id="hakem" placeholder="Hakem adı..." style="margin-bottom:0"></div>
+        <div><label>Ort Kart/Maç</label><input type="number" id="hakem-avg" placeholder="3.5" step="0.1" style="margin-bottom:0"></div>
       </div>
-      <button class="btn btn-p btn-w" style="background:linear-gradient(135deg,#f9a825,#e65100);color:#000" onclick="doAITahmin('kart')" id="ai-krt-btn">🤖 AI Kart Tahmini</button>
-      <div id="ai-krt-result" style="margin-top:12px;display:none">
-        <div class="pred-card" style="border-color:rgba(249,168,37,.3)">
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px">
-            <div class="po"><div class="po-l">Toplam Sarı</div><div class="po-v" style="color:#f9a825" id="akrt-sari">—</div></div>
-            <div class="po"><div class="po-l">Ev Sarı</div><div class="po-v" style="color:var(--green)" id="akrt-ev">—</div></div>
-            <div class="po"><div class="po-l">Dep Sarı</div><div class="po-v" style="color:var(--red)" id="akrt-dep">—</div></div>
-            <div class="po"><div class="po-l">3.5 Üst</div><div class="po-v" id="akrt-35">—</div></div>
-          </div>
-          <div style="background:var(--s2);border-left:3px solid #f9a825;border-radius:0 9px 9px 0;padding:10px;font-size:12px;color:var(--t2);line-height:1.6" id="akrt-insight">—</div>
-        </div>
-      </div>
+      <button class="btn btn-w" id="ai-krt-btn" onclick="doAI('kart')" style="background:linear-gradient(135deg,#f9a825,#e65100);color:#000;justify-content:center;margin-top:8px">🤖 AI Kart Tahmini</button>
+      <div id="ai-krt-res" style="display:none"></div>
     </div>
   </div>
 
-  <!-- GENEL İSTATİSTİK -->
-  <div id="sub-panel-genel" style="display:none">
+  <!-- GENEL -->
+  <div id="sub-genel" style="display:none">
     <div class="card">
       <div class="card-title">📊 GENEL İSTATİSTİKLER</div>
-      <div id="genel-bars"></div>
+      <div id="genel-stat-bars"></div>
     </div>
-    <!-- Baskımetre -->
     <div class="card">
       <div class="card-title">⚡ BASKIMETRE</div>
-      <div id="bm-wrap">
-        <div class="press-bar"><div class="press-h" id="bm-h" style="width:50%">50%</div><div class="press-a" id="bm-a">50%</div></div>
-        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:4px"><span id="bm-hl">Ev</span><span id="bm-dom" style="font-family:var(--fh);font-size:14px"></span><span id="bm-al">Dep</span></div>
-      </div>
+      <div class="press-bar"><div class="press-h" id="bm-h" style="width:50%">50%</div><div class="press-a" id="bm-a">50%</div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:4px"><span id="bm-hl">Ev</span><span id="bm-dom" style="font-family:var(--fh);font-size:14px"></span><span id="bm-al">Dep</span></div>
     </div>
   </div>
 </div>
 
-<!-- ── ORANLAR ──────────────────────────────────── -->
-<div id="panel-oranlar" style="display:none">
+<!-- ORANLAR -->
+<div id="panel-oranlar" class="panel">
   <div class="card">
-    <div class="card-title">💰 ORAN ANALİZİ</div>
+    <div class="card-title">💰 CANLI ORANLAR</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px">
-      <div style="flex:2;min-width:140px">
-        <label>Fixture ID (Maça tıklayınca otomatik geler)</label>
-        <input type="text" id="odds-fid" placeholder="Fixture ID...">
-      </div>
-      <button class="btn btn-p" onclick="loadOdds()">📥 Oranları Çek</button>
+      <div style="flex:2;min-width:140px"><label>Fixture ID</label><input type="text" id="odds-fid" placeholder="Maça tıklayınca otomatik gelir..." style="margin-bottom:0"></div>
+      <button class="btn btn-p" onclick="loadOdds()">Oranları Çek</button>
     </div>
-    <div id="odds-content">
-      <div style="text-align:center;padding:20px;color:var(--t3)">Maça tıklayın veya Fixture ID girin</div>
-    </div>
+    <div id="odds-content" style="color:var(--t3);text-align:center;padding:16px">Maça tıklayın veya Fixture ID girin</div>
   </div>
-
-  <!-- Kapanış oranları AI analizi -->
   <div class="card">
-    <div class="card-title">🧠 KAPANIŞ ORANLARI ANALİZİ</div>
-    <div style="color:var(--t3);font-size:12px;margin-bottom:12px">
-      Canlı maçın kapanış oranlarına benzer geçmiş maçları bulur ve AI ile tahmin yapar.
+    <div class="card-title">🧠 KAPANIŞ ORANLARI AI ANALİZİ</div>
+    <p style="font-size:12px;color:var(--t3);margin-bottom:12px">Kapanış oranlarına göre AI tahmin yapar</p>
+    <div class="g2" style="margin-bottom:10px">
+      <div><label>1 Oranı</label><input type="number" id="co-1" placeholder="2.50" step="0.01" style="margin-bottom:0"></div>
+      <div><label>X Oranı</label><input type="number" id="co-x" placeholder="3.20" step="0.01" style="margin-bottom:0"></div>
+      <div><label>2 Oranı</label><input type="number" id="co-2" placeholder="2.80" step="0.01" style="margin-bottom:0"></div>
+      <div><label>2.5 Üst Oranı</label><input type="number" id="co-u" placeholder="1.90" step="0.01" style="margin-bottom:0"></div>
     </div>
-    <div class="grid2" style="margin-bottom:12px;gap:8px">
-      <div><label>1 Oranı</label><input type="number" id="co-1" placeholder="2.50" step="0.01"></div>
-      <div><label>X Oranı</label><input type="number" id="co-x" placeholder="3.20" step="0.01"></div>
-      <div><label>2 Oranı</label><input type="number" id="co-2" placeholder="2.80" step="0.01"></div>
-      <div><label>2.5 Üst Oranı</label><input type="number" id="co-u" placeholder="1.90" step="0.01"></div>
-    </div>
-    <button class="btn btn-p btn-w" onclick="doOddsAI()" id="odds-ai-btn">🤖 AI Oran Analizi Yap</button>
-    <div id="odds-ai-result" style="margin-top:12px;display:none">
-      <div class="pred-card">
-        <div class="po-grid">
-          <div class="po"><div class="po-l">Ev (1)</div><div class="po-v" style="color:var(--green)" id="oa-h">—</div></div>
-          <div class="po"><div class="po-l">Beraberlik</div><div class="po-v" style="color:var(--amber)" id="oa-d">—</div></div>
-          <div class="po"><div class="po-l">Dep (2)</div><div class="po-v" style="color:var(--red)" id="oa-a">—</div></div>
-        </div>
-        <div style="background:var(--s2);border-left:3px solid var(--cyan);border-radius:0 9px 9px 0;padding:10px;font-size:12px;color:var(--t2);line-height:1.6" id="oa-insight">—</div>
-      </div>
-    </div>
+    <button class="btn btn-p btn-w" id="odds-ai-btn" onclick="doOddsAI()" style="margin-top:8px">🤖 AI Oran Analizi</button>
+    <div id="odds-ai-res" style="display:none;margin-top:12px"></div>
   </div>
 </div>
 
-<!-- ── PROFİL ────────────────────────────────────── -->
-<div id="panel-profil" style="display:none">
-  <!-- Ana profil -->
+<!-- PROFİL -->
+<div id="panel-profil" class="panel">
   <div id="prof-main">
-    <div class="card" style="text-align:center;padding:20px">
+    <div class="card" style="text-align:center;padding:24px">
       <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 10px">👤</div>
       <div style="font-size:16px;font-weight:700;margin-bottom:3px" id="prof-name">—</div>
-      <div style="font-size:12px;color:var(--t3);margin-bottom:10px" id="prof-email">—</div>
+      <div style="font-size:12px;color:var(--t3);margin-bottom:12px" id="prof-email">—</div>
       <div style="background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.15);border-radius:10px;padding:10px">
-        <div style="font-family:var(--fh);font-size:30px;color:var(--green)" id="prof-days">—</div>
-        <div style="font-size:10px;color:var(--t3);letter-spacing:1px;text-transform:uppercase">Gün Kaldı</div>
+        <div style="font-family:var(--fh);font-size:32px" id="prof-days" style="color:var(--green)">—</div>
+        <div style="font-size:9px;color:var(--t3);letter-spacing:1px;text-transform:uppercase">Gün Kaldı</div>
       </div>
     </div>
-
-    <div onclick="showProfSection('edit')" class="prof-item">
-      <span class="prof-icon">✏️</span>
-      <div class="prof-text"><strong>Profili Düzenle</strong><span>Ad, soyad, telefon</span></div>
-      <span class="prof-arrow">›</span>
-    </div>
-    <div onclick="showProfSection('pw')" class="prof-item">
-      <span class="prof-icon">🔑</span>
-      <div class="prof-text"><strong>Şifre Değiştir</strong></div>
-      <span class="prof-arrow">›</span>
-    </div>
-    <div onclick="doLogoutAll()" class="prof-item" style="border-color:rgba(255,171,0,.2)">
-      <span class="prof-icon">📱</span>
-      <div class="prof-text"><strong>Tüm Cihazlardan Çıkış</strong></div>
-      <span class="prof-arrow">›</span>
-    </div>
-    <div onclick="AUTH.logout()" class="prof-item" style="border-color:rgba(255,61,107,.2)">
-      <span class="prof-icon">🚪</span>
-      <div class="prof-text"><strong>Çıkış Yap</strong></div>
-      <span class="prof-arrow">›</span>
-    </div>
+    <div class="prof-item" onclick="showProfSec('edit')"><span style="font-size:18px">✏️</span><div><strong>Profili Düzenle</strong><div style="font-size:11px;color:var(--t3)">Ad, telefon güncelle</div></div><span style="margin-left:auto;color:var(--t3)">›</span></div>
+    <div class="prof-item" onclick="showProfSec('pw')"><span style="font-size:18px">🔑</span><div><strong>Şifre Değiştir</strong></div><span style="margin-left:auto;color:var(--t3)">›</span></div>
+    <div class="prof-item" onclick="doLogoutAll()" style="border-color:rgba(255,171,0,.2)"><span style="font-size:18px">📱</span><div><strong>Tüm Cihazlardan Çıkış</strong></div><span style="margin-left:auto;color:var(--t3)">›</span></div>
+    <div class="prof-item" onclick="doLogout()" style="border-color:rgba(255,61,107,.2)"><span style="font-size:18px">🚪</span><div><strong>Çıkış Yap</strong></div><span style="margin-left:auto;color:var(--t3)">›</span></div>
   </div>
-
-  <!-- Düzenle -->
-  <div id="prof-edit" class="prof-section">
-    <button class="back-btn" onclick="showProfSection('')">← Geri</button>
+  <div id="prof-edit" class="prof-sec">
+    <button onclick="showProfSec('')" style="background:none;border:none;color:var(--t2);font-size:12px;cursor:pointer;margin-bottom:12px;padding:0">← Geri</button>
     <div class="card">
       <div class="card-title">Profili Düzenle</div>
-      <div class="fg"><label>Ad Soyad</label><input type="text" id="pe-name"></div>
-      <div class="fg"><label>Telefon</label><input type="tel" id="pe-phone"></div>
+      <label>Ad Soyad</label><input type="text" id="pe-name">
+      <label>Telefon</label><input type="tel" id="pe-phone">
       <button class="btn btn-p btn-w" id="pe-btn" onclick="doEditProf()">Kaydet</button>
       <div class="msg" id="pe-msg"></div>
     </div>
   </div>
-
-  <!-- Şifre -->
-  <div id="prof-pw" class="prof-section">
-    <button class="back-btn" onclick="showProfSection('')">← Geri</button>
+  <div id="prof-pw" class="prof-sec">
+    <button onclick="showProfSec('')" style="background:none;border:none;color:var(--t2);font-size:12px;cursor:pointer;margin-bottom:12px;padding:0">← Geri</button>
     <div class="card">
       <div class="card-title">Şifre Değiştir</div>
-      <div class="fg"><label>Mevcut Şifre</label><input type="password" id="pp-old"></div>
-      <div class="fg"><label>Yeni Şifre</label><input type="password" id="pp-new"></div>
-      <div class="fg"><label>Yeni Şifre Tekrar</label><input type="password" id="pp-new2"></div>
-      <button class="btn btn-p btn-w" id="pp-btn" onclick="doChangePw()">Değiştir</button>
+      <label>Mevcut Şifre</label><input type="password" id="pp-old">
+      <label>Yeni Şifre</label><input type="password" id="pp-new">
+      <label>Yeni Şifre Tekrar</label><input type="password" id="pp-new2" style="margin-bottom:0">
+      <button class="btn btn-p btn-w" id="pp-btn" onclick="doChangePw()" style="margin-top:10px">Değiştir</button>
       <div class="msg" id="pp-msg"></div>
     </div>
   </div>
 </div>
 
 </div><!-- /app -->
-
-<script src="/js/core.js"></script>
 <script>
+// ── CONFIG ────────────────────────────────────────
+var TOKEN = localStorage.getItem('ft_token') || localStorage.getItem('ft_admin_token') || '';
+var USER  = JSON.parse(localStorage.getItem('ft_user') || 'null');
+var isAdmin = !!(localStorage.getItem('ft_admin_token'));
+var IDLE_TIMEOUT = 10 * 60 * 1000; // 10 dk
+var idleTimer = null;
+
 // ── SESSION KONTROL ───────────────────────────────
-(function(){
-  // Admin token kontrolü
-  var adminToken = localStorage.getItem('ft_admin_token') || '';
-  if(adminToken) {
-    // Admin olarak giriş yapılmış - direkt başlat
-    AUTH.token = adminToken;
-    AUTH.user  = { email: 'Admin', full_name: 'Admin', days_left: null };
-    initApp();
-    return;
-  }
-  if(!AUTH.token){ window.location.href='/giris'; return; }
-  AUTH.verify().then(function(ok){
-    if(!ok){ window.location.href='/giris'; return; }
-    initApp();
-  });
+(function() {
+  if (!TOKEN) { window.location.href = '/giris'; return; }
+  if (isAdmin) { initApp(); return; }
+  fetch('/api/auth/verify', { headers: { 'Authorization': 'Bearer ' + TOKEN, 'Content-Type': 'application/json' } })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.user) { USER = d.user; localStorage.setItem('ft_user', JSON.stringify(d.user)); initApp(); }
+      else { window.location.href = '/giris'; }
+    }).catch(function() { window.location.href = '/giris'; });
 })();
 
-// ── DURUM ────────────────────────────────────────
-var S = {
-  matches: [], curFilter:'all', search:'',
-  curFid:null, curHome:'', curAway:'', curLeague:'', curMin:45,
-  curStats:{h:{},a:{}}, curGols:{h:[],a:[]},
-  apiCount: parseInt(localStorage.getItem('api_cnt')||'0'),
-  apiDate:  localStorage.getItem('api_date')||'',
-};
-
-function initApp(){
-  AUTH.startIdleTimer();
-  updateUserHeader();
+// ── INIT ─────────────────────────────────────────
+function initApp() {
+  updateHeader();
+  startIdleTimer();
   loadPerformance();
   loadMatches();
-  loadPerformanceInterval = setInterval(loadPerformance, 5*60*1000);
 }
 
-// ── HEADER ───────────────────────────────────────
-function updateUserHeader(){
-  var u = AUTH.user;
-  if (!u) return;
-  document.getElementById('user-name').textContent = u.full_name || u.email;
+function updateHeader() {
+  var u = USER || {};
+  document.getElementById('u-name').textContent = u.full_name || u.email || 'Admin';
   var dl = u.days_left;
-  var dEl = document.getElementById('user-days');
-  if (dl !== null) {
-    dEl.textContent = dl + ' gün';
-    dEl.style.color = dl>7?'var(--green)':dl>2?'var(--amber)':'var(--red)';
+  var dEl = document.getElementById('u-days');
+  if (dl !== null && dl !== undefined) {
+    dEl.textContent = dl + 'g';
+    dEl.style.color = dl > 7 ? 'var(--green)' : dl > 2 ? 'var(--amber)' : 'var(--red)';
   }
 }
 
-async function loadPerformance(){
-  try{
-    var d = await API.live('/performance');
-    if(d.today||d.week||d.month){
-      document.getElementById('perf-bar').style.display='flex';
-      document.getElementById('perf-day').textContent  = (d.today&&d.today.pct?d.today.pct:'—')+'%';
-      document.getElementById('perf-week').textContent = (d.week&&d.week.pct?d.week.pct:'—')+'%';
-      document.getElementById('perf-month').textContent= (d.month&&d.month.pct?d.month.pct:'—')+'%';
+function startIdleTimer() {
+  function reset() { clearTimeout(idleTimer); idleTimer = setTimeout(function() { toast('10 dk hareketsizlik — çıkış yapılıyor...', 'info'); setTimeout(doLogout, 2000); }, IDLE_TIMEOUT); }
+  ['click','keypress','touchstart','scroll'].forEach(function(e) { document.addEventListener(e, reset, { passive: true }); });
+  reset();
+}
+
+// ── API ──────────────────────────────────────────
+function apiHeaders() { return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN }; }
+
+async function apiFetch(path) {
+  var r = await fetch('/api/football?path=' + encodeURIComponent(path), { headers: apiHeaders() });
+  return r.json();
+}
+
+async function apiAI(messages, maxTokens) {
+  var r = await fetch('/api/ai', { method: 'POST', headers: apiHeaders(), body: JSON.stringify({ messages: messages, max_tokens: maxTokens || 800 }) });
+  return r.json();
+}
+
+async function apiAuth(path, method, body) {
+  var opts = { method: method || 'GET', headers: apiHeaders() };
+  if (body) opts.body = JSON.stringify(body);
+  var r = await fetch('/api/auth' + path, opts);
+  return r.json();
+}
+
+// ── TOAST ────────────────────────────────────────
+function toast(msg, type) {
+  var t = document.createElement('div');
+  t.className = 'toast toast-' + (type || 'ok');
+  t.textContent = msg;
+  document.getElementById('toasts').appendChild(t);
+  setTimeout(function() { t.style.opacity='0'; t.style.transition='.3s'; setTimeout(function(){t.remove();},300); }, 2800);
+}
+
+function showMsg(id, text, type) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = text;
+  el.className = 'msg ' + (type || 'info');
+}
+
+function btnLoad(id, loading, txt) {
+  var btn = document.getElementById(id);
+  if (!btn) return;
+  btn.disabled = loading;
+  if (loading) { btn.dataset.orig = btn.innerHTML; btn.innerHTML = '<span class="spin"></span>' + (txt || ''); }
+  else { btn.innerHTML = btn.dataset.orig || txt || 'Tamam'; }
+}
+
+// ── PERFORMANS ───────────────────────────────────
+async function loadPerformance() {
+  try {
+    var r = await fetch('/api/live?path=/performance', { headers: apiHeaders() });
+    var d = await r.json();
+    if (d.today || d.week || d.month) {
+      document.getElementById('perf-box').style.display = 'flex';
+      document.getElementById('p-day').textContent   = (d.today  && d.today.pct  ? d.today.pct  : '—') + '%';
+      document.getElementById('p-week').textContent  = (d.week   && d.week.pct   ? d.week.pct   : '—') + '%';
+      document.getElementById('p-month').textContent = (d.month  && d.month.pct  ? d.month.pct  : '—') + '%';
     }
-  }catch(e){}
+  } catch(e) {}
 }
 
 // ── TABS ─────────────────────────────────────────
-function switchTab(tab){
-  document.querySelectorAll('[id^=panel-]').forEach(function(p){p.style.display='none';});
-  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
-  document.getElementById('panel-'+tab).style.display='block';
-  var tb=document.getElementById('tab-'+tab);
-  if(tb) tb.classList.add('active');
-  if(tab==='profil') fillProfForm();
-  if(typeof window['logFeatureView']==='function') logFeatureView(tab);
-  API.auth('/log','POST',{feature:tab,duration:0}).catch(function(){});
-}
-
-function switchSub(sub){
-  ['gol','korner','kart','genel'].forEach(function(s){
-    document.getElementById('sub-panel-'+s).style.display='none';
-    document.getElementById('sub-'+s).classList.remove('active');
+function switchTab(tab) {
+  ['maclar','oranlar','profil'].forEach(function(t) {
+    document.getElementById('panel-'+t).classList.remove('active');
+    document.getElementById('tab-'+t) && document.getElementById('tab-'+t).classList.remove('active');
   });
-  document.getElementById('sub-panel-'+sub).style.display='block';
-  document.getElementById('sub-'+sub).classList.add('active');
+  document.getElementById('panel-stat').classList.remove('active');
+  document.getElementById('panel-'+tab).classList.add('active');
+  var tb = document.getElementById('tab-'+tab);
+  if (tb) tb.classList.add('active');
+  if (tab === 'profil') fillProfForm();
+  if (tab === 'maclar') document.getElementById('panel-maclar').classList.add('active');
 }
 
-function backToMatches(){
-  document.getElementById('panel-stat').style.display='none';
-  document.getElementById('panel-maclar').style.display='block';
+function switchSub(sub) {
+  ['gol','korner','kart','genel'].forEach(function(s) {
+    document.getElementById('sub-'+s).style.display='none';
+    document.getElementById('sub-'+s+'-btn') && (document.getElementById('sub-'+s+'-btn').className='sub-tab');
+  });
+  var el = document.getElementById('sub-'+sub);
+  if (el) el.style.display='block';
+  var btn = document.getElementById('sub-'+sub);
+  if (btn) btn.classList.add('active');
+  // Fix sub-tab active
+  document.querySelectorAll('.sub-tab').forEach(function(b){b.classList.remove('active');});
+  var sbtn = Array.from(document.querySelectorAll('.sub-tab')).find(function(b){return b.textContent.toLowerCase().includes(sub==='gol'?'gol':sub==='korner'?'korner':sub==='kart'?'kart':'genel');});
+  if(sbtn) sbtn.classList.add('active');
+}
+
+function backToList() {
+  document.getElementById('panel-stat').classList.remove('active');
+  document.getElementById('panel-maclar').classList.add('active');
   document.getElementById('tab-maclar').classList.add('active');
 }
 
-// ── MAÇLARI YÜKLEe ───────────────────────────────
-var autoTimer=null, cdTimer=null, autoTotal=0, autoCd=0;
+// ── MAÇLAR ───────────────────────────────────────
+var S = { matches: [], lig: '', search: '', curFid: null, curHome: '', curAway: '', curMin: 45, curH: {}, curA: {}, curGols: {h:[],a:[]} };
 
-async function loadMatches(){
-  // Önce direkt API'den çek (cache dolana kadar)
-  await loadMatchesDirect();
-  // Arka planda cache'i de kontrol et
-  try{
-    var d = await API.live('/matches');
-    if(d.matches && d.matches.length){
-      S.matches = convertMatches(d.matches);
-      renderMatches();
-    }
-  }catch(e){}
-}
-
-async function loadMatchesDirect(){
-  try{
-    var d = await API.football('/fixtures?live=all');
-    trackApi(1);
-    if(d.response){
+async function loadMatches() {
+  try {
+    var d = await apiFetch('/fixtures?live=all');
+    if (d.response && d.response.length) {
       S.matches = d.response;
       renderMatches();
     } else {
-      document.getElementById('mac-list').innerHTML='<div style="text-align:center;padding:24px;color:var(--t3)">Canlı maç bulunamadı</div>';
+      document.getElementById('mac-list').innerHTML = '<div style="text-align:center;padding:32px;color:var(--t3)"><div style="font-size:28px;margin-bottom:8px">🌙</div>Şu an canlı maç yok</div>';
     }
-  }catch(e){
-    document.getElementById('mac-list').innerHTML='<div style="text-align:center;padding:24px;color:var(--red)">Veri yüklenemedi: '+e.message+'</div>';
+  } catch(e) {
+    document.getElementById('mac-list').innerHTML = '<div style="text-align:center;padding:32px;color:var(--red)">Veri yüklenemedi: ' + e.message + '</div>';
   }
 }
 
-function convertMatches(cached){
-  return cached.map(function(m){
-    return {
-      fixture:{id:m.fixture_id, status:{elapsed:m.minute,short:m.status}},
-      teams:{home:{name:m.home_team,id:0},away:{name:m.away_team,id:1}},
-      goals:{home:m.score_home,away:m.score_away},
-      league:{name:m.league,id:0},
-      _hStats:m.home_stats||{}, _aStats:m.away_stats||{},
-      _hSig:m.home_signal||{}, _aSig:m.away_signal||{},
-      _cached:true,
-    };
-  });
+function sigCalc(stats, min) {
+  var dA=stats.dAtk||0, sut=stats.sut||0, isb=stats.isb||0, kor=stats.kor||0, xg=stats.xg||0;
+  var press = dA*0.4+isb*0.3+sut*0.2+kor*0.1;
+  var threat = xg*0.6+isb*0.25;
+  var mom = dA*0.5+sut*0.3+kor*0.2;
+  var boost = min>0?(min/90)*(1+mom/100):0.5;
+  var score = (threat*0.4+press*0.25+mom*0.2)*boost;
+  var prob = score;
+  if(dA>20&&isb<2)prob*=0.6; if(sut>10&&xg<0.5)prob*=0.75; if(isb===0)prob*=0.7;
+  score=Math.min(100,Math.round(score)); prob=Math.min(100,Math.round(prob));
+  var dec = score>70?'STRONG GOAL':dA>=8&&sut>=3&&kor>=2?'GOL GELİYOR':score>50?'WATCH':'LOW';
+  return {score,prob,dec};
 }
 
-function trackApi(n){
-  var today=new Date().toISOString().slice(0,10);
-  if(S.apiDate!==today){S.apiCount=0;S.apiDate=today;}
-  S.apiCount+=n;
-  localStorage.setItem('api_cnt',S.apiCount);
-  localStorage.setItem('api_date',S.apiDate);
-  var el=document.getElementById('api-cnt');
-  if(el) el.textContent=S.apiCount+' istek';
+function sigBadge(dec) {
+  var map={
+    'STRONG GOAL':'<span class="sig sig-strong">🔴 STRONG GOAL</span>',
+    'GOL GELİYOR':'<span class="sig sig-goal">🔥 GOL GELİYOR</span>',
+    'WATCH':'<span class="sig sig-watch">🟡 WATCH</span>',
+    'LOW':'<span class="sig sig-low">🟢 LOW</span>',
+  };
+  return map[dec]||map['LOW'];
 }
 
-// ── AUTO REFRESH ─────────────────────────────────
-function setAutoRefresh(){
-  var val=parseInt(document.getElementById('ref-interval').value)||0;
-  clearInterval(autoTimer);clearInterval(cdTimer);autoTimer=null;cdTimer=null;
-  var prog=document.getElementById('ref-prog'),status=document.getElementById('ref-status'),cd=document.getElementById('ref-cd');
-  if(prog) prog.style.width='0%';if(cd) cd.textContent='';
-  if(!val){if(status)status.textContent='Kapalı';return;}
-  autoTotal=val;autoCd=val;
-  if(status)status.innerHTML='<span style="color:var(--green)">● Aktif</span>';
-  cdTimer=setInterval(function(){
-    autoCd--;
-    if(autoCd<0) autoCd=autoTotal;
-    var pct=Math.round((1-autoCd/autoTotal)*100);
-    if(prog) prog.style.width=pct+'%';
-    if(cd) cd.textContent=autoCd+'s';
-  },1000);
-  autoTimer=setInterval(function(){autoCd=autoTotal;loadMatches();},val*1000);
+function setLig(lg, el) {
+  S.lig = lg;
+  document.querySelectorAll('#lig-bar span').forEach(function(s){s.style.background='rgba(0,230,118,.1)';s.style.color='var(--green)';});
+  if(el){el.style.background='var(--green)';el.style.color='#000';}
+  renderMatches();
 }
 
-// ── MAÇ LİSTESİ RENDER ───────────────────────────
-function renderMatches(){
-  updateLigFilter();
-  var q=S.search.toLowerCase();
-  var filtered = S.curFilter==='all' ? S.matches : S.matches.filter(function(m){
-    return (m.league&&m.league.name||'').indexOf(S.curFilter)!==-1;
+function onSearch() { S.search = document.getElementById('mac-search').value; renderMatches(); }
+
+function renderMatches() {
+  // Lig filtresi güncelle
+  var ligs = [''];
+  S.matches.forEach(function(m){var lg=m.league&&m.league.name||'';if(lg&&ligs.indexOf(lg)===-1)ligs.push(lg);});
+  var bar = document.getElementById('lig-bar');
+  bar.innerHTML = ligs.map(function(lg){
+    var lbl = lg===''?'Tümü':lg;
+    var active = S.lig===lg;
+    return '<span class="sig sig-low" style="cursor:pointer;'+(active?'background:var(--green);color:#000':'')+'" onclick="setLig(\''+lg.replace(/'/g,'').replace(/"/g,'')+'\',this)">'+lbl+'</span>';
+  }).join('');
+
+  var q = S.search.toLowerCase();
+  var filtered = S.matches.filter(function(m) {
+    if (S.lig && (m.league&&m.league.name||'') !== S.lig) return false;
+    if (q && (m.teams.home.name||'').toLowerCase().indexOf(q)===-1 && (m.teams.away.name||'').toLowerCase().indexOf(q)===-1 && (m.league&&m.league.name||'').toLowerCase().indexOf(q)===-1) return false;
+    return true;
   });
-  if(q) filtered=filtered.filter(function(m){
-    return (m.teams.home.name||'').toLowerCase().indexOf(q)!==-1||
-           (m.teams.away.name||'').toLowerCase().indexOf(q)!==-1||
-           (m.league&&m.league.name||'').toLowerCase().indexOf(q)!==-1;
-  });
-  if(!filtered.length){
-    document.getElementById('mac-list').innerHTML='<div style="text-align:center;padding:24px;color:var(--t3)">Maç bulunamadı</div>';
-    return;
-  }
+
+  if (!filtered.length) { document.getElementById('mac-list').innerHTML='<div style="text-align:center;padding:24px;color:var(--t3)">Maç bulunamadı</div>'; return; }
+
   // Liglere göre grupla
   var groups={};
   filtered.forEach(function(m){var lg=m.league&&m.league.name||'Diğer';if(!groups[lg])groups[lg]=[];groups[lg].push(m);});
-  document.getElementById('mac-list').innerHTML=Object.keys(groups).map(function(lg){
-    var lgId='lg'+lg.replace(/[^a-zA-Z0-9]/g,'');
+
+  document.getElementById('mac-list').innerHTML = Object.keys(groups).map(function(lg) {
+    var lgKey = 'lg'+lg.replace(/[^a-z0-9]/gi,'');
     return '<div style="margin-bottom:8px">'
-      +'<div class="lg-hdr" data-lid="'+lgId+'" onclick="toggleLg(this)">'
+      +'<div class="lg-header" onclick="toggleLg(\''+lgKey+'\')">'
       +'<span class="lg-name">'+lg+'</span>'
-      +'<div class="lg-meta"><span>'+groups[lg].length+' maç</span><span id="arr-'+lgId+'">▼</span></div>'
+      +'<span style="font-size:11px;color:var(--t3)">'+groups[lg].length+' maç ▼</span>'
       +'</div>'
-      +'<div id="'+lgId+'">'
+      +'<div id="'+lgKey+'">'
       +groups[lg].map(function(m){
         var hg=m.goals&&m.goals.home!=null?m.goals.home:0;
         var ag=m.goals&&m.goals.away!=null?m.goals.away:0;
         var mn=m.fixture&&m.fixture.status&&m.fixture.status.elapsed||0;
-        var hSig=m._hSig&&m._hSig.decision?m._hSig:Signal.calc(m._hStats||{},mn);
-        var aSig=m._aSig&&m._aSig.decision?m._aSig:Signal.calc(m._aStats||{},mn);
-        var topSig=hSig.goalScore>=aSig.goalScore?hSig:aSig;
-        var meterC=topSig.goalScore>70?'var(--red)':topSig.goalScore>50?'var(--amber)':'var(--green)';
-        return '<div class="mc" data-fid="'+m.fixture.id+'" data-home="'+encodeURI(m.teams.home.name)+'" data-away="'+encodeURI(m.teams.away.name)+'" data-league="'+encodeURI(m.league&&m.league.name||'')+'" onclick="onMatchClick(this)">'
+        var sig = sigCalc({dAtk:0,sut:0,isb:0,kor:0,xg:0}, mn); // placeholder, gerçek stats maça tıklayınca gelir
+        var mC = sig.score>70?'var(--red)':sig.score>50?'var(--amber)':'var(--green)';
+        return '<div class="mc" data-fid="'+m.fixture.id+'" data-home="'+encodeURI(m.teams.home.name)+'" data-away="'+encodeURI(m.teams.away.name)+'" data-league="'+encodeURI(lg)+'" onclick="onMacClick(this)">'
           +'<div class="mc-league">'+lg+'</div>'
           +'<div class="mc-teams">'
           +'<div class="mc-team">'+m.teams.home.name+'</div>'
-          +'<div class="mc-score"><div class="mc-score-num">'+hg+' - '+ag+'</div><div class="mc-score-min">'+mn+"'</div></div>"
+          +'<div class="mc-score-box"><div class="mc-score">'+hg+' - '+ag+'</div><div class="mc-min">'+mn+"'</div></div>"
           +'<div class="mc-team mc-team-r">'+m.teams.away.name+'</div>'
           +'</div>'
           +'<div class="mc-signal">'
-          +Signal.badge(topSig.decision)
-          +'<div class="mc-meter"><div class="mc-meter-fill" style="width:'+topSig.goalScore+'%;background:'+meterC+'"></div></div>'
-          +'<span style="font-size:10px;color:var(--t3);font-family:var(--fm)">'+topSig.goalScore+'</span>'
-          +'</div>'
-          +'</div>';
+          +sigBadge(sig.dec)
+          +'<div class="mc-bar"><div class="mc-bar-fill" style="width:'+sig.score+'%;background:'+mC+'"></div></div>'
+          +'<span style="font-size:10px;color:var(--t3);font-family:var(--fm)">'+sig.score+'</span>'
+          +'</div></div>';
       }).join('')+'</div></div>';
   }).join('');
 }
 
-function toggleLg(el){
-  var id=el.dataset.lid;
-  var wrap=document.getElementById(id),arr=document.getElementById('arr-'+id);
-  if(!wrap) return;
-  var hide=wrap.style.display!=='none'&&wrap.style.display!=='';
-  wrap.style.display=hide?'none':'block';
-  if(arr) arr.textContent=hide?'▶':'▼';
+function toggleLg(id) {
+  var el = document.getElementById(id);
+  if(el) el.style.display = el.style.display==='none'?'block':'none';
 }
-
-function updateLigFilter(){
-  var bar=document.getElementById('lig-bar');if(!bar)return;
-  var ligs=['all'];
-  S.matches.forEach(function(m){var lg=m.league&&m.league.name||'';if(lg&&ligs.indexOf(lg)===-1)ligs.push(lg);});
-  bar.innerHTML=ligs.map(function(lg){
-    var lbl=lg==='all'?'Tümü':lg;
-    var active=S.curFilter===lg?'active':'';
-    return '<span class="fc '+active+'" data-lg="'+lg.replace(/"/g,'')+'" onclick="setLigFilter(\''+lg.replace(/'/g,'')+'\',this)">'+lbl+'</span>';
-  }).join('');
-}
-
-function setLigFilter(f,el){
-  S.curFilter=f;
-  document.querySelectorAll('.fc').forEach(function(c){c.classList.remove('active');});
-  if(el) el.classList.add('active');
-  renderMatches();
-}
-
-function onSearch(){ S.search=document.getElementById('mac-search').value; renderMatches(); }
 
 // ── MAÇ SEÇ ──────────────────────────────────────
-async function onMatchClick(el){
-  var fid    = el.dataset.fid;
-  var home   = decodeURI(el.dataset.home);
-  var away   = decodeURI(el.dataset.away);
-  var league = decodeURI(el.dataset.league);
-  S.curFid=fid;S.curHome=home;S.curAway=away;S.curLeague=league;
-
-  document.getElementById('stat-match-title').textContent=home+' vs '+away;
-  document.getElementById('odds-fid').value=fid;
+async function onMacClick(el) {
+  var fid = el.dataset.fid;
+  S.curFid = fid;
+  S.curHome = decodeURI(el.dataset.home);
+  S.curAway = decodeURI(el.dataset.away);
+  document.getElementById('stat-title').textContent = S.curHome + ' vs ' + S.curAway;
+  document.getElementById('odds-fid').value = fid;
+  document.getElementById('gm-lh').textContent = S.curHome;
+  document.getElementById('gm-la').textContent = S.curAway;
+  S.curGols = {h:[],a:[]};
+  renderGolChips();
 
   // Overlay
-  var ov=document.createElement('div');ov.id='sel-ov';
-  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center';
-  ov.innerHTML='<div style="background:var(--s1);padding:22px 30px;border-radius:14px;border:1px solid var(--green);text-align:center"><span class="spin" style="border-top-color:var(--green)"></span><div style="margin-top:8px;font-size:13px">Veriler yükleniyor...</div></div>';
+  var ov = document.createElement('div');
+  ov.id='load-ov';
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;display:flex;align-items:center;justify-content:center';
+  ov.innerHTML='<div style="background:var(--s1);padding:22px 30px;border-radius:14px;border:1px solid var(--green);text-align:center"><span class="spin" style="border-top-color:var(--green);width:20px;height:20px"></span><div style="margin-top:8px;font-size:13px">İstatistikler yükleniyor...</div></div>';
   document.body.appendChild(ov);
 
-  try{
-    trackApi(3);
-    var [fixRes,statRes,linRes]=await Promise.all([
-      API.football('/fixtures?id='+fid),
-      API.football('/fixtures/statistics?fixture='+fid),
-      API.football('/fixtures/lineups?fixture='+fid),
+  try {
+    var [fixRes, statRes] = await Promise.all([
+      apiFetch('/fixtures?id='+fid),
+      apiFetch('/fixtures/statistics?fixture='+fid),
     ]);
-    document.getElementById('sel-ov').remove();
+    document.getElementById('load-ov').remove();
 
-    var fix=fixRes.response&&fixRes.response[0];
-    var mn=fix&&fix.fixture&&fix.fixture.status&&fix.fixture.status.elapsed||45;
-    var sh=fix&&fix.goals&&fix.goals.home!=null?fix.goals.home:0;
-    var sa=fix&&fix.goals&&fix.goals.away!=null?fix.goals.away:0;
-    S.curMin=mn;
+    var fix = fixRes.response && fixRes.response[0];
+    S.curMin = fix&&fix.fixture&&fix.fixture.status&&fix.fixture.status.elapsed||45;
+    var sh = fix&&fix.goals&&fix.goals.home!=null?fix.goals.home:0;
+    var sa = fix&&fix.goals&&fix.goals.away!=null?fix.goals.away:0;
 
     // Gol dakikaları
-    var hGols=[],aGols=[];
-    var homeId=fix&&fix.teams&&fix.teams.home&&fix.teams.home.id;
-    if(fix&&fix.events){fix.events.forEach(function(ev){
-      if(ev.type==='Goal'&&ev.detail!=='Missed Penalty'){
-        var dk=ev.time&&ev.time.elapsed;if(!dk)return;
-        if(ev.team&&ev.team.id===homeId)hGols.push(dk);else aGols.push(dk);
-      }
-    });}
+    if(fix&&fix.events){
+      var hId = fix.teams&&fix.teams.home&&fix.teams.home.id;
+      fix.events.forEach(function(ev){
+        if(ev.type==='Goal'&&ev.detail!=='Missed Penalty'){
+          var dk=ev.time&&ev.time.elapsed;if(!dk)return;
+          if(ev.team&&ev.team.id===hId)S.curGols.h.push(dk);else S.curGols.a.push(dk);
+        }
+      });
+    }
 
-    // İstatistikler
-    var statR=statRes.response||[];
-    var hRaw=statR[0]&&statR[0].statistics?statR[0].statistics:[];
-    var aRaw=statR[1]&&statR[1].statistics?statR[1].statistics:[];
-    var h=extractStats(hRaw);
-    var a=extractStats(aRaw);
-    if(!h.top&&!a.top){h.top=50;a.top=50;}
-    else if(!a.top)a.top=100-h.top;
-    else if(!h.top)h.top=100-a.top;
-    S.curStats={h,a};
-    S.curGols={h:hGols,a:aGols};
+    var statR = statRes.response||[];
+    S.curH = extractStats(statR[0]&&statR[0].statistics||[]);
+    S.curA = extractStats(statR[1]&&statR[1].statistics||[]);
+    if(!S.curH.top&&!S.curA.top){S.curH.top=50;S.curA.top=50;}
 
-    // Göster
-    fillStatView(home,away,sh,sa,mn,h,a,hGols,aGols);
-    document.getElementById('panel-maclar').style.display='none';
-    document.getElementById('panel-stat').style.display='block';
+    fillStatView();
+    document.getElementById('panel-maclar').classList.remove('active');
+    document.getElementById('panel-stat').classList.add('active');
+    document.getElementById('tab-maclar').classList.remove('active');
     switchSub('gol');
-
-  }catch(e){
-    var ov2=document.getElementById('sel-ov');if(ov2)ov2.remove();
-    Toast.show('Veri yüklenemedi: '+e.message,'err');
+    renderGolChips();
+    renderGolTimeline();
+  } catch(e) {
+    var ov2=document.getElementById('load-ov');if(ov2)ov2.remove();
+    toast('Veri yüklenemedi: '+e.message,'err');
   }
 }
 
-function extractStats(raw){
+function extractStats(raw) {
   return {
-    sut:  parseStat(raw,'shots total'),
-    isb:  parseStat(raw,'shots on target'),
-    kor:  parseStat(raw,'corner kicks'),
-    pas:  parseStat(raw,'total passes'),
-    top:  parseStat(raw,'ball possession'),
-    faul: parseStat(raw,'fouls'),
-    sari: parseStat(raw,'yellow cards'),
-    kir:  parseStat(raw,'red cards'),
-    dAtk: parseStat(raw,'dangerous attacks'),
-    atak: parseStat(raw,'attacks'),
-    xg:   parseStat(raw,'xg'),
-    pbSut:parseStat(raw,'shots inside box'),
-    kurtaris:parseStat(raw,'goalkeeper saves'),
-    ofs:  parseStat(raw,'offsides'),
-    blok: parseStat(raw,'blocked shots'),
+    sut:  pStat(raw,'shots total'),
+    isb:  pStat(raw,'shots on target'),
+    kor:  pStat(raw,'corner kicks'),
+    top:  pStat(raw,'ball possession'),
+    faul: pStat(raw,'fouls'),
+    sari: pStat(raw,'yellow cards'),
+    kir:  pStat(raw,'red cards'),
+    dAtk: pStat(raw,'dangerous attacks'),
+    atak: pStat(raw,'attacks'),
+    xg:   pStat(raw,'xg'),
+    pbSut:pStat(raw,'shots insidebox'),
+    krt:  pStat(raw,'goalkeeper saves'),
+    ofs:  pStat(raw,'offsides'),
+    pas:  pStat(raw,'total passes'),
   };
 }
 
-// ── İSTATİSTİK GÖSTER ────────────────────────────
-function fillStatView(home,away,sh,sa,mn,h,a,hGols,aGols){
-  var hName=home,aName=away;
-  document.getElementById('gm-lbl-h').textContent=hName;
-  document.getElementById('gm-lbl-a').textContent=aName;
-
-  // Gol dakikaları
-  S.curGols={h:hGols,a:aGols};
-  renderGolChips();
-  renderGolTimeline();
-
-  // Gol baskı barları
-  renderStatBars('gol-bars',[
-    {l:'Toplam Şut',h:h.sut,a:a.sut,w:'normal'},
-    {l:'İsabetli Şut',h:h.isb,a:a.isb,w:'high'},
-    {l:'xG',h:h.xg,a:a.xg,w:'critical'},
-    {l:'PB Şut',h:h.pbSut,a:a.pbSut,w:'high'},
-    {l:'Kaleci Kurtarış',h:h.kurtaris,a:a.kurtaris,w:'normal'},
-  ]);
-
-  // Gol baskımetre
-  var hGolSig=Signal.calc(h,mn),aGolSig=Signal.calc(a,mn);
-  var pctH=Math.round(hGolSig.goalScore/(hGolSig.goalScore+aGolSig.goalScore+0.001)*100);
-  document.getElementById('gol-press-wrap').style.display='block';
-  document.getElementById('gp-h').style.width=pctH+'%';document.getElementById('gp-h').textContent=pctH>14?pctH+'%':'';
-  document.getElementById('gp-a').textContent=(100-pctH)>14?(100-pctH)+'%':'';
-  document.getElementById('gp-hl').textContent=hName;document.getElementById('gp-al').textContent=aName;
-  var diff=pctH-(100-pctH);
-  var domEl=document.getElementById('gol-dom');
-  if(diff>20)domEl.innerHTML='<span style="color:var(--green)">'+hName+' AÇIK ÜSTÜNLİK</span>';
-  else if(diff>8)domEl.innerHTML='<span style="color:var(--green)">'+hName+' HAFİF ÜSTÜN</span>';
-  else if(diff<-20)domEl.innerHTML='<span style="color:var(--red)">'+aName+' AÇIK ÜSTÜNLİK</span>';
-  else if(diff<-8)domEl.innerHTML='<span style="color:var(--red)">'+aName+' HAFİF ÜSTÜN</span>';
-  else domEl.innerHTML='<span style="color:var(--amber)">DENGELİ</span>';
-
-  // xG projeksiyon
-  if(h.xg>0||a.xg>0){
-    var mLeft=Math.max(1,90-mn);
-    var hProj=h.xg>0?Math.round((h.xg+(h.xg/mn)*mLeft)*10)/10:0;
-    var aProj=a.xg>0?Math.round((a.xg+(a.xg/mn)*mLeft)*10)/10:0;
-    document.getElementById('xg-proj').style.display='grid';
-    document.getElementById('xg-h').textContent=hProj;
-    document.getElementById('xg-skor').textContent=Math.round(hProj)+'-'+Math.round(aProj);
-    document.getElementById('xg-a').textContent=aProj;
-  }
-
-  // Korner barları
-  renderStatBars('kor-bars',[
-    {l:'Korner',h:h.kor,a:a.kor,w:'critical'},
-    {l:'Toplam Şut',h:h.sut,a:a.sut,w:'normal'},
-    {l:'Bloke Şut',h:h.blok,a:a.blok,w:'high'},
-  ]);
-  var pctK=Math.round(h.kor/(h.kor+a.kor+0.001)*100);
-  document.getElementById('kor-press-wrap').style.display='block';
-  document.getElementById('kp-h').style.width=pctK+'%';document.getElementById('kp-h').textContent=pctK>14?pctK+'%':'';
-  document.getElementById('kp-a').textContent=(100-pctK)>14?(100-pctK)+'%':'';
-  document.getElementById('kp-hl').textContent=hName;document.getElementById('kp-al').textContent=aName;
-  var korDom=document.getElementById('kor-dom');
-  korDom.innerHTML=pctK>55?'<span style="color:var(--green)">'+hName+' KORNER BASTIYOR</span>':pctK<45?'<span style="color:var(--red)">'+aName+' KORNER BASTIYOR</span>':'<span style="color:var(--amber)">DENGELİ</span>';
-  var minsLeft=Math.max(0,90-mn);
-  var totalK=h.kor+a.kor;
-  var projTotal=totalK>0?Math.round(totalK/(mn||1)*90):9;
-  var projH=Math.round(projTotal*pctK/100);
-  document.getElementById('kor-proj').innerHTML=[
-    {l:'Tahmini Toplam',v:projTotal,c:'var(--amber)'},
-    {l:'Ev Korner',v:projH,c:'var(--green)'},
-    {l:'Dep Korner',v:projTotal-projH,c:'var(--red)'},
-    {l:'Kalan ('+minsLeft+"dk'da)",v:Math.round(minsLeft/90*projTotal),c:'var(--cyan)'},
-  ].map(function(b){return '<div class="po"><div class="po-l">'+b.l+'</div><div style="font-family:var(--fh);font-size:20px;color:'+b.c+'">'+b.v+'</div></div>';}).join('');
-
-  // Kart barları
-  renderStatBars('krt-bars',[
-    {l:'Fauller',h:h.faul,a:a.faul,w:'high'},
-    {l:'Sarı Kart',h:h.sari,a:a.sari,w:'critical'},
-    {l:'Ofsayt',h:h.ofs,a:a.ofs,w:'normal'},
-  ]);
-  var totF=h.faul+a.faul,totS=h.sari+a.sari;
-  document.getElementById('krt-risk-wrap').style.display='block';
-  document.getElementById('krt-faul-r').textContent=totF>=20?'🔴 YÜKSEK':totF>=12?'🟡 ORTA':'🟢 DÜŞÜK';
-  document.getElementById('krt-sari-r').textContent=totS>=4?'🔴 YÜKSEK':totS>=2?'🟡 ORTA':'🟢 DÜŞÜK';
-  document.getElementById('krt-kir-r').textContent=(h.kir+a.kir)>0?'🔴 VAR':totF>25?'🟡 OLASI':'🟢 DÜŞÜK';
-
-  // Genel istatistik
-  renderStatBars('genel-bars',[
-    {l:'Top Hakimiyeti',h:h.top,a:a.top,w:'normal'},
-    {l:'Paslar',h:h.pas,a:a.pas,w:'normal'},
-    {l:'Ataklar',h:h.atak,a:a.atak,w:'high'},
-    {l:'Tehlikeli Atak',h:h.dAtk,a:a.dAtk,w:'critical'},
-    {l:'Ofsayt',h:h.ofs,a:a.ofs,w:'normal'},
-  ]);
-
-  // Genel baskımetre
-  var bhPct=Math.round(h.top>0?h.top:(h.dAtk+h.sut)/(h.dAtk+h.sut+a.dAtk+a.sut+0.001)*100);
-  document.getElementById('bm-h').style.width=bhPct+'%';document.getElementById('bm-h').textContent=bhPct>14?bhPct+'%':'';
-  document.getElementById('bm-a').textContent=(100-bhPct)>14?(100-bhPct)+'%':'';
-  document.getElementById('bm-hl').textContent=hName;document.getElementById('bm-al').textContent=aName;
-  document.getElementById('bm-dom').innerHTML=bhPct>55?'<span style="color:var(--green)">'+hName+' HAKİM</span>':bhPct<45?'<span style="color:var(--red)">'+aName+' HAKİM</span>':'<span style="color:var(--amber)">DENGELİ</span>';
+function pStat(stats, type) {
+  if(!stats||!stats.length)return 0;
+  var aliases={'shots total':['total shots','shots total'],'shots on target':['shots on goal','shots on target'],'corner kicks':['corner kicks','corners'],'dangerous attacks':['dangerous attacks'],'attacks':['attacks'],'xg':['expected goals','xg'],'ball possession':['ball possession','possession'],'fouls':['fouls'],'yellow cards':['yellow cards'],'red cards':['red cards'],'offsides':['offsides','offside'],'goalkeeper saves':['goalkeeper saves','saves'],'total passes':['passes','total passes'],'shots insidebox':['shots insidebox','shots inside box']};
+  var search=aliases[type.toLowerCase()]||[type.toLowerCase()];
+  for(var i=0;i<stats.length;i++){var item=stats[i];if(!item||!item.type)continue;var t=item.type.toLowerCase().replace(/_/g,' ').trim();for(var j=0;j<search.length;j++){if(t===search[j]||t.indexOf(search[j])!==-1){var n=parseFloat(String(item.value||0).replace('%',''));return isNaN(n)?0:n;}}}
+  return 0;
 }
 
-// ── STAT BARLARI ──────────────────────────────────
-function renderStatBars(containerId, stats){
-  var colors={'normal':'var(--green)','high':'#00bcd4','critical':'var(--amber)'};
-  document.getElementById(containerId).innerHTML=stats.filter(function(s){return s.h+s.a>0;}).map(function(s){
-    var t=s.h+s.a||1,hw=Math.round(s.h/t*100),c=colors[s.w]||'var(--green)';
-    return '<div class="stat-bar-row">'
-      +'<span class="stat-val-l" style="color:'+c+'">'+s.h+'</span>'
-      +'<div class="stat-bar"><div class="stat-bar-l" style="width:'+hw+'%;background:'+c+'"></div><div class="stat-bar-r" style="width:'+(100-hw)+'%"></div></div>'
-      +'<span class="stat-lbl">'+s.l+'</span>'
-      +'<div class="stat-bar"><div class="stat-bar-r" style="width:'+(100-hw)+'%"></div></div>'
-      +'<span class="stat-val-r">'+s.a+'</span>'
-      +'</div>';
+function fillStatView() {
+  var h=S.curH,a=S.curA,mn=S.curMin;
+  // Gol barları
+  renderStatBars('gol-stat-bars',[{l:'İsabetli Şut',h:h.isb,a:a.isb,c:'high'},{l:'xG',h:h.xg,a:a.xg,c:'critical'},{l:'Toplam Şut',h:h.sut,a:a.sut,c:'normal'},{l:'PB Şut',h:h.pbSut,a:a.pbSut,c:'high'},{l:'Kaleci Kurtarış',h:h.krt,a:a.krt,c:'normal'}]);
+  // Gol baskı
+  var hS=sigCalc(h,mn),aS=sigCalc(a,mn);
+  var pct=Math.round(hS.score/(hS.score+aS.score+0.001)*100);
+  setBar('gol-ph','gol-pa',pct);
+  document.getElementById('gol-hl').textContent=S.curHome;
+  document.getElementById('gol-al').textContent=S.curAway;
+  setDom('gol-dom',pct,S.curHome,S.curAway);
+  // xG proj
+  if(h.xg>0||a.xg>0){
+    var left=Math.max(1,90-mn);
+    var hP=h.xg>0?Math.round((h.xg+(h.xg/mn)*left)*10)/10:0;
+    var aP=a.xg>0?Math.round((a.xg+(a.xg/mn)*left)*10)/10:0;
+    document.getElementById('xg-row').style.display='grid';
+    document.getElementById('xg-h').textContent=hP;
+    document.getElementById('xg-skor').textContent=Math.round(hP)+'-'+Math.round(aP);
+    document.getElementById('xg-a').textContent=aP;
+  }
+  // Korner barları
+  renderStatBars('kor-stat-bars',[{l:'Korner',h:h.kor,a:a.kor,c:'critical'},{l:'Toplam Şut',h:h.sut,a:a.sut,c:'normal'},{l:'Ataklar',h:h.atak,a:a.atak,c:'high'}]);
+  var kP=Math.round(h.kor/(h.kor+a.kor+0.001)*100);
+  document.getElementById('kor-ph').style.width=kP+'%';document.getElementById('kor-ph').textContent=kP>14?kP+'%':'';
+  document.getElementById('kor-pa').textContent=(100-kP)>14?(100-kP)+'%':'';
+  document.getElementById('kor-hl').textContent=S.curHome;document.getElementById('kor-al').textContent=S.curAway;
+  setDom('kor-dom',kP,S.curHome,S.curAway);
+  var totK=h.kor+a.kor,projTot=totK>0?Math.round(totK/mn*90):9,projH=Math.round(projTot*kP/100);
+  document.getElementById('kor-proj').innerHTML=[{l:'Tahmini Top.',v:projTot,c:'var(--amber)'},{l:'Ev Korner',v:projH,c:'var(--green)'},{l:'Dep Korner',v:projTot-projH,c:'var(--red)'}].map(function(b){return '<div class="pred-item"><div class="pred-lbl">'+b.l+'</div><div style="font-family:var(--fh);font-size:20px;color:'+b.c+'">'+b.v+'</div></div>';}).join('');
+  // Kart barları
+  renderStatBars('krt-stat-bars',[{l:'Fauller',h:h.faul,a:a.faul,c:'high'},{l:'Sarı Kart',h:h.sari,a:a.sari,c:'critical'},{l:'Ofsayt',h:h.ofs,a:a.ofs,c:'normal'}]);
+  var tF=h.faul+a.faul,tS=h.sari+a.sari;
+  document.getElementById('krt-risk').style.display='grid';
+  document.getElementById('krt-f').textContent=tF>=20?'🔴 YÜKSEK':tF>=12?'🟡 ORTA':'🟢 DÜŞÜK';
+  document.getElementById('krt-s').textContent=tS>=4?'🔴 YÜKSEK':tS>=2?'🟡 ORTA':'🟢 DÜŞÜK';
+  document.getElementById('krt-k').textContent=(h.kir+a.kir)>0?'🔴 VAR':tF>25?'🟡 OLASI':'🟢 DÜŞÜK';
+  // Genel barlar
+  renderStatBars('genel-stat-bars',[{l:'Top Hak.',h:h.top,a:a.top,c:'normal'},{l:'Paslar',h:h.pas,a:a.pas,c:'normal'},{l:'Ataklar',h:h.atak,a:a.atak,c:'high'},{l:'Teh. Atak',h:h.dAtk,a:a.dAtk,c:'critical'},{l:'Ofsayt',h:h.ofs,a:a.ofs,c:'normal'}]);
+  // Baskımetre
+  var bhP=Math.round(h.top>0?h.top:(h.dAtk+h.sut)/(h.dAtk+h.sut+a.dAtk+a.sut+0.001)*100);
+  setBar('bm-h','bm-a',bhP);
+  document.getElementById('bm-hl').textContent=S.curHome;document.getElementById('bm-al').textContent=S.curAway;
+  setDom('bm-dom',bhP,S.curHome,S.curAway);
+}
+
+function renderStatBars(id,stats){
+  document.getElementById(id).innerHTML=stats.filter(function(s){return s.h+s.a>0;}).map(function(s){
+    var t=s.h+s.a||1,hw=Math.round(s.h/t*100);
+    var c=s.c==='critical'?'var(--amber)':s.c==='high'?'var(--cyan)':'var(--green)';
+    return '<div class="stat-row"><span class="stat-vl" style="color:'+c+'">'+s.h+'</span><div class="stat-bar"><div class="stat-bar-l" style="width:'+hw+'%;background:'+c+'"></div><div class="stat-bar-r" style="width:'+(100-hw)+'%"></div></div><span class="stat-lbl">'+s.l+'</span><div class="stat-bar"><div class="stat-bar-r" style="width:'+(100-hw)+'%"></div></div><span class="stat-vr">'+s.a+'</span></div>';
   }).join('');
+}
+
+function setBar(hId,aId,pct){
+  var h=document.getElementById(hId),a=document.getElementById(aId);
+  if(!h||!a)return;
+  h.style.width=pct+'%';h.textContent=pct>14?pct+'%':'';
+  a.textContent=(100-pct)>14?(100-pct)+'%':'';
+}
+
+function setDom(id,pct,hn,an){
+  var el=document.getElementById(id);if(!el)return;
+  var diff=pct-50;
+  if(diff>20)el.innerHTML='<span style="color:var(--green)">'+hn+' AÇIK ÜSTÜNLİK</span>';
+  else if(diff>8)el.innerHTML='<span style="color:var(--green)">'+hn+' HAFİF ÜSTÜN</span>';
+  else if(diff<-20)el.innerHTML='<span style="color:var(--red)">'+an+' AÇIK ÜSTÜNLİK</span>';
+  else if(diff<-8)el.innerHTML='<span style="color:var(--red)">'+an+' HAFİF ÜSTÜN</span>';
+  else el.innerHTML='<span style="color:var(--amber)">DENGELİ</span>';
 }
 
 // ── GOL DAKIKALARI ────────────────────────────────
 function renderGolChips(){
   ['h','a'].forEach(function(t){
     var el=document.getElementById('gm-'+t);if(!el)return;
-    el.innerHTML=S.curGols[t].map(function(dk){
-      return '<span class="gol-chip" onclick="removeGol(\''+t+'\','+dk+')">'+dk+"' ✕</span>";
-    }).join('');
+    el.innerHTML=S.curGols[t].map(function(dk){return '<span class="gol-chip" onclick="removeGol(\''+t+'\','+dk+')">'+dk+"' ✕</span>";}).join('');
   });
 }
-function addGol(t){
-  var el=document.getElementById('gm-'+t+'i');
-  var dk=parseInt(el.value);if(!dk||dk<1||dk>120)return;
-  S.curGols[t].push(dk);S.curGols[t].sort(function(a,b){return a-b;});
-  el.value='';renderGolChips();renderGolTimeline();
-}
-function removeGol(t,dk){
-  S.curGols[t]=S.curGols[t].filter(function(x){return x!==dk;});
-  renderGolChips();renderGolTimeline();
-}
+function addGol(t){var el=document.getElementById('gm-'+t+'i');var dk=parseInt(el.value);if(!dk||dk<1||dk>120)return;S.curGols[t].push(dk);S.curGols[t].sort(function(a,b){return a-b;});el.value='';renderGolChips();renderGolTimeline();}
+function removeGol(t,dk){S.curGols[t]=S.curGols[t].filter(function(x){return x!==dk;});renderGolChips();renderGolTimeline();}
 function renderGolTimeline(){
   var tl=document.getElementById('gol-tl');if(!tl)return;
-  var all=[];
-  S.curGols.h.forEach(function(dk){all.push({dk,t:'h'});});
-  S.curGols.a.forEach(function(dk){all.push({dk,t:'a'});});
-  tl.innerHTML=all.map(function(g){
-    var pct=Math.min(99,Math.round(g.dk/90*100));
-    var c=g.t==='h'?'var(--green)':'var(--red)';
-    return '<div class="gt-mark" style="left:'+pct+'%;background:'+c+'" title="'+g.dk+"'"></div>";
-  }).join('');
+  var all=[];S.curGols.h.forEach(function(dk){all.push({dk,t:'h'});});S.curGols.a.forEach(function(dk){all.push({dk,t:'a'});});
+  tl.innerHTML=all.map(function(g){var pct=Math.min(99,Math.round(g.dk/90*100));return '<div style="position:absolute;left:'+pct+'%;width:3px;height:100%;background:'+(g.t==='h'?'var(--green)':'var(--red)')+';border-radius:1px" title="'+g.dk+"'></div>";}).join('');
 }
 
 // ── AI TAHMİN ────────────────────────────────────
-async function doAITahmin(type){
-  var h=S.curStats.h,a=S.curStats.a;
-  var mn=S.curMin,home=S.curHome,away=S.curAway;
+async function doAI(type) {
+  var h=S.curH,a=S.curA,mn=S.curMin;
   var btnId='ai-'+type+'-btn';
   btnLoad(btnId,true,'Analiz yapılıyor...');
-
   var prompt='';
   if(type==='gol'){
-    prompt='Futbol gol analizi. MAC:'+home+' vs '+away+' '+mn+'dk'
-      +' EV Sut:'+h.sut+' Isab:'+h.isb+' xG:'+h.xg+' PBSut:'+h.pbSut+' Kurt:'+h.kurtaris+' dAtk:'+h.dAtk+' Top:'+h.top+'%'
-      +' DEP Sut:'+a.sut+' Isab:'+a.isb+' xG:'+a.xg+' PBSut:'+a.pbSut+' Kurt:'+a.kurtaris+' dAtk:'+a.dAtk+' Top:'+a.top+'%'
-      +' Gol dk Ev:'+S.curGols.h.join(',')+' Dep:'+S.curGols.a.join(',')
-      +' JSON:{"win_home":N,"draw":N,"win_away":N,"predicted_scores":["X-X","X-X"],"best_score":"X-X","ou_pred":"UST/ALT","btts":"VAR/YOK","confidence":7,"insight":"analiz 3 cumle"}';
+    prompt='Futbol gol analizi. MAC:'+S.curHome+' vs '+S.curAway+' '+mn+'dk EV Sut:'+h.sut+' Isab:'+h.isb+' xG:'+h.xg+' dAtk:'+h.dAtk+' Top:'+h.top+'% DEP Sut:'+a.sut+' Isab:'+a.isb+' xG:'+a.xg+' dAtk:'+a.dAtk+' Top:'+a.top+'% GolDk Ev:'+S.curGols.h.join(',')+' Dep:'+S.curGols.a.join(',')
+      +' JSON:{"win_home":N,"draw":N,"win_away":N,"predicted_scores":["X-X","X-X"],"best_score":"X-X","ou_pred":"UST veya ALT","btts":"VAR veya YOK","confidence":7,"insight":"3 cumle analiz"}';
   } else if(type==='korner'){
-    prompt='Futbol korner analizi. MAC:'+home+' vs '+away+' '+mn+'dk'
-      +' EV Kor:'+h.kor+' Sut:'+h.sut+' Blok:'+h.blok+' DEP Kor:'+a.kor+' Sut:'+a.sut+' Blok:'+a.blok
+    prompt='Futbol korner analizi. MAC:'+S.curHome+' vs '+S.curAway+' '+mn+'dk EV Kor:'+h.kor+' Sut:'+h.sut+' DEP Kor:'+a.kor+' Sut:'+a.sut
       +' JSON:{"toplam_korner":N,"ev_korner":N,"dep_korner":N,"over_85_pct":N,"over_105_pct":N,"insight":"analiz"}';
   } else {
-    prompt='Futbol kart analizi. MAC:'+home+' vs '+away+' '+mn+'dk'
-      +' Hakem:'+document.getElementById('hakem-adi').value+' Ort:'+document.getElementById('hakem-avg').value+' Sari/mac:'+document.getElementById('hakem-sari').value
-      +' EV Faul:'+h.faul+' Sari:'+h.sari+' Kir:'+h.kir+' DEP Faul:'+a.faul+' Sari:'+a.sari+' Kir:'+a.kir
+    prompt='Futbol kart analizi. MAC:'+S.curHome+' vs '+S.curAway+' '+mn+'dk Hakem:'+(document.getElementById('hakem').value||'Bilinmiyor')+' OrtKart:'+(document.getElementById('hakem-avg').value||'3.5')+' EV Faul:'+h.faul+' Sari:'+h.sari+' DEP Faul:'+a.faul+' Sari:'+a.sari
       +' JSON:{"toplam_sari":N,"ev_sari":N,"dep_sari":N,"over_35_pct":N,"kirmizi_pct":N,"insight":"analiz"}';
   }
-
   try{
-    var d=await API.ai([{role:'user',content:prompt}],600);
+    var d=await apiAI([{role:'user',content:prompt}],700);
     var txt=d.content&&d.content.map(function(c){return c.text||'';}).join('')||'';
     var res=JSON.parse(txt.replace(/```json|```/g,'').trim());
     btnLoad(btnId,false);
-
+    var resId='ai-'+type+'-res';
+    document.getElementById(resId).style.display='block';
     if(type==='gol'){
-      document.getElementById('ai-gol-result').style.display='block';
-      document.getElementById('ag-h').textContent=(res.win_home||0)+'%';
-      document.getElementById('ag-d').textContent=(res.draw||0)+'%';
-      document.getElementById('ag-a').textContent=(res.win_away||0)+'%';
-      var scEl=document.getElementById('ag-scores');
-      scEl.innerHTML=(res.predicted_scores||[]).map(function(s){
-        var isBest=s===res.best_score;
-        return '<span style="background:'+(isBest?'rgba(0,230,118,.15)':'var(--s2)')+';border:1px solid '+(isBest?'var(--green)':'var(--bdr)')+';border-radius:8px;padding:6px 14px;font-family:var(--fm);font-size:16px;color:'+(isBest?'var(--green)':'var(--text)')+'">'+s+'</span>';
-      }).join('');
-      document.getElementById('ag-insight').innerHTML=res.insight||'—';
-      if(res.ou_pred||res.btts){
-        document.getElementById('ag-insight').innerHTML+='<div style="display:flex;gap:6px;margin-top:8px">'
-          +(res.ou_pred?'<span class="badge b-ok">'+res.ou_pred+'</span>':'')
-          +(res.btts?'<span class="badge b-pend">KG '+res.btts+'</span>':'')
-          +'</div>';
-      }
+      document.getElementById(resId).innerHTML='<div class="pred-box"><div class="pred-grid">'
+        +'<div class="pred-item"><div class="pred-lbl">Ev Kazanır</div><div class="pred-val" style="color:var(--green)">'+(res.win_home||0)+'%</div></div>'
+        +'<div class="pred-item"><div class="pred-lbl">Beraberlik</div><div class="pred-val" style="color:var(--amber)">'+(res.draw||0)+'%</div></div>'
+        +'<div class="pred-item"><div class="pred-lbl">Dep Kazanır</div><div class="pred-val" style="color:var(--red)">'+(res.win_away||0)+'%</div></div>'
+        +'</div>'
+        +'<div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px">'
+        +(res.predicted_scores||[]).map(function(s){var b=s===res.best_score;return '<span style="background:'+(b?'rgba(0,230,118,.15)':'var(--s2)')+';border:1px solid '+(b?'var(--green)':'var(--bdr)')+';border-radius:8px;padding:6px 14px;font-family:var(--fm);font-size:16px;color:'+(b?'var(--green)':'var(--text)')+'">'+s+'</span>';}).join('')
+        +'</div>'
+        +'<div class="insight-box">'+(res.insight||'—')+'<div style="display:flex;gap:6px;margin-top:7px">'
+        +(res.ou_pred?'<span style="background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.2);border-radius:5px;padding:2px 8px;font-size:10px;color:var(--green)">'+res.ou_pred+'</span>':'')
+        +(res.btts?'<span style="background:rgba(255,171,0,.1);border:1px solid rgba(255,171,0,.2);border-radius:5px;padding:2px 8px;font-size:10px;color:var(--amber)">KG '+res.btts+'</span>':'')
+        +'</div></div></div>';
     } else if(type==='korner'){
-      document.getElementById('ai-kor-result').style.display='block';
-      document.getElementById('ak-total').textContent=res.toplam_korner||'—';
-      document.getElementById('ak-85').textContent=(res.over_85_pct||0)+'%';
-      document.getElementById('ak-105').textContent=(res.over_105_pct||0)+'%';
-      document.getElementById('ak-insight').innerHTML=res.insight||'—';
+      document.getElementById(resId).innerHTML='<div class="pred-box"><div class="pred-grid">'
+        +'<div class="pred-item"><div class="pred-lbl">Toplam Korner</div><div class="pred-val" style="color:var(--amber)">'+(res.toplam_korner||'—')+'</div></div>'
+        +'<div class="pred-item"><div class="pred-lbl">8.5 Üst</div><div class="pred-val">'+(res.over_85_pct||0)+'%</div></div>'
+        +'<div class="pred-item"><div class="pred-lbl">10.5 Üst</div><div class="pred-val">'+(res.over_105_pct||0)+'%</div></div>'
+        +'</div><div class="insight-box">'+(res.insight||'—')+'</div></div>';
     } else {
-      document.getElementById('ai-krt-result').style.display='block';
-      document.getElementById('akrt-sari').textContent=res.toplam_sari||'—';
-      document.getElementById('akrt-ev').textContent=res.ev_sari||'—';
-      document.getElementById('akrt-dep').textContent=res.dep_sari||'—';
-      document.getElementById('akrt-35').textContent=(res.over_35_pct||0)+'%';
-      document.getElementById('akrt-insight').innerHTML=res.insight||'—';
+      document.getElementById(resId).innerHTML='<div class="pred-box"><div class="pred-grid">'
+        +'<div class="pred-item"><div class="pred-lbl">Toplam Sarı</div><div class="pred-val" style="color:#f9a825">'+(res.toplam_sari||'—')+'</div></div>'
+        +'<div class="pred-item"><div class="pred-lbl">Ev Sarı</div><div class="pred-val" style="color:var(--green)">'+(res.ev_sari||'—')+'</div></div>'
+        +'<div class="pred-item"><div class="pred-lbl">Dep Sarı</div><div class="pred-val" style="color:var(--red)">'+(res.dep_sari||'—')+'</div></div>'
+        +'</div>'
+        +'<div class="pred-item" style="margin-bottom:10px"><div class="pred-lbl">3.5 Üst</div><div class="pred-val">'+(res.over_35_pct||0)+'%</div></div>'
+        +'<div class="insight-box">'+(res.insight||'—')+'</div></div>';
     }
-  }catch(e){
-    btnLoad(btnId,false);
-    Toast.show('AI hatası: '+e.message,'err');
-  }
+  }catch(e){btnLoad(btnId,false);toast('AI hatası: '+e.message,'err');}
 }
 
 // ── ORANLAR ──────────────────────────────────────
 async function loadOdds(){
   var fid=document.getElementById('odds-fid').value.trim();
-  if(!fid){Toast.show('Fixture ID girin','err');return;}
+  if(!fid){toast('Fixture ID girin','err');return;}
   document.getElementById('odds-content').innerHTML='<div style="text-align:center;padding:16px"><span class="spin" style="border-top-color:var(--amber)"></span> Oranlar yükleniyor...</div>';
   try{
-    trackApi(1);
-    var d=await API.football('/odds?fixture='+fid);
-    if(!d.response||!d.response[0]){
-      document.getElementById('odds-content').innerHTML='<div style="color:var(--t3);text-align:center;padding:16px">Oran bulunamadı</div>';
-      return;
-    }
-    var odds=d.response[0];
-    var bookmakers=odds.bookmakers||[];
+    var d=await apiFetch('/odds?fixture='+fid);
+    if(!d.response||!d.response[0]){document.getElementById('odds-content').innerHTML='<div style="color:var(--t3);text-align:center;padding:16px">Oran bulunamadı</div>';return;}
+    var bms=d.response[0].bookmakers||[];
     var html='<div style="overflow-x:auto"><table class="odds-tbl"><thead><tr><th>Bahisçi</th><th>1</th><th>X</th><th>2</th><th>2.5 Üst</th><th>2.5 Alt</th></tr></thead><tbody>';
-    bookmakers.slice(0,10).forEach(function(bm){
+    bms.slice(0,10).forEach(function(bm){
       var x12=bm.bets&&bm.bets.find(function(b){return b.name==='Match Winner'||b.name==='1X2';});
       var ou=bm.bets&&bm.bets.find(function(b){return b.name==='Goals Over/Under';});
-      var v=function(bet,val){if(!bet||!bet.values)return'—';var v=bet.values.find(function(x){return x.value===val;});return v?v.odd:'—';};
-      html+='<tr><td style="font-size:11px">'+bm.name+'</td>'
-        +'<td style="text-align:center;font-family:var(--fm);color:var(--green)">'+v(x12,'Home')+'</td>'
-        +'<td style="text-align:center;font-family:var(--fm);color:var(--amber)">'+v(x12,'Draw')+'</td>'
-        +'<td style="text-align:center;font-family:var(--fm);color:var(--red)">'+v(x12,'Away')+'</td>'
-        +'<td style="text-align:center;font-family:var(--fm)">'+v(ou,'Over 2.5')+'</td>'
-        +'<td style="text-align:center;font-family:var(--fm)">'+v(ou,'Under 2.5')+'</td>'
-        +'</tr>';
+      var v=function(bet,val){if(!bet||!bet.values)return'—';var vv=bet.values.find(function(x){return x.value===val;});return vv?vv.odd:'—';};
+      html+='<tr><td style="font-size:11px">'+bm.name+'</td><td style="text-align:center;font-family:var(--fm);color:var(--green)">'+v(x12,'Home')+'</td><td style="text-align:center;font-family:var(--fm);color:var(--amber)">'+v(x12,'Draw')+'</td><td style="text-align:center;font-family:var(--fm);color:var(--red)">'+v(x12,'Away')+'</td><td style="text-align:center;font-family:var(--fm)">'+v(ou,'Over 2.5')+'</td><td style="text-align:center;font-family:var(--fm)">'+v(ou,'Under 2.5')+'</td></tr>';
     });
     html+='</tbody></table></div>';
     document.getElementById('odds-content').innerHTML=html;
-  }catch(e){
-    document.getElementById('odds-content').innerHTML='<div style="color:var(--red);text-align:center;padding:16px">Hata: '+e.message+'</div>';
-  }
+  }catch(e){document.getElementById('odds-content').innerHTML='<div style="color:var(--red);text-align:center;padding:16px">Hata: '+e.message+'</div>';}
 }
 
 async function doOddsAI(){
-  var o1=document.getElementById('co-1').value;
-  var ox=document.getElementById('co-x').value;
-  var o2=document.getElementById('co-2').value;
-  var ou=document.getElementById('co-u').value;
-  if(!o1||!ox||!o2){Toast.show('Oranları girin','err');return;}
+  var o1=document.getElementById('co-1').value,ox=document.getElementById('co-x').value,o2=document.getElementById('co-2').value,ou=document.getElementById('co-u').value;
+  if(!o1||!ox||!o2){toast('Oranları girin','err');return;}
   btnLoad('odds-ai-btn',true,'Analiz yapılıyor...');
-  var prompt='Futbol kapanış oran analizi. 1:'+o1+' X:'+ox+' 2:'+o2+' 2.5Ust:'+ou
-    +' Bu oranlar neyi ima ediyor? Geçmiş benzer oran profilindeki maçlara göre tahmin yap.'
-    +' JSON:{"win_home":N,"draw":N,"win_away":N,"ou_pred":"UST/ALT","value_bet":"1/X/2 veya YOK","confidence":7,"insight":"3 cumle analiz"}';
+  var prompt='Futbol kapanış oran analizi. 1:'+o1+' X:'+ox+' 2:'+o2+' 2.5Ust:'+ou+' Bu oranlar neyi ima ediyor? Geçmiş benzer oran profillerindeki maçlara göre tahmin yap. JSON:{"win_home":N,"draw":N,"win_away":N,"ou_pred":"UST veya ALT","value_bet":"1 veya X veya 2 veya YOK","confidence":7,"insight":"3 cumle analiz"}';
   try{
-    var d=await API.ai([{role:'user',content:prompt}],500);
+    var d=await apiAI([{role:'user',content:prompt}],600);
     var txt=d.content&&d.content.map(function(c){return c.text||'';}).join('')||'';
     var res=JSON.parse(txt.replace(/```json|```/g,'').trim());
-    document.getElementById('odds-ai-result').style.display='block';
-    document.getElementById('oa-h').textContent=(res.win_home||0)+'%';
-    document.getElementById('oa-d').textContent=(res.draw||0)+'%';
-    document.getElementById('oa-a').textContent=(res.win_away||0)+'%';
-    var ins=res.insight||'—';
-    if(res.value_bet&&res.value_bet!=='YOK')ins+='<div style="margin-top:6px"><span class="badge b-ok">💡 Value: '+res.value_bet+'</span></div>';
-    document.getElementById('oa-insight').innerHTML=ins;
-    btnLoad('odds-ai-btn',false,'🤖 AI Oran Analizi Yap');
-  }catch(e){
-    btnLoad('odds-ai-btn',false,'🤖 AI Oran Analizi Yap');
-    Toast.show('AI hatası: '+e.message,'err');
-  }
+    document.getElementById('odds-ai-res').style.display='block';
+    document.getElementById('odds-ai-res').innerHTML='<div class="pred-box"><div class="pred-grid">'
+      +'<div class="pred-item"><div class="pred-lbl">Ev</div><div class="pred-val" style="color:var(--green)">'+(res.win_home||0)+'%</div></div>'
+      +'<div class="pred-item"><div class="pred-lbl">Beraberlik</div><div class="pred-val" style="color:var(--amber)">'+(res.draw||0)+'%</div></div>'
+      +'<div class="pred-item"><div class="pred-lbl">Dep</div><div class="pred-val" style="color:var(--red)">'+(res.win_away||0)+'%</div></div>'
+      +'</div><div class="insight-box">'+(res.insight||'—')+(res.value_bet&&res.value_bet!=='YOK'?'<div style="margin-top:7px"><span style="background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.2);border-radius:5px;padding:2px 8px;font-size:10px;color:var(--green)">💡 Value: '+res.value_bet+'</span></div>':'')+'</div></div>';
+    btnLoad('odds-ai-btn',false,'🤖 AI Oran Analizi');
+  }catch(e){btnLoad('odds-ai-btn',false,'🤖 AI Oran Analizi');toast('AI hatası: '+e.message,'err');}
 }
 
 // ── PROFİL ───────────────────────────────────────
 function fillProfForm(){
-  var u=AUTH.user;if(!u)return;
-  document.getElementById('prof-name').textContent=u.full_name||u.email;
-  document.getElementById('prof-email').textContent=u.email;
+  var u=USER||{};
+  document.getElementById('prof-name').textContent=u.full_name||u.email||'—';
+  document.getElementById('prof-email').textContent=u.email||'—';
   var dl=u.days_left;
   var dEl=document.getElementById('prof-days');
-  dEl.textContent=dl!==null?dl:'∞';
+  dEl.textContent=dl!==null&&dl!==undefined?dl:'∞';
   dEl.style.color=dl>7?'var(--green)':dl>2?'var(--amber)':'var(--red)';
   document.getElementById('pe-name').value=u.full_name||'';
   document.getElementById('pe-phone').value=u.phone||'';
 }
 
-function showProfSection(name){
-  document.querySelectorAll('.prof-section').forEach(function(s){s.classList.remove('active');});
+function showProfSec(name){
+  document.querySelectorAll('.prof-sec').forEach(function(s){s.classList.remove('active');});
   document.getElementById('prof-main').style.display=name?'none':'block';
   if(name){document.getElementById('prof-'+name).classList.add('active');}
 }
@@ -1046,34 +888,39 @@ async function doEditProf(){
   var phone=document.getElementById('pe-phone').value.trim();
   if(!name&&!phone){showMsg('pe-msg','En az bir alan doldurun','err');return;}
   btnLoad('pe-btn',true,'Kaydediliyor...');
-  var d=await API.auth('/profile','PUT',{full_name:name,phone:phone});
+  var d=await apiAuth('/profile','PUT',{full_name:name,phone:phone});
   btnLoad('pe-btn',false,'Kaydet');
   if(d.error){showMsg('pe-msg',d.error,'err');return;}
-  if(AUTH.user){AUTH.user.full_name=name;AUTH.user.phone=phone;localStorage.setItem('ft_user',JSON.stringify(AUTH.user));}
+  if(USER){USER.full_name=name;USER.phone=phone;localStorage.setItem('ft_user',JSON.stringify(USER));}
   document.getElementById('prof-name').textContent=name;
-  document.getElementById('user-name').textContent=name;
+  document.getElementById('u-name').textContent=name;
   showMsg('pe-msg','✅ Güncellendi','ok');
 }
 
 async function doChangePw(){
-  var old=document.getElementById('pp-old').value;
-  var nw=document.getElementById('pp-new').value;
-  var nw2=document.getElementById('pp-new2').value;
+  var old=document.getElementById('pp-old').value,nw=document.getElementById('pp-new').value,nw2=document.getElementById('pp-new2').value;
   if(!old||!nw){showMsg('pp-msg','Tüm alanları doldurun','err');return;}
   if(nw!==nw2){showMsg('pp-msg','Şifreler eşleşmiyor','err');return;}
   if(nw.length<6){showMsg('pp-msg','Şifre en az 6 karakter','err');return;}
   btnLoad('pp-btn',true,'Değiştiriliyor...');
-  var d=await API.auth('/change-password','POST',{old_password:old,new_password:nw});
+  var d=await apiAuth('/change-password','POST',{old_password:old,new_password:nw});
   btnLoad('pp-btn',false,'Değiştir');
   if(d.error){showMsg('pp-msg',d.error,'err');return;}
-  showMsg('pp-msg','✅ Şifre değiştirildi','ok');
+  showMsg('pp-msg','✅ Değiştirildi','ok');
   document.getElementById('pp-old').value='';document.getElementById('pp-new').value='';document.getElementById('pp-new2').value='';
+}
+
+async function doLogout(){
+  try{await fetch('/api/auth/logout',{method:'POST',headers:apiHeaders()});}catch(e){}
+  localStorage.removeItem('ft_token');localStorage.removeItem('ft_user');localStorage.removeItem('ft_admin_token');
+  window.location.href='/giris';
 }
 
 async function doLogoutAll(){
   if(!confirm('Tüm cihazlardan çıkış yapılacak. Emin misiniz?'))return;
-  await API.auth('/logout-all','POST');
-  AUTH.logout();
+  await apiAuth('/logout-all','POST');
+  localStorage.removeItem('ft_token');localStorage.removeItem('ft_user');
+  window.location.href='/giris';
 }
 </script>
 </body>
