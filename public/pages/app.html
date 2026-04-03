@@ -454,35 +454,37 @@ async function loadPerformance() {
 
 // ── TABS ─────────────────────────────────────────
 function switchTab(tab) {
-  ['maclar','oranlar','profil'].forEach(function(t) {
-    document.getElementById('panel-'+t).classList.remove('active');
-    document.getElementById('tab-'+t) && document.getElementById('tab-'+t).classList.remove('active');
+  ['maclar','oranlar','profil','stat'].forEach(function(t) {
+    var el = document.getElementById('panel-'+t);
+    if(el){ el.classList.remove('active'); el.style.display='none'; }
   });
-  document.getElementById('panel-stat').classList.remove('active');
-  document.getElementById('panel-'+tab).classList.add('active');
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  var panel = document.getElementById('panel-'+tab);
+  if(panel){ panel.style.display='block'; panel.classList.add('active'); }
   var tb = document.getElementById('tab-'+tab);
-  if (tb) tb.classList.add('active');
-  if (tab === 'profil') fillProfForm();
-  if (tab === 'maclar') document.getElementById('panel-maclar').classList.add('active');
+  if(tb) tb.classList.add('active');
+  if(tab==='profil') fillProfForm();
 }
 
 function switchSub(sub) {
   ['gol','korner','kart','genel'].forEach(function(s) {
-    document.getElementById('sub-'+s).style.display='none';
-    document.getElementById('sub-'+s+'-btn') && (document.getElementById('sub-'+s+'-btn').className='sub-tab');
+    var el=document.getElementById('sub-'+s);
+    if(el) el.style.display='none';
   });
-  var el = document.getElementById('sub-'+sub);
-  if (el) el.style.display='block';
-  var btn = document.getElementById('sub-'+sub);
-  if (btn) btn.classList.add('active');
-  // Fix sub-tab active
+  var el=document.getElementById('sub-'+sub);
+  if(el) el.style.display='block';
   document.querySelectorAll('.sub-tab').forEach(function(b){b.classList.remove('active');});
-  var sbtn = Array.from(document.querySelectorAll('.sub-tab')).find(function(b){return b.textContent.toLowerCase().includes(sub==='gol'?'gol':sub==='korner'?'korner':sub==='kart'?'kart':'genel');});
+  var sbtn=Array.from(document.querySelectorAll('.sub-tab')).find(function(b){
+    var map={'gol':'gol','korner':'korner','kart':'kart','genel':'genel'};
+    return b.textContent.toLowerCase().indexOf(map[sub]||sub)!==-1;
+  });
   if(sbtn) sbtn.classList.add('active');
 }
 
 function backToList() {
+  document.getElementById('panel-stat').style.display='none';
   document.getElementById('panel-stat').classList.remove('active');
+  document.getElementById('panel-maclar').style.display='block';
   document.getElementById('panel-maclar').classList.add('active');
   document.getElementById('tab-maclar').classList.add('active');
 }
@@ -575,12 +577,14 @@ function renderMatches() {
         var mn=m.fixture&&m.fixture.status&&m.fixture.status.elapsed||0;
         var sig = sigCalc({dAtk:0,sut:0,isb:0,kor:0,xg:0}, mn); // placeholder, gerçek stats maça tıklayınca gelir
         var mC = sig.score>70?'var(--red)':sig.score>50?'var(--amber)':'var(--green)';
-        return '<div class="mc" data-fid="'+m.fixture.id+'" data-home="'+encodeURI(m.teams.home.name)+'" data-away="'+encodeURI(m.teams.away.name)+'" data-league="'+encodeURI(lg)+'" onclick="onMacClick(this)">'
+        var homeN = m.teams&&m.teams.home&&m.teams.home.name||'Ev';
+        var awayN = m.teams&&m.teams.away&&m.teams.away.name||'Dep';
+        return '<div class="mc" data-fid="'+m.fixture.id+'" data-home="'+encodeURIComponent(homeN)+'" data-away="'+encodeURIComponent(awayN)+'" data-league="'+encodeURIComponent(lg)+'" onclick="onMacClick(this)">'
           +'<div class="mc-league">'+lg+'</div>'
           +'<div class="mc-teams">'
-          +'<div class="mc-team">'+m.teams.home.name+'</div>'
+          +'<div class="mc-team">'+homeN+'</div>'
           +'<div class="mc-score-box"><div class="mc-score">'+hg+' - '+ag+'</div><div class="mc-min">'+mn+"'</div></div>"
-          +'<div class="mc-team mc-team-r">'+m.teams.away.name+'</div>'
+          +'<div class="mc-team mc-team-r">'+awayN+'</div>'
           +'</div>'
           +'<div class="mc-signal">'
           +sigBadge(sig.dec)
@@ -600,8 +604,8 @@ function toggleLg(id) {
 async function onMacClick(el) {
   var fid = el.dataset.fid;
   S.curFid = fid;
-  S.curHome = decodeURI(el.dataset.home);
-  S.curAway = decodeURI(el.dataset.away);
+  S.curHome = decodeURIComponent(el.dataset.home || '');
+  S.curAway = decodeURIComponent(el.dataset.away || '');
   document.getElementById('stat-title').textContent = S.curHome + ' vs ' + S.curAway;
   document.getElementById('odds-fid').value = fid;
   document.getElementById('gm-lh').textContent = S.curHome;
@@ -645,9 +649,9 @@ async function onMacClick(el) {
     if(!S.curH.top&&!S.curA.top){S.curH.top=50;S.curA.top=50;}
 
     fillStatView();
-    document.getElementById('panel-maclar').classList.remove('active');
+    document.getElementById('panel-maclar').style.display='none';
+    document.getElementById('panel-stat').style.display='block';
     document.getElementById('panel-stat').classList.add('active');
-    document.getElementById('tab-maclar').classList.remove('active');
     switchSub('gol');
     renderGolChips();
     renderGolTimeline();
