@@ -22,13 +22,19 @@ async function db(method, table, body, query) {
 
 async function verifyToken(token) {
   if (!token) return false;
-  if (token.startsWith('adm-')) {
-    const r = await db('GET', 'admins', null, '?current_token=eq.' + token + '&select=id');
-    return r.ok && r.data && r.data[0];
-  }
-  const r = await db('GET', 'sessions', null, '?token=eq.' + token + '&expires_at=gt.' + new Date().toISOString() + '&select=user_id,users(is_active,is_approved,access_end)');
-  if (!r.ok || !r.data || !r.data[0]) return false;
-  const u = r.data[0].users;
+  // Admin token kontrolü (adm- prefix ile veya prefix olmadan)
+  const cleanToken = token.replace(/^adm-/, '');
+  const adminRes = await db('GET', 'admins', null, 
+    '?or=(current_token.eq.' + token + ',current_token.eq.adm-' + cleanToken + ')&select=id'
+  );
+  if (adminRes.ok && adminRes.data && adminRes.data[0]) return true;
+  
+  // User token kontrolü
+  const userRes = await db('GET', 'sessions', null, 
+    '?token=eq.' + token + '&expires_at=gt.' + new Date().toISOString() + '&select=user_id,users(is_active,is_approved,access_end)'
+  );
+  if (!userRes.ok || !userRes.data || !userRes.data[0]) return false;
+  const u = userRes.data[0].users;
   if (!u || !u.is_active || !u.is_approved) return false;
   if (u.access_end && new Date(u.access_end) < new Date()) return false;
   return true;
@@ -37,10 +43,13 @@ async function verifyToken(token) {
 exports.handler = async function(event) {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: CORS, body: '' };
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers: CORS, body: JSON.stringify({ error: 'Method not allowed' }) };
+  
   const token = (event.headers['authorization'] || '').replace('Bearer ', '').trim();
   if (!await verifyToken(token)) return { statusCode: 401, headers: CORS, body: JSON.stringify({ error: 'Oturum gerekli' }) };
+  
   let body = {};
   try { body = JSON.parse(event.body || '{}'); } catch {}
+  
   try {
     const r = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
