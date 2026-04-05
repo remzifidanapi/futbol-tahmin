@@ -210,6 +210,8 @@ async function doLogin() {
     var d = await r.json();
     if (d.error) { showMsg('a-msg', d.error, 'err'); btn.disabled=false; btn.textContent='Giriş Yap'; return; }
     TOKEN = d.token;
+    // adm- prefix'i yoksa ekle
+    if(!TOKEN.startsWith('adm-')) TOKEN = 'adm-' + TOKEN;
     localStorage.setItem('ft_admin_token', TOKEN);
     initApp();
   } catch(e) {
