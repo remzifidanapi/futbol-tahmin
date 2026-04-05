@@ -329,7 +329,14 @@ textarea{resize:vertical;min-height:56px;margin-bottom:0}
 </div><!-- /wrap -->
 <script>
 // ── CONFIG ──
-var TOKEN = localStorage.getItem('ft_token') || localStorage.getItem('ft_admin_token') || '';
+var _adminTok = localStorage.getItem('ft_admin_token') || '';
+var _userTok  = localStorage.getItem('ft_token') || '';
+// Admin token adm- prefix olmadan kaydedilmiş olabilir, düzelt
+if(_adminTok && !_adminTok.startsWith('adm-')) {
+  _adminTok = 'adm-' + _adminTok;
+  localStorage.setItem('ft_admin_token', _adminTok);
+}
+var TOKEN = _userTok || _adminTok;
 var USER  = null;
 var MC    = {}; // match cache
 var MATCHES = [];
