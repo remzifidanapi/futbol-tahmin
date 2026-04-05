@@ -390,7 +390,7 @@ async function apiFetch(path){
 async function apiAI(msgs,max){
   var r=await fetch('/api/ai',{method:'POST',headers:hdr(),body:JSON.stringify({messages:msgs,max_tokens:max||800})});
   var d=await r.json();
-  if(d.error) throw new Error(d.error);
+  if(d.error) throw new Error(d.error+' (token:'+TOKEN.slice(0,8)+'...)');
   return d;
 }
 
@@ -579,7 +579,7 @@ function renderMatches(){
         var an=m.teams&&m.teams.away&&m.teams.away.name||'Dep';
         var sig=sigCalc({dAtk:0,sut:0,isb:0,kor:0,xg:0},mn);
         var mC=sig.score>70?'var(--red)':sig.score>50?'var(--amber)':'var(--green)';
-        return '<div class="mc" onclick="onMacClick('+fid+')">'
+        return '<div class="mc" onclick="onMacClick('+fid+')" data-fid="'+fid+'">'
           +'<div class="mc-lg">'+lg+'</div>'
           +'<div class="mc-teams">'
           +'<div class="mc-team">'+hn+'</div>'
@@ -597,7 +597,8 @@ function renderMatches(){
 
 // ── MAÇ SEÇ ──
 async function onMacClick(fid){
-  var m=MC[fid]||MC[String(fid)]||MC[parseInt(fid)];
+  fid = parseInt(fid)||fid;
+  var m=MC[fid]||MC[String(fid)];
   if(!m){toast('Maç verisi bulunamadı: '+fid,'err');return;}
   CUR_FID=fid;
   CUR_HOME=m.teams&&m.teams.home&&m.teams.home.name||'Ev';
