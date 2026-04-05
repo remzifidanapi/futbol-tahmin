@@ -134,7 +134,7 @@ textarea{resize:vertical;min-height:56px;margin-bottom:0}
 
 <!-- MAÇLAR PANELİ -->
 <div id="main-maclar">
-  <input type="text" id="mac-search" placeholder="🔍 Takım veya lig ara..." oninput="onSearch()">
+  <input type="text" id="mac-search" placeholder="🔍 Takım veya lig ara..." oninput="onSearch()" autocomplete="off" autocorrect="off" autocapitalize="off">
   <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px" id="lig-bar"></div>
   <div id="mac-list">
     <div style="text-align:center;padding:32px;color:var(--t3)">
@@ -481,6 +481,7 @@ async function loadMatches(){
       MC={};
       MATCHES.forEach(function(m){MC[m.fixture.id]=m;MC[String(m.fixture.id)]=m;});
       CUR_LIG='';
+      document.getElementById('mac-search').value='';
       renderMatches();
     } else {
       document.getElementById('mac-list').innerHTML='<div style="text-align:center;padding:32px;color:var(--t3)"><div style="font-size:28px;margin-bottom:8px">🌙</div>Şu an canlı maç yok</div>';
