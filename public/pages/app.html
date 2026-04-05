@@ -479,7 +479,7 @@ async function loadMatches(){
     if(d.response&&d.response.length){
       MATCHES=d.response;
       MC={};
-      MATCHES.forEach(function(m){MC[m.fixture.id]=m;});
+      MATCHES.forEach(function(m){MC[m.fixture.id]=m;MC[String(m.fixture.id)]=m;});
       CUR_LIG='';
       renderMatches();
     } else {
@@ -597,8 +597,8 @@ function renderMatches(){
 
 // ── MAÇ SEÇ ──
 async function onMacClick(fid){
-  var m=MC[fid];
-  if(!m){toast('Maç verisi bulunamadı','err');return;}
+  var m=MC[fid]||MC[String(fid)]||MC[parseInt(fid)];
+  if(!m){toast('Maç verisi bulunamadı: '+fid,'err');return;}
   CUR_FID=fid;
   CUR_HOME=m.teams&&m.teams.home&&m.teams.home.name||'Ev';
   CUR_AWAY=m.teams&&m.teams.away&&m.teams.away.name||'Dep';
