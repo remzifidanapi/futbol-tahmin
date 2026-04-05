@@ -535,8 +535,7 @@ function renderMatches(){
   document.getElementById('lig-bar').innerHTML=ligs.map(function(lg){
     var lbl=lg===''?'Tümü':lg;
     var active=CUR_LIG===lg;
-    return '<span class="sig sig-low" style="cursor:pointer;'+(active?'background:var(--green);color:#000':'')+'" onclick="setLig(''+lg.replace(/\/g,'').replace(/'/g,'')+'')">'+lbl+'</span>';
-  }).join('');
+     return '<span class="sig sig-low" style="cursor:pointer" onclick="setLig(\''+lg+'\')">' + lbl + '</span>';
 
   if(!filtered.length){
     document.getElementById('mac-list').innerHTML='<div style="text-align:center;padding:24px;color:var(--t3)">Maç bulunamadı</div>';
