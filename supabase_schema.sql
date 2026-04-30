@@ -1,105 +1,87 @@
--- pgcrypto
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
+-- ANALİZHANE v4 - Final Şema
+DROP TABLE IF EXISTS tahminler CASCADE;
+DROP TABLE IF EXISTS applications CASCADE;
+DROP TABLE IF EXISTS site_ayarlari CASCADE;
+DROP TABLE IF EXISTS admins CASCADE;
 
--- Kullanıcılar
-CREATE TABLE IF NOT EXISTS users (
-  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email         TEXT UNIQUE NOT NULL,
-  phone         TEXT,
-  full_name     TEXT,
+CREATE TABLE admins (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  username TEXT UNIQUE NOT NULL,
   password_hash TEXT NOT NULL,
-  is_approved   BOOLEAN DEFAULT FALSE,
-  is_active     BOOLEAN DEFAULT TRUE,
-  access_days   INTEGER DEFAULT 0,
-  access_start  TIMESTAMPTZ,
-  access_end    TIMESTAMPTZ,
-  last_login    TIMESTAMPTZ,
-  reset_code    TEXT,
-  reset_expiry  TIMESTAMPTZ,
-  notes         TEXT,
-  created_at    TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Oturumlar
-CREATE TABLE IF NOT EXISTS sessions (
-  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id     UUID REFERENCES users(id) ON DELETE CASCADE,
-  token       TEXT UNIQUE NOT NULL,
-  expires_at  TIMESTAMPTZ NOT NULL,
-  ip_address  TEXT,
-  user_agent  TEXT,
-  created_at  TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Admin
-CREATE TABLE IF NOT EXISTS admins (
-  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email          TEXT UNIQUE NOT NULL,
-  password_hash  TEXT NOT NULL,
-  current_token  TEXT,
-  token_expires  TIMESTAMPTZ,
-  created_at     TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Kullanım logları
-CREATE TABLE IF NOT EXISTS usage_logs (
-  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id    UUID REFERENCES users(id) ON DELETE CASCADE,
-  feature    TEXT NOT NULL,
-  duration   INTEGER DEFAULT 0,
+  isim TEXT NOT NULL,
+  rol TEXT NOT NULL CHECK (rol IN ('admin', 'superadmin')),
+  aktif BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Canlı maçlar cache
-CREATE TABLE IF NOT EXISTS live_matches (
-  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  fixture_id  BIGINT UNIQUE NOT NULL,
-  home_team   TEXT,
-  away_team   TEXT,
-  league      TEXT,
-  minute      INTEGER DEFAULT 0,
-  score_home  INTEGER DEFAULT 0,
-  score_away  INTEGER DEFAULT 0,
-  status      TEXT DEFAULT 'LIVE',
-  home_stats  JSONB DEFAULT '{}',
-  away_stats  JSONB DEFAULT '{}',
-  home_signal JSONB DEFAULT '{}',
-  away_signal JSONB DEFAULT '{}',
-  updated_at  TIMESTAMPTZ DEFAULT NOW()
+CREATE TABLE applications (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  ad TEXT NOT NULL,
+  soyad TEXT NOT NULL,
+  email_sifrelenmis TEXT,
+  email_hash TEXT UNIQUE,
+  telefon_sifrelenmis TEXT,
+  sifre_hash TEXT,
+  telegram TEXT NOT NULL,
+  referans_admin_id UUID REFERENCES admins(id),
+  referans_admin_isim TEXT,
+  bayi_kodu TEXT NOT NULL,
+  gorsel_url TEXT,
+  durum TEXT DEFAULT 'beklemede' CHECK (durum IN ('beklemede', 'onaylandi', 'reddedildi')),
+  uyelik_bitis_tarihi DATE,
+  telegram_davet_gonderildi BOOLEAN DEFAULT false,
+  notlar TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- AI tahminler
-CREATE TABLE IF NOT EXISTS match_predictions (
-  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  fixture_id        BIGINT NOT NULL,
-  home_team         TEXT,
-  away_team         TEXT,
-  league            TEXT,
-  minute_predicted  INTEGER,
-  score_at_predict  TEXT,
-  predicted_result  TEXT,
-  predicted_score   TEXT,
-  ou_pred           TEXT,
-  win_home_pct      INTEGER,
-  draw_pct          INTEGER,
-  win_away_pct      INTEGER,
-  confidence        INTEGER,
-  insight           TEXT,
-  next_goal         TEXT,
-  status            TEXT DEFAULT 'active',
-  actual_score      TEXT,
-  actual_result     TEXT,
-  correct_result    BOOLEAN,
-  correct_ou        BOOLEAN,
-  finished_at       TIMESTAMPTZ,
-  created_at        TIMESTAMPTZ DEFAULT NOW()
+CREATE TABLE tahminler (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  admin_id UUID REFERENCES admins(id),
+  admin_isim TEXT NOT NULL,
+  baslik TEXT NOT NULL,
+  icerik TEXT,
+  gorsel_url TEXT,
+  tip TEXT DEFAULT 'yazili' CHECK (tip IN ('yazili', 'gorsel', 'aciklama')),
+  mac_tarihi DATE,
+  aktif BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- İndexler
-CREATE INDEX IF NOT EXISTS idx_sessions_token   ON sessions(token);
-CREATE INDEX IF NOT EXISTS idx_sessions_user    ON sessions(user_id);
-CREATE INDEX IF NOT EXISTS idx_usage_user       ON usage_logs(user_id);
-CREATE INDEX IF NOT EXISTS idx_live_fixture     ON live_matches(fixture_id);
-CREATE INDEX IF NOT EXISTS idx_pred_fixture     ON match_predictions(fixture_id);
-CREATE INDEX IF NOT EXISTS idx_pred_status      ON match_predictions(status);
-CREATE INDEX IF NOT EXISTS idx_pred_created     ON match_predictions(created_at);
+CREATE TABLE site_ayarlari (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  anahtar TEXT UNIQUE NOT NULL,
+  deger TEXT,
+  guncelleme_tarihi TIMESTAMPTZ DEFAULT NOW()
+);
+
+INSERT INTO site_ayarlari (anahtar, deger) VALUES
+('banner_url',''),('banner_link',''),('banner_aktif','false'),
+('uyelik_sartlari','<h3>Üyelik Şartları</h3><p>1. iddaa.com üzerinden bayi kodunu girmen zorunludur.<br>2. Bayi değişimi sonrası ekran görüntüsü iletilmelidir.<br>3. Paylaşılan analizler yatırım tavsiyesi değildir.</p>'),
+('telegram_grup_linki','https://t.me/analizhane'),
+('bayi_kodu','303527'),('bayi_adi','Mehmet Mustafa Donma'),
+('telegram_bot_token',''),('telegram_chat_id','');
+
+ALTER TABLE applications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tahminler ENABLE ROW LEVEL SECURITY;
+ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
+ALTER TABLE site_ayarlari ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Tahminleri herkes okur" ON tahminler FOR SELECT USING (aktif = true);
+CREATE POLICY "Herkes basvuru ekler" ON applications FOR INSERT WITH CHECK (true);
+CREATE POLICY "Site ayarlari herkes okur" ON site_ayarlari FOR SELECT USING (true);
+CREATE POLICY "Aktif adminler gorunur" ON admins FOR SELECT USING (aktif = true);
+
+CREATE OR REPLACE FUNCTION update_updated_at()
+RETURNS TRIGGER AS $$ BEGIN NEW.updated_at = NOW(); RETURN NEW; END; $$ LANGUAGE plpgsql;
+CREATE TRIGGER applications_updated_at BEFORE UPDATE ON applications FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER tahminler_updated_at BEFORE UPDATE ON tahminler FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+INSERT INTO admins (username, password_hash, isim, rol) VALUES ('superadmin', '$2b$10$kVkax.nkfOjD.heQG8EdeOrNwHPn5MjeHnZ9Itj8WdNIl68Y7m1UK', 'Süper Admin', 'superadmin');
+INSERT INTO admins (username, password_hash, isim, rol) VALUES ('admin1', '$2b$10$fztEGNfogDUZ.X2teN1lKeJurAU0TFJZk3pysnMU69ByAY2fx3kD2', 'Admin 1', 'admin');
+INSERT INTO admins (username, password_hash, isim, rol) VALUES ('admin2', '$2b$10$8s8v81ciLojQTIVHpy0l9e8lRFlj069nbre6yP/.UUIt0YAC7Ut5G', 'Admin 2', 'admin');
+INSERT INTO admins (username, password_hash, isim, rol) VALUES ('admin3', '$2b$10$aAdkNMyyqZ4DxZ9ZAHHXVeTLkFa0dIWXVEwnISFp8bu7KA8pQiewa', 'Admin 3', 'admin');
+INSERT INTO admins (username, password_hash, isim, rol) VALUES ('admin4', '$2b$10$N71jZrt0FB66jmXzVzPnhe6tR5MR8pSRRc1ectdSjN/UScgCx3Hdq', 'Admin 4', 'admin');
+INSERT INTO admins (username, password_hash, isim, rol) VALUES ('admin5', '$2b$10$Zds63ZAlyrL9I1ZisfE4EOVvneRvLeRjMTUSibsY2plDAo0Mo6/Y.', 'Admin 5', 'admin');
+INSERT INTO admins (username, password_hash, isim, rol) VALUES ('admin6', '$2b$10$L3VLFPk55IS8fMcZH.YZK.NO7ChxJF7502cwTGtnFdktZiKpW0eJy', 'Admin 6', 'admin');

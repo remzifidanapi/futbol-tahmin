@@ -1,0 +1,14 @@
+{
+  "name": "analizhane",
+  "version": "1.0.0",
+  "description": "Analizhane Üyelik Sistemi",
+  "scripts": {
+    "build": "echo Static site"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "bcryptjs": "^2.4.3",
+    "busboy": "^1.6.0",
+    "jsonwebtoken": "^9.0.2"
+  }
+}

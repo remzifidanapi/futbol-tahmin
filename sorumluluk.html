@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analizhane — Sorumluluk Reddi</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--turuncu:#F5C518;--koyu2:#0a0f0a;--panel:#111a11;--beyaz:#fff;--gri:#9ca3af;--border:rgba(245,197,24,.25);}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:#0a0f0a;color:var(--beyaz);min-height:100vh;}
+/* placeholder nav{background:linear-gradient(90deg,#050905,#111a11);border-bottom:3px solid var(--sari);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:99;}
+.logo{font-family:'Bebas Neue',cursive;font-size:26px;color:var(--sari);letter-spacing:3px;text-decoration:none;}
+.logo span{color:#fff;}
+.nav-links a{color:var(--gri);text-decoration:none;font-size:12px;font-weight:700;padding:6px 10px;border-radius:6px;transition:.2s;}
+.nav-links a:hover{color:#fff;background:rgba(245,197,24,.2);}
+.hero{background:linear-gradient(135deg,#050905,#0a0f0a);padding:40px 20px 30px;text-align:center;border-bottom:1px solid rgba(245,197,24,.2);}
+.hero h1{font-family:'Bebas Neue',cursive;font-size:clamp(24px,6vw,44px);letter-spacing:3px;}
+.hero h1 span{color:var(--sari);}
+.container{max-width:760px;margin:0 auto;padding:40px 16px;}
+.content-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:32px;}
+.content-card h2{font-family:'Bebas Neue',cursive;font-size:20px;letter-spacing:2px;color:var(--sari);margin:24px 0 10px;border-left:3px solid var(--sari);padding-left:10px;}
+.content-card h2:first-child{margin-top:0;}
+.content-card p{font-size:14px;color:#d1d5db;line-height:1.85;margin-bottom:12px;}
+.uyari-box{background:rgba(245,197,24,.08);border:1px solid rgba(245,197,24,.25);border-radius:10px;padding:16px 20px;margin-bottom:24px;}
+.uyari-box p{color:#fdba74;font-size:13px;margin:0;}
+footer{background:#050905;border-top:1px solid rgba(245,197,24,.15);padding:20px;text-align:center;margin-top:40px;}
+footer p{font-size:12px;color:var(--gri);}
+footer a{color:var(--sari);text-decoration:none;}
+
+/* NAVBAR */
+nav{background:linear-gradient(90deg,#050905,#111a11);border-bottom:3px solid var(--sari);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:999;flex-wrap:wrap;}
+.logo{font-family:'Bebas Neue',cursive;font-size:26px;color:var(--sari);letter-spacing:3px;text-decoration:none;flex-shrink:0;}
+.logo span{color:#fff;}
+.nav-links{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.nav-links a{color:var(--gri);text-decoration:none;font-size:12px;font-weight:700;padding:6px 10px;border-radius:6px;transition:.2s;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+.nav-links a:hover{color:#fff;background:rgba(245,197,24,.2);}
+.nav-links a.aktif{color:var(--sari);background:rgba(245,197,24,.15);}
+.nav-admin{border:1px solid rgba(245,197,24,.4)!important;color:var(--sari)!important;}
+.nav-toggle{display:none;background:none;border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:16px;}
+@media(max-width:700px){
+  .nav-toggle{display:block;}
+  .nav-links{display:none;width:100%;flex-direction:column;background:#050905;padding:8px 0;border-top:1px solid rgba(245,197,24,.2);}
+  .nav-links.acik{display:flex;}
+  .nav-links a{width:100%;padding:10px 20px;border-radius:0;}
+  nav{flex-wrap:wrap;height:auto;padding:10px 20px;}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/index.html" class="logo">ANALİZ<span>HANE</span></a>
+  <button class="nav-toggle" onclick="navToggle()">☰</button>
+  <div class="nav-links" id="nav-links">
+    <a href="/index.html">🏠 Ana Sayfa</a>
+    <a href="/tahminler.html">📊 Tahminler</a>
+    <a href="/rehber.html">📖 Bayi Rehberi</a>
+    <a href="/sartlar.html">📋 Şartlar</a>
+    <a href="/sorumluluk.html" class="aktif">⚖️ Sorumluluk</a>
+    <a href="/admin-login.html" class="nav-admin">🔐 Admin</a>
+  </div>
+</nav>
+<div class="hero">
+  <h1>SORUMLULUK <span>REDDİ</span></h1>
+</div>
+<div class="container">
+  <div class="content-card">
+    <div class="uyari-box">
+      <p>⚠️ <strong>Önemli Uyarı:</strong> Bu sitede yer alan tüm içerikler yalnızca istatistik ve analiz amaçlıdır. Kesinlik içermez ve yatırım tavsiyesi niteliği taşımaz.</p>
+    </div>
+
+    <h2>1. GENEL BİLGİLENDİRME</h2>
+    <p>Analizhane ("Site"), yalnızca spor analizi ve istatistik paylaşımı amacıyla kurulmuş bir platformdur. Sitede yer alan hiçbir içerik, tahmin, analiz veya yorum kesin sonuç garantisi vermez ve bahis danışmanlığı hizmeti niteliği taşımaz.</p>
+    <p>Sitede paylaşılan tüm veriler ve analizler, yalnızca bilgilendirme ve eğlence amaçlı olup herhangi bir finansal, hukuki veya profesyonel tavsiye niteliği taşımamaktadır.</p>
+
+    <h2>2. TAHMİN VE ANALİZLER</h2>
+    <p>Sitede yayınlanan tahminler, maç analizleri ve istatistiksel değerlendirmeler; geçmiş performans verilerine, istatistiksel modellere ve editöryal yorumlara dayanmaktadır. Bu veriler gelecekteki sonuçların kesin bir göstergesi değildir.</p>
+    <p>Spor müsabakalarının doğası gereği sonuçlar tamamen öngörülemez olup, herhangi bir tahmin ya da analizin doğruluğu garanti edilemez. Kullanıcılar bu bilgileri kendi sorumluluklarında değerlendirmelidir.</p>
+
+    <h2>3. BAHIS SORUMLULUĞU</h2>
+    <p>Analizhane, kullanıcıların bahis veya kumar faaliyetlerine katılmasını teşvik etmez. Bahis oynama kararı tamamen kullanıcının kendi tercihidir ve bu kararın sonuçlarından kullanıcı bizzat sorumludur.</p>
+    <p>Kumar bağımlılığı ciddi bir sağlık sorunudur. Kaybetmeyi göze alamayacağınız miktarlarda bahis oynamayınız. Bahis bağımlılığı konusunda yardım almak için ilgili kuruluşlara başvurabilirsiniz.</p>
+
+    <h2>4. FİNANSAL SORUMLULUK</h2>
+    <p>Sitedeki herhangi bir içeriğe dayanarak yapılan bahislerden, yatırımlardan veya finansal işlemlerden doğan kayıplar için Analizhane ve site yöneticileri hiçbir şekilde sorumlu tutulamaz.</p>
+    <p>Kullanıcılar, sitedeki tahmin ve analizleri bahis kararlarında tek başına temel almamayı kabul eder.</p>
+
+    <h2>5. ÜÇÜNCÜ TARAF BAĞLANTILARI</h2>
+    <p>Sitede yer alan harici bağlantılar (iddaa.com vb.) üçüncü taraf platformlara aittir. Bu platformların içerikleri, politikaları ve hizmetleri hakkında Analizhane herhangi bir sorumluluk üstlenmez.</p>
+
+    <h2>6. İÇERİK DEĞİŞİKLİKLERİ</h2>
+    <p>Analizhane, sitedeki içerikleri önceden bildirimde bulunmaksızın değiştirme, güncelleme veya kaldırma hakkını saklı tutar. Bu sorumluluk reddi beyanı da zaman zaman güncellenebilir.</p>
+
+    <h2>7. UYGULANACAK HUKUK</h2>
+    <p>Bu sorumluluk reddi beyanı Türkiye Cumhuriyeti yasalarına tabidir. Herhangi bir anlaşmazlık durumunda Türkiye Cumhuriyeti mahkemeleri yetkilidir.</p>
+
+    <h2>8. İLETİŞİM</h2>
+    <p>Bu sorumluluk reddi beyanına ilişkin sorularınız için Telegram grubumuz üzerinden bizimle iletişime geçebilirsiniz.</p>
+
+    <p style="margin-top:24px;padding-top:16px;border-top:1px solid rgba(245,197,24,.15);font-size:11px;color:var(--gri);">Son güncelleme: Nisan 2026 · Analizhane Yönetimi</p>
+  </div>
+</div>
+<footer><p>© 2026 Analizhane · <a href="sartlar.html">Üyelik Şartları</a> · <a href="/">Ana Sayfa</a></p></footer>
+</body>
+</html>

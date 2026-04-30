@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analizhane — Bayi Kodu Değişim Rehberi</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--turuncu:#F5C518;--yesil:#2DB84B;--koyu2:#0a0f0a;--panel:#111a11;--beyaz:#fff;--gri:#9ca3af;--border:rgba(245,197,24,.25);}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:#0a0f0a;color:var(--beyaz);min-height:100vh;}
+/* placeholder nav{background:linear-gradient(90deg,#050905,#111a11);border-bottom:3px solid var(--sari);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:99;}
+.logo{font-family:'Bebas Neue',cursive;font-size:26px;color:var(--sari);letter-spacing:3px;text-decoration:none;}
+.logo span{color:#fff;}
+.nav-links a{color:var(--gri);text-decoration:none;font-size:12px;font-weight:700;padding:6px 10px;border-radius:6px;transition:.2s;text-transform:uppercase;}
+.nav-links a:hover{color:#fff;background:rgba(245,197,24,.2);}
+.hero{background:linear-gradient(135deg,#050905,#0a0f0a);padding:40px 20px 30px;text-align:center;border-bottom:1px solid rgba(245,197,24,.2);}
+.hero h1{font-family:'Bebas Neue',cursive;font-size:clamp(26px,6vw,48px);letter-spacing:3px;}
+.hero h1 span{color:var(--sari);}
+.container{max-width:760px;margin:0 auto;padding:40px 16px;}
+
+.bayi-info-box{background:linear-gradient(135deg,#0f2d1a,#1a4a2e);border:2px solid var(--yesil);border-radius:16px;padding:24px;text-align:center;margin-bottom:40px;}
+.bayi-info-box h2{font-family:'Bebas Neue',cursive;font-size:20px;letter-spacing:2px;color:var(--yesil);margin-bottom:16px;}
+.bayi-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+.bayi-item{background:rgba(29,185,84,.1);border:1px solid rgba(29,185,84,.3);border-radius:10px;padding:14px 24px;text-align:center;}
+.bayi-label{font-size:11px;color:var(--gri);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.bayi-val{font-family:'Bebas Neue',cursive;font-size:24px;letter-spacing:2px;color:var(--yesil);}
+.copy-btn{background:rgba(29,185,84,.2);border:1px solid rgba(29,185,84,.4);color:var(--yesil);border-radius:6px;padding:4px 12px;font-size:11px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;margin-top:6px;transition:.2s;}
+.copy-btn:hover{background:rgba(29,185,84,.4);}
+.ucret-badge{display:inline-block;background:var(--sari);color:#fff;font-family:'Bebas Neue',cursive;font-size:18px;letter-spacing:1px;padding:6px 20px;border-radius:20px;margin-top:12px;}
+
+.step-list{display:flex;flex-direction:column;gap:20px;}
+.step-item{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:22px;display:flex;gap:16px;align-items:flex-start;}
+.step-num{width:40px;height:40px;min-width:40px;background:var(--sari);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',cursive;font-size:20px;color:#fff;}
+.step-content h3{font-size:15px;font-weight:800;margin-bottom:6px;}
+.step-content p{font-size:13px;color:#d1d5db;line-height:1.7;}
+.step-content .tip{background:rgba(245,197,24,.1);border:1px solid rgba(245,197,24,.2);border-radius:8px;padding:10px 14px;font-size:12px;color:#fdba74;margin-top:10px;line-height:1.6;}
+.step-content code{background:#080e08;border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:13px;color:var(--yesil);font-family:monospace;}
+
+.cta-box{background:linear-gradient(135deg,#1a1230,#2d1b69);border:1px solid rgba(99,102,241,.3);border-radius:16px;padding:28px;text-align:center;margin-top:40px;}
+.cta-box h3{font-family:'Bebas Neue',cursive;font-size:24px;letter-spacing:2px;margin-bottom:8px;}
+.cta-box p{color:var(--gri);font-size:13px;margin-bottom:20px;}
+.btn-kayit{display:inline-block;background:linear-gradient(90deg,var(--sari),#F0B800);color:#fff;text-decoration:none;border-radius:10px;font-family:'Bebas Neue',cursive;font-size:18px;letter-spacing:2px;padding:14px 36px;transition:.2s;}
+.btn-kayit:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,197,24,.4);}
+footer{background:#050905;border-top:1px solid rgba(245,197,24,.15);padding:20px;text-align:center;margin-top:40px;}
+footer p{font-size:12px;color:var(--gri);}
+footer a{color:var(--sari);text-decoration:none;}
+
+/* NAVBAR */
+nav{background:linear-gradient(90deg,#050905,#111a11);border-bottom:3px solid var(--sari);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:999;flex-wrap:wrap;}
+.logo{font-family:'Bebas Neue',cursive;font-size:26px;color:var(--sari);letter-spacing:3px;text-decoration:none;flex-shrink:0;}
+.logo span{color:#fff;}
+.nav-links{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.nav-links a{color:var(--gri);text-decoration:none;font-size:12px;font-weight:700;padding:6px 10px;border-radius:6px;transition:.2s;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+.nav-links a:hover{color:#fff;background:rgba(245,197,24,.2);}
+.nav-links a.aktif{color:var(--sari);background:rgba(245,197,24,.15);}
+.nav-admin{border:1px solid rgba(245,197,24,.4)!important;color:var(--sari)!important;}
+.nav-toggle{display:none;background:none;border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:16px;}
+@media(max-width:700px){
+  .nav-toggle{display:block;}
+  .nav-links{display:none;width:100%;flex-direction:column;background:#050905;padding:8px 0;border-top:1px solid rgba(245,197,24,.2);}
+  .nav-links.acik{display:flex;}
+  .nav-links a{width:100%;padding:10px 20px;border-radius:0;}
+  nav{flex-wrap:wrap;height:auto;padding:10px 20px;}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/index.html" class="logo">ANALİZ<span>HANE</span></a>
+  <button class="nav-toggle" onclick="navToggle()">☰</button>
+  <div class="nav-links" id="nav-links">
+    <a href="/index.html">🏠 Ana Sayfa</a>
+    <a href="/tahminler.html">📊 Tahminler</a>
+    <a href="/rehber.html" class="aktif">📖 Bayi Rehberi</a>
+    <a href="/sartlar.html">📋 Şartlar</a>
+    <a href="/sorumluluk.html">⚖️ Sorumluluk</a>
+    <a href="/admin-login.html" class="nav-admin">🔐 Admin</a>
+  </div>
+</nav>
+<div class="hero">
+  <h1>BAYİ KODU <span>DEĞİŞİM</span> REHBERİ</h1>
+  <p style="color:var(--gri);margin-top:8px;font-size:13px;">iddaa.com üzerinden adım adım ücretsiz bayi kodu değişimi</p>
+</div>
+<div class="container">
+
+  <div class="bayi-info-box">
+    <h2>✅ BAYİ BİLGİLERİMİZ</h2>
+    <div class="bayi-row">
+      <div class="bayi-item">
+        <div class="bayi-label">Bayi Kodu</div>
+        <div class="bayi-val" id="bayi-kodu-goster">303527</div>
+        <button class="copy-btn" onclick="kopyala('bayi-kodu-goster','Bayi kodu')">📋 Kopyala</button>
+      </div>
+      <div class="bayi-item">
+        <div class="bayi-label">Bayi Adı</div>
+        <div style="font-size:16px;font-weight:800;margin-top:4px" id="bayi-adi-goster">Mehmet Mustafa Donma</div>
+      </div>
+    </div>
+    <div class="ucret-badge">ÜCRETSİZ GRUP ERİŞİMİ</div>
+  </div>
+
+  <div class="step-list">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>iddaa.com'a Giriş Yap</h3>
+        <p>Tarayıcından <strong>iddaa.com</strong> adresine git. Hesabınla giriş yap. Hesabın yoksa ücretsiz kayıt oluşturabilirsin.</p>
+        <div class="tip">💡 Resmi site: <strong>www.iddaa.com</strong> — Başka sitelere girme, sadece resmi site üzerinden işlem yapılmalı.</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Hesap Ayarlarına Git</h3>
+        <p>Giriş yaptıktan sonra sağ üstteki profil ikonuna tıkla. Açılan menüden <strong>"Hesap Bilgilerim"</strong> veya <strong>"Profil"</strong> seçeneğini seç.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Bayi Kodu Bölümünü Bul</h3>
+        <p>Hesap ayarları sayfasında <strong>"Bayi Kodu"</strong> veya <strong>"Bayi Değişikliği"</strong> bölümünü bul. Bu bölüm genellikle kişisel bilgiler altında yer alır.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h3>Bayi Kodunu Gir</h3>
+        <p>Bayi kodu alanına <code id="kod-inline">303527</code> yaz. Bayi adı olarak <strong>Mehmet Mustafa Donma</strong> göreceksin — doğru bayi bu!</p>
+        <div class="tip">✅ Onaylamadan önce bayi adının <strong>"Mehmet Mustafa Donma"</strong> olduğunu teyit et.</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <h3>Kaydet ve Ekran Görüntüsü Al</h3>
+        <p>Kaydet butonuna bas. Başarıyla kaydedildikten sonra <strong>bayi adının göründüğü ekranın görüntüsünü</strong> al. Bu ekran görüntüsünü kayıt formunda yükleyeceksin.</p>
+        <div class="tip">📷 Ekran görüntüsünde bayi adı ve kodun açıkça görünmeli. Aksi halde başvurun onaylanmayabilir.</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">6</div>
+      <div class="step-content">
+        <h3>Kayıt Formunu Doldur</h3>
+        <p>Ekran görüntüsünü hazırladıktan sonra ana sayfadaki kayıt formunu doldurup başvurunu ilet. Onaylandığında Telegram grubuna davet alacaksın! 🎉</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-box">
+    <h3>HAZIR MISIN? 🚀</h3>
+    <p>Bayi kodunu değiştirdiysen hemen kayıt formunu doldur ve gruba katıl!</p>
+    <a href="/" class="btn-kayit">ÜYELİK FORMUNA GİT</a>
+  </div>
+</div>
+<footer><p>© 2026 Analizhane · <a href="sorumluluk.html">Sorumluluk Reddi</a> · <a href="sartlar.html">Şartlar</a></p></footer>
+<script>
+const SUPABASE_URL = 'https://tgyovobwyvywhsxkqwtn.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_tg426zdtj1K6oSaW3jEM2Q_B04K9LJt';
+async function bayiyukle() {
+  const r = await fetch(SUPABASE_URL+'/rest/v1/site_ayarlari?anahtar=in.(bayi_kodu,bayi_adi)&select=anahtar,deger',{headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY}});
+  const data = await r.json();
+  if(!Array.isArray(data))return;
+  data.forEach(d=>{
+    if(d.anahtar==='bayi_kodu'){document.getElementById('bayi-kodu-goster').textContent=d.deger;document.getElementById('kod-inline').textContent=d.deger;}
+    if(d.anahtar==='bayi_adi')document.getElementById('bayi-adi-goster').textContent=d.deger;
+  });
+}
+function kopyala(id, adi) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text);
+  const btn = event.target;
+  btn.textContent = '✅ Kopyalandı!';
+  setTimeout(()=>btn.textContent='📋 Kopyala',2000);
+}
+bayiukle();
+</script>
+</body>
+</html>

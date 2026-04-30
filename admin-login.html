@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analizhane — Admin Giriş</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--turuncu:#F5C518;--yesil:#2DB84B;--koyu:#050905;--koyu2:#0a0f0a;--panel:#111a11;--beyaz:#fff;--gri:#9ca3af;--hata:#ef4444;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:#0a0f0a;color:var(--beyaz);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+.login-wrap{width:100%;max-width:400px;}
+.logo-area{text-align:center;margin-bottom:32px;}
+.logo{font-family:'Bebas Neue',cursive;font-size:42px;color:var(--sari);letter-spacing:4px;}
+.logo span{color:#fff;}
+.logo-sub{font-size:12px;color:var(--gri);text-transform:uppercase;letter-spacing:2px;margin-top:4px;}
+.card{background:var(--panel);border:1px solid rgba(245,197,24,.25);border-radius:16px;padding:32px;}
+.card h2{font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:2px;color:var(--sari);margin-bottom:24px;text-align:center;}
+.form-group{margin-bottom:18px;}
+.form-group label{display:block;font-size:11px;font-weight:700;color:var(--gri);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;}
+.form-group input{width:100%;background:#080e08;border:1.5px solid rgba(245,197,24,.25);border-radius:8px;color:#fff;font-family:'Nunito',sans-serif;font-size:14px;padding:12px 14px;transition:.2s;outline:none;}
+.form-group input:focus{border-color:var(--sari);box-shadow:0 0 0 3px rgba(245,197,24,.1);}
+.btn{width:100%;background:linear-gradient(90deg,var(--sari),#F0B800);color:#fff;border:none;border-radius:10px;font-family:'Bebas Neue',cursive;font-size:20px;letter-spacing:2px;padding:14px;cursor:pointer;transition:.2s;margin-top:4px;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,197,24,.4);}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.alert{border-radius:8px;padding:12px 16px;font-size:13px;font-weight:700;margin-bottom:16px;display:none;}
+.alert.hata{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.4);color:#fca5a5;}
+.back{text-align:center;margin-top:20px;}
+.back a{color:var(--gri);font-size:12px;text-decoration:none;}
+.back a:hover{color:var(--beyaz);}
+</style>
+</head>
+<body>
+<div class="login-wrap">
+  <div class="logo-area">
+    <div class="logo">ANALİZ<span>HANE</span></div>
+    <div class="logo-sub">Yönetim Paneli</div>
+  </div>
+  <div class="card">
+    <h2>🔐 GİRİŞ YAP</h2>
+    <div id="alert-box" class="alert hata"></div>
+    <div class="form-group">
+      <label>Kullanıcı Adı</label>
+      <input type="text" id="username" placeholder="Kullanıcı adınız" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label>Şifre</label>
+      <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')giris()">
+    </div>
+    <button class="btn" id="btn-giris" onclick="giris()">GİRİŞ YAP</button>
+  </div>
+  <div class="back"><a href="/index.html">← Ana Sayfaya Dön</a></div>
+</div>
+
+<script>
+async function giris() {
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  if (!username || !password) { showAlert('Kullanıcı adı ve şifre gereklidir.'); return; }
+  const btn = document.getElementById('btn-giris');
+  btn.disabled = true; btn.textContent = 'GİRİŞ YAPILIYOR...';
+  try {
+    const res = await fetch('/.netlify/functions/admin-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (data.success) {
+      localStorage.setItem('ah_token', data.token);
+      localStorage.setItem('ah_rol', data.rol);
+      localStorage.setItem('ah_isim', data.isim);
+      localStorage.setItem('ah_id', data.id);
+      if (data.rol === 'superadmin') window.location.href = '/superadmin.html';
+      else window.location.href = '/admin.html';
+    } else {
+      showAlert(data.error || 'Geçersiz kullanıcı adı veya şifre.');
+      btn.disabled = false; btn.textContent = 'GİRİŞ YAP';
+    }
+  } catch(e) {
+    showAlert('Sunucu hatası. Tekrar deneyin.');
+    btn.disabled = false; btn.textContent = 'GİRİŞ YAP';
+  }
+}
+function showAlert(msg) {
+  const el = document.getElementById('alert-box');
+  el.textContent = '❌ ' + msg;
+  el.style.display = 'block';
+}
+// Zaten giriş yapılmışsa yönlendir
+const tok = localStorage.getItem('ah_token');
+const rol = localStorage.getItem('ah_rol');
+if (tok) { if (rol === 'superadmin') window.location.href = '/superadmin.html'; else window.location.href = '/admin.html'; }
+</script>
+</body>
+</html>

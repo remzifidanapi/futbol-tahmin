@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analizhane — Süper Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--turuncu:#F5C518;--yesil:#2DB84B;--koyu:#050905;--koyu2:#0a0f0a;--panel:#111a11;--panel2:#162016;--beyaz:#fff;--gri:#9ca3af;--border:rgba(245,197,24,.25);--hata:#ef4444;--basari:#22c55e;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:#0a0f0a;color:var(--beyaz);min-height:100vh;}
+nav{background:linear-gradient(90deg,#050905,#111a11);border-bottom:3px solid var(--sari);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:999;}
+.logo{font-family:'Bebas Neue',cursive;font-size:20px;color:var(--sari);letter-spacing:2px;}
+.logo span{color:#fff;}
+.super-badge{background:linear-gradient(90deg,var(--sari),#F0B800);border-radius:20px;padding:3px 12px;font-size:11px;font-weight:800;color:#fff;letter-spacing:.5px;}
+.btn-cikis{background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;color:var(--gri);font-size:12px;padding:6px 12px;cursor:pointer;font-family:'Nunito',sans-serif;}
+.nav-right{display:flex;align-items:center;gap:10px;}
+
+/* TABS */
+.tabs{background:#080e08;border-bottom:1px solid rgba(245,197,24,.15);display:flex;overflow-x:auto;padding:0 16px;gap:4px;}
+.tab{padding:14px 18px;font-size:12px;font-weight:700;color:var(--gri);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:.2s;text-transform:uppercase;letter-spacing:.5px;}
+.tab.aktif{color:var(--sari);border-bottom-color:var(--sari);}
+.tab:hover{color:var(--beyaz);}
+.tab-content{display:none;}
+.tab-content.aktif{display:block;}
+
+.container{max-width:1100px;margin:0 auto;padding:28px 16px;}
+.section-title{font-family:'Bebas Neue',cursive;font-size:20px;letter-spacing:2px;color:var(--sari);border-left:4px solid var(--sari);padding-left:12px;margin-bottom:20px;}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:24px;}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px;}
+.stat-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;}
+.stat-num{font-family:'Bebas Neue',cursive;font-size:32px;color:var(--sari);}
+.stat-label{font-size:11px;color:var(--gri);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
+
+/* FILTERS */
+.filter-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center;}
+.filter-row input,.filter-row select{background:#080e08;border:1.5px solid var(--border);border-radius:8px;color:#fff;font-family:'Nunito',sans-serif;font-size:13px;padding:8px 12px;outline:none;}
+.filter-row input:focus,.filter-row select:focus{border-color:var(--sari);}
+.filter-row select option{background:#111a11;}
+.btn-excel{background:linear-gradient(90deg,#2DB84B,#158a3e);color:#fff;border:none;border-radius:8px;font-family:'Bebas Neue',cursive;font-size:14px;letter-spacing:1px;padding:9px 18px;cursor:pointer;transition:.2s;}
+.btn-excel:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(29,185,84,.4);}
+
+/* TABLE */
+.tablo-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead{background:#080e08;}
+th{padding:12px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--gri);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;border-bottom:1px solid var(--border);}
+td{padding:12px 14px;border-bottom:1px solid rgba(245,197,24,.08);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(245,197,24,.03);}
+.durum-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:800;text-transform:uppercase;}
+.durum-beklemede{background:rgba(234,179,8,.15);color:#fde047;border:1px solid rgba(234,179,8,.3);}
+.durum-onaylandi{background:rgba(34,197,94,.15);color:#86efac;border:1px solid rgba(34,197,94,.3);}
+.durum-reddedildi{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.3);}
+.td-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.btn-onayla{background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);color:#86efac;border-radius:6px;padding:5px 11px;font-size:11px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;white-space:nowrap;}
+.btn-onayla:hover{background:rgba(34,197,94,.3);}
+.btn-reddet{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#fca5a5;border-radius:6px;padding:5px 11px;font-size:11px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;white-space:nowrap;}
+.btn-reddet:hover{background:rgba(239,68,68,.3);}
+.btn-gorsel{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);color:#93c5fd;border-radius:6px;padding:5px 11px;font-size:11px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;white-space:nowrap;}
+.btn-aktif{background:rgba(29,185,84,.15);border:1px solid rgba(29,185,84,.3);color:var(--yesil);border-radius:6px;padding:5px 11px;font-size:11px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;}
+.btn-pasif{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#fca5a5;border-radius:6px;padding:5px 11px;font-size:11px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;}
+
+/* FORM */
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:11px;font-weight:700;color:var(--gri);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.form-group input,.form-group select,.form-group textarea{width:100%;background:#080e08;border:1.5px solid var(--border);border-radius:8px;color:#fff;font-family:'Nunito',sans-serif;font-size:14px;padding:11px 14px;transition:.2s;outline:none;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--sari);}
+.form-group textarea{resize:vertical;min-height:120px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:600px){.form-row{grid-template-columns:1fr;}}
+.btn-kaydet{background:linear-gradient(90deg,var(--sari),#F0B800);color:#fff;border:none;border-radius:10px;font-family:'Bebas Neue',cursive;font-size:18px;letter-spacing:2px;padding:13px 32px;cursor:pointer;transition:.2s;}
+.btn-kaydet:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(245,197,24,.4);}
+.btn-kaydet:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.alert{border-radius:8px;padding:12px 16px;font-size:13px;font-weight:700;margin-bottom:16px;display:none;}
+.alert.hata{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.4);color:#fca5a5;}
+.alert.basari{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.4);color:#86efac;}
+.empty{text-align:center;padding:32px;color:var(--gri);font-size:14px;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.acik{display:flex;}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:28px;max-width:500px;width:100%;}
+.modal h3{font-family:'Bebas Neue',cursive;font-size:20px;color:var(--sari);letter-spacing:2px;margin-bottom:20px;}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
+.btn-iptal{background:none;border:1px solid rgba(255,255,255,.2);border-radius:8px;color:var(--gri);padding:10px 20px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:13px;}
+.link-kopyala{background:#080e08;border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--yesil);word-break:break-all;cursor:pointer;margin-bottom:12px;}
+.link-kopyala:hover{border-color:var(--yesil);}
+
+/* ADMIN LİSTE */
+.admin-item{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.admin-info{flex:1;}
+.admin-isim{font-weight:800;font-size:14px;}
+.admin-meta{font-size:12px;color:var(--gri);margin-top:2px;}
+.rol-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;margin-right:6px;}
+.rol-superadmin{background:rgba(255,215,0,.2);color:#fde047;}
+.rol-admin{background:rgba(245,197,24,.2);color:var(--sari);}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/index.html" class="logo" style="text-decoration:none;">ANALİZ<span>HANE</span></a>
+  <div class="nav-right">
+    <span class="super-badge">⭐ SÜPER ADMİN</span>
+    <a href="/index.html" style="color:var(--gri);font-size:12px;text-decoration:none;margin-right:4px;">🏠 Site</a> <button class="btn-cikis" onclick="cikis()">Çıkış</button>
+  </div>
+</nav>
+
+<div class="tabs">
+  <div class="tab aktif" onclick="tabAc('basvurular',this)">📋 Başvurular</div>
+  <div class="tab" onclick="tabAc('uyeler',this)">👥 Üyeler</div>
+  <div class="tab" onclick="tabAc('ayarlar',this)">⚙️ Site Ayarları</div>
+  <div class="tab" onclick="tabAc('adminler',this)">👤 Adminler</div>
+  <div class="tab" onclick="tabAc('sartlar',this)">📋 Üyelik Şartları</div>
+</div>
+
+<!-- BAŞVURULAR TAB -->
+<div id="tab-basvurular" class="tab-content aktif">
+<div class="container">
+  <div class="stats-row" id="stats-row">
+    <div class="stat-card"><div class="stat-num" id="s-toplam">-</div><div class="stat-label">Toplam</div></div>
+    <div class="stat-card"><div class="stat-num" id="s-beklemede">-</div><div class="stat-label">Beklemede</div></div>
+    <div class="stat-card"><div class="stat-num" id="s-onay">-</div><div class="stat-label">Onaylı</div></div>
+    <div class="stat-card"><div class="stat-num" id="s-red">-</div><div class="stat-label">Reddedilen</div></div>
+  </div>
+
+  <div class="filter-row">
+    <input type="text" id="ara" placeholder="🔍 Ad, soyad, email, telegram..." style="flex:1;min-width:160px;" oninput="filtrele()">
+    <select id="durum-filtre" onchange="filtrele()">
+      <option value="">Tüm Durumlar</option>
+      <option value="beklemede">Beklemede</option>
+      <option value="onaylandi">Onaylı</option>
+      <option value="reddedildi">Reddedilen</option>
+    </select>
+    <select id="admin-filtre" onchange="filtrele()">
+      <option value="">Tüm Adminler</option>
+    </select>
+    <button class="btn-excel" onclick="excelIndir()">📥 Excel İndir</button>
+  </div>
+
+  <div class="tablo-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Ad Soyad</th>
+          <th>Telegram</th>
+          <th>Telefon</th>
+          <th>Referans</th>
+          <th>Bayi Kodu</th>
+          <th>Durum</th>
+          <th>Tarih</th>
+          <th>İşlemler</th>
+        </tr>
+      </thead>
+      <tbody id="basvuru-tbody">
+        <tr><td colspan="8" class="empty">Yükleniyor...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- ÜYELER TAB -->
+<div id="tab-uyeler" class="tab-content">
+<div class="container">
+  <div class="filter-row">
+    <input type="text" id="uye-ara" placeholder="🔍 Ara..." style="flex:1;" oninput="uyeleriFiltrele()">
+    <select id="uye-durum" onchange="uyeleriFiltrele()">
+      <option value="">Tüm Durum</option>
+      <option value="onaylandi">Aktif</option>
+      <option value="beklemede">Beklemede</option>
+      <option value="reddedildi">Reddedilen</option>
+    </select>
+  </div>
+  <div class="tablo-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Ad Soyad</th>
+          <th>Telegram</th>
+          <th>Telefon</th>
+          <th>Üyelik Bitiş</th>
+          <th>Durum</th>
+          <th>İşlemler</th>
+        </tr>
+      </thead>
+      <tbody id="uye-tbody"><tr><td colspan="6" class="empty">Yükleniyor...</td></tr></tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- AYARLAR TAB -->
+<div id="tab-ayarlar" class="tab-content">
+<div class="container">
+  <div id="ayar-alert" class="alert"></div>
+
+  <p class="section-title">BANNER YÖNETİMİ</p>
+  <div class="card">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Banner Görsel URL</label>
+        <input type="text" id="banner-url" placeholder="https://...">
+      </div>
+      <div class="form-group">
+        <label>Banner Tıklama Linki</label>
+        <input type="text" id="banner-link" placeholder="https://...">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Banner Aktif mi?</label>
+      <select id="banner-aktif">
+        <option value="true">✅ Aktif</option>
+        <option value="false">❌ Pasif</option>
+      </select>
+    </div>
+    <button class="btn-kaydet" onclick="bannerKaydet()">BANNERI KAYDET</button>
+  </div>
+
+  <p class="section-title">BAYİ BİLGİLERİ</p>
+  <div class="card">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Bayi Kodu</label>
+        <input type="text" id="bayi-kodu" placeholder="303527">
+      </div>
+      <div class="form-group">
+        <label>Bayi Adı</label>
+        <input type="text" id="bayi-adi" placeholder="Ad Soyad">
+      </div>
+    </div>
+    <button class="btn-kaydet" onclick="bayiKaydet()">BAYİ BİLGİSİ KAYDET</button>
+  </div>
+
+  <p class="section-title">TELEGRAM AYARLARI</p>
+  <div class="card">
+    <div class="form-group">
+      <label>Telegram Bot Token</label>
+      <input type="text" id="bot-token" placeholder="123456:ABC-DEF...">
+    </div>
+    <div class="form-group">
+      <label>Telegram Grup Linki</label>
+      <input type="text" id="telegram-link" placeholder="https://t.me/...">
+    </div>
+    <button class="btn-kaydet" onclick="telegramKaydet()">TELEGRAM KAYDET</button>
+  </div>
+</div>
+</div>
+
+<!-- ADMİNLER TAB -->
+<div id="tab-adminler" class="tab-content">
+<div class="container">
+  <div id="admin-alert" class="alert"></div>
+  <p class="section-title">YENİ ADMİN EKLE</p>
+  <div class="card">
+    <div class="form-row">
+      <div class="form-group">
+        <label>İsim</label>
+        <input type="text" id="yeni-isim" placeholder="Ad Soyad">
+      </div>
+      <div class="form-group">
+        <label>Kullanıcı Adı</label>
+        <input type="text" id="yeni-username" placeholder="kullanici_adi">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Şifre</label>
+        <input type="password" id="yeni-sifre" placeholder="Min 6 karakter">
+      </div>
+      <div class="form-group">
+        <label>Rol</label>
+        <select id="yeni-rol">
+          <option value="admin">Admin</option>
+          <option value="superadmin">Süper Admin</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-kaydet" onclick="adminEkle()">ADMİN EKLE</button>
+  </div>
+
+  <p class="section-title">ADMİN LİSTESİ</p>
+  <div id="admin-listesi"><div class="empty">Yükleniyor...</div></div>
+</div>
+</div>
+
+<!-- ŞARTLAR TAB -->
+<div id="tab-sartlar" class="tab-content">
+<div class="container">
+  <div id="sart-alert" class="alert"></div>
+  <p class="section-title">ÜYELİK ŞARTLARI</p>
+  <div class="card">
+    <div class="form-group">
+      <label>İçerik (HTML destekli)</label>
+      <textarea id="sartlar-icerik" style="min-height:300px;font-size:13px;" placeholder="&lt;h3&gt;Başlık&lt;/h3&gt;&lt;p&gt;İçerik...&lt;/p&gt;"></textarea>
+    </div>
+    <button class="btn-kaydet" onclick="sartlarKaydet()">ŞARTLARI KAYDET</button>
+  </div>
+</div>
+</div>
+
+<!-- ONAY MODAL -->
+<div class="modal-overlay" id="onay-modal">
+  <div class="modal">
+    <h3>✅ BAŞVURUYU ONAYLA</h3>
+    <div class="form-group">
+      <label>Üyelik Bitiş Tarihi</label>
+      <input type="date" id="bitis-tarihi">
+    </div>
+    <div class="form-group">
+      <label>Telegram Davet Linki (manuel)</label>
+      <div class="link-kopyala" id="davet-link-goster" onclick="linkKopyala()">Yükleniyor...</div>
+      <p style="font-size:11px;color:var(--gri);">Tıklayarak kopyala veya otomatik gönder seçeneğini kullan</p>
+    </div>
+    <div class="form-group">
+      <label>Not (opsiyonel)</label>
+      <input type="text" id="onay-not" placeholder="Onay notu...">
+    </div>
+    <div class="modal-footer">
+      <button class="btn-iptal" onclick="modalKapat()">İptal</button>
+      <button class="btn-kaydet" onclick="onaylaGonder(false)" style="padding:10px 20px;font-size:14px;">Onayla (Manuel Link)</button>
+      <button class="btn-kaydet" onclick="onaylaGonder(true)" style="padding:10px 20px;font-size:14px;background:linear-gradient(90deg,#2DB84B,#1a8f35);">Onayla + Otomatik Gönder</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const TOKEN = localStorage.getItem('ah_token');
+const ROL = localStorage.getItem('ah_rol');
+if (!TOKEN || ROL !== 'superadmin') window.location.href = '/admin-login.html';
+
+let tumBasvurular = [], aktifBasvuruId = null;
+
+// TAB
+function tabAc(id, el) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('aktif'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('aktif'));
+  document.getElementById('tab-' + id).classList.add('aktif');
+  el.classList.add('aktif');
+  if (id === 'basvurular') basvurulariyukle();
+  if (id === 'uyeler') uyeleriYukle();
+  if (id === 'ayarlar') ayarlariYukle();
+  if (id === 'adminler') adminleriyukle();
+  if (id === 'sartlar') sartlariyukle();
+}
+
+async function apiFetch(path, opts={}) {
+  return fetch('/.netlify/functions/' + path, {
+    ...opts,
+    headers: { 'Authorization': 'Bearer ' + TOKEN, 'Content-Type': 'application/json', ...(opts.headers||{}) }
+  }).then(r => r.json());
+}
+
+// BAŞVURULAR
+async function basvurulariyukle() {
+  const data = await apiFetch('get-applications');
+  tumBasvurular = data.applications || [];
+  istatistikGuncelle();
+  adminFiltreYukle();
+  tabloGuncelle(tumBasvurular);
+}
+
+function istatistikGuncelle() {
+  document.getElementById('s-toplam').textContent = tumBasvurular.length;
+  document.getElementById('s-beklemede').textContent = tumBasvurular.filter(a => a.durum === 'beklemede').length;
+  document.getElementById('s-onay').textContent = tumBasvurular.filter(a => a.durum === 'onaylandi').length;
+  document.getElementById('s-red').textContent = tumBasvurular.filter(a => a.durum === 'reddedildi').length;
+}
+
+function adminFiltreYukle() {
+  const sel = document.getElementById('admin-filtre');
+  const adminlar = [...new Set(tumBasvurular.map(a => a.referans_admin_isim).filter(Boolean))];
+  adminlar.forEach(a => {
+    if (!sel.querySelector(`option[value="${a}"]`)) {
+      const opt = document.createElement('option');
+      opt.value = a; opt.textContent = a; sel.appendChild(opt);
+    }
+  });
+}
+
+function maskeTelefon(tel) {
+  if (!tel || tel.length < 7) return tel;
+  return tel.substring(0, 4) + '***' + tel.substring(7);
+}
+
+function filtrele() {
+  const ara = document.getElementById('ara').value.toLowerCase();
+  const durum = document.getElementById('durum-filtre').value;
+  const admin = document.getElementById('admin-filtre').value;
+  const filtered = tumBasvurular.filter(a => {
+    const metin = (a.ad + ' ' + a.soyad + ' ' + a.email + ' ' + a.telegram).toLowerCase();
+    return (!ara || metin.includes(ara)) &&
+           (!durum || a.durum === durum) &&
+           (!admin || a.referans_admin_isim === admin);
+  });
+  tabloGuncelle(filtered);
+}
+
+function tabloGuncelle(liste) {
+  const tbody = document.getElementById('basvuru-tbody');
+  if (!liste.length) { tbody.innerHTML = '<tr><td colspan="8" class="empty">Kayıt bulunamadı.</td></tr>'; return; }
+  tbody.innerHTML = liste.map(a => `
+    <tr>
+      <td><strong>${a.ad} ${a.soyad}</strong><br><span style="font-size:11px;color:var(--gri)">${a.email}</span></td>
+      <td>${a.telegram}</td>
+      <td>${maskeTelefon(a.telefon)}</td>
+      <td>${a.referans_admin_isim || '-'}</td>
+      <td>${a.bayi_kodu}</td>
+      <td><span class="durum-badge durum-${a.durum}">${a.durum}</span></td>
+      <td style="font-size:11px;color:var(--gri)">${new Date(a.created_at).toLocaleDateString('tr-TR')}</td>
+      <td>
+        <div class="td-actions">
+          ${a.gorsel_url ? `<button class="btn-gorsel" onclick="window.open('${a.gorsel_url}','_blank')">Görsel</button>` : ''}
+          ${a.durum === 'beklemede' ? `
+            <button class="btn-onayla" onclick="onayModalAc('${a.id}')">Onayla</button>
+            <button class="btn-reddet" onclick="reddet('${a.id}')">Reddet</button>
+          ` : ''}
+          ${a.durum === 'onaylandi' ? `<button class="btn-pasif" onclick="pasifYap('${a.id}')">Pasif</button>` : ''}
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// EXCEL İNDİR
+function excelIndir() {
+  const ara = document.getElementById('ara').value.toLowerCase();
+  const durum = document.getElementById('durum-filtre').value;
+  const admin = document.getElementById('admin-filtre').value;
+  const liste = tumBasvurular.filter(a => {
+    const metin = (a.ad + ' ' + a.soyad + ' ' + a.email + ' ' + a.telegram).toLowerCase();
+    return (!ara || metin.includes(ara)) && (!durum || a.durum === durum) && (!admin || a.referans_admin_isim === admin);
+  });
+
+  const rows = liste.map(a => ({
+    'Ad': a.ad,
+    'Soyad': a.soyad,
+    'E-Posta': a.email,
+    'Telefon': maskeTelefon(a.telefon),
+    'Telegram': a.telegram,
+    'Referans Admin': a.referans_admin_isim || '',
+    'Bayi Kodu': a.bayi_kodu,
+    'Durum': a.durum,
+    'Üyelik Bitiş': a.uyelik_bitis_tarihi || '',
+    'Kayıt Tarihi': new Date(a.created_at).toLocaleDateString('tr-TR')
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Başvurular');
+  XLSX.writeFile(wb, 'analizhane_uyeler_' + new Date().toISOString().slice(0,10) + '.xlsx');
+}
+
+// ONAY MODAL
+async function onayModalAc(id) {
+  aktifBasvuruId = id;
+  const bugun = new Date();
+  bugun.setMonth(bugun.getMonth() + 1);
+  document.getElementById('bitis-tarihi').value = bugun.toISOString().slice(0,10);
+  // Telegram linkini yükle
+  const data = await apiFetch('get-settings?keys=telegram_grup_linki');
+  document.getElementById('davet-link-goster').textContent = data.telegram_grup_linki || 'Link bulunamadı';
+  document.getElementById('onay-modal').classList.add('acik');
+}
+
+function modalKapat() { document.getElementById('onay-modal').classList.remove('acik'); aktifBasvuruId = null; }
+
+function linkKopyala() {
+  const t = document.getElementById('davet-link-goster').textContent;
+  navigator.clipboard.writeText(t);
+  document.getElementById('davet-link-goster').textContent = '✅ Kopyalandı! ' + t;
+  setTimeout(() => document.getElementById('davet-link-goster').textContent = t, 2000);
+}
+
+async function onaylaGonder(otomatik) {
+  const bitis = document.getElementById('bitis-tarihi').value;
+  const not = document.getElementById('onay-not').value;
+  const data = await apiFetch('approve', {
+    method: 'POST',
+    body: JSON.stringify({ id: aktifBasvuruId, uyelik_bitis_tarihi: bitis, notlar: not, otomatik_telegram: otomatik })
+  });
+  if (data.success) {
+    modalKapat();
+    basvurulariyukle();
+    alert('✅ Başvuru onaylandı!' + (otomatik && data.telegram_gonderildi ? ' Telegram mesajı gönderildi.' : ''));
+  } else alert('Hata: ' + data.error);
+}
+
+async function reddet(id) {
+  if (!confirm('Bu başvuruyu reddetmek istediğinize emin misiniz?')) return;
+  const data = await apiFetch('reject', { method: 'POST', body: JSON.stringify({ id }) });
+  if (data.success) basvurulariyukle();
+  else alert('Hata: ' + data.error);
+}
+
+async function pasifYap(id) {
+  if (!confirm('Bu üyeyi pasif yapmak istediğinize emin misiniz?')) return;
+  const data = await apiFetch('update-application', { method: 'POST', body: JSON.stringify({ id, durum: 'reddedildi' }) });
+  if (data.success) basvurulariyukle();
+  else alert('Hata: ' + data.error);
+}
+
+// ÜYELER
+async function uyeleriYukle() {
+  const data = await apiFetch('get-applications');
+  window._tumUyeler = data.applications || [];
+  uyeleriFiltrele();
+}
+
+function uyeleriFiltrele() {
+  const ara = document.getElementById('uye-ara').value.toLowerCase();
+  const durum = document.getElementById('uye-durum').value;
+  const liste = (window._tumUyeler || []).filter(a => {
+    const metin = (a.ad + ' ' + a.soyad + ' ' + a.telegram).toLowerCase();
+    return (!ara || metin.includes(ara)) && (!durum || a.durum === durum);
+  });
+  const tbody = document.getElementById('uye-tbody');
+  if (!liste.length) { tbody.innerHTML = '<tr><td colspan="6" class="empty">Kayıt yok.</td></tr>'; return; }
+  tbody.innerHTML = liste.map(a => `
+    <tr>
+      <td><strong>${a.ad} ${a.soyad}</strong></td>
+      <td>${a.telegram}</td>
+      <td>${maskeTelefon(a.telefon)}</td>
+      <td>${a.uyelik_bitis_tarihi || '-'}</td>
+      <td><span class="durum-badge durum-${a.durum}">${a.durum}</span></td>
+      <td>
+        <div class="td-actions">
+          <input type="date" id="bitis-${a.id}" value="${a.uyelik_bitis_tarihi||''}" style="background:#080e08;border:1px solid var(--border);border-radius:6px;color:#fff;font-size:11px;padding:4px 8px;outline:none;">
+          <button class="btn-aktif" onclick="gunGuncelle('${a.id}')">Güncelle</button>
+          ${a.durum==='onaylandi'?`<button class="btn-pasif" onclick="durumGuncelle('${a.id}','reddedildi')">Pasif</button>`:`<button class="btn-aktif" onclick="durumGuncelle('${a.id}','onaylandi')">Aktif</button>`}
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+async function gunGuncelle(id) {
+  const tarih = document.getElementById('bitis-' + id).value;
+  const data = await apiFetch('update-application', { method: 'POST', body: JSON.stringify({ id, uyelik_bitis_tarihi: tarih }) });
+  if (data.success) { uyeleriYukle(); alert('✅ Tarih güncellendi.'); }
+  else alert('Hata: ' + data.error);
+}
+
+async function durumGuncelle(id, durum) {
+  const data = await apiFetch('update-application', { method: 'POST', body: JSON.stringify({ id, durum }) });
+  if (data.success) uyeleriYukle();
+  else alert('Hata: ' + data.error);
+}
+
+// AYARLAR
+async function ayarlariYukle() {
+  const data = await apiFetch('get-settings?keys=banner_url,banner_link,banner_aktif,bayi_kodu,bayi_adi,telegram_bot_token,telegram_grup_linki');
+  if (data.banner_url !== undefined) document.getElementById('banner-url').value = data.banner_url || '';
+  if (data.banner_link !== undefined) document.getElementById('banner-link').value = data.banner_link || '';
+  if (data.banner_aktif !== undefined) document.getElementById('banner-aktif').value = data.banner_aktif || 'false';
+  if (data.bayi_kodu !== undefined) document.getElementById('bayi-kodu').value = data.bayi_kodu || '';
+  if (data.bayi_adi !== undefined) document.getElementById('bayi-adi').value = data.bayi_adi || '';
+  if (data.telegram_bot_token !== undefined) document.getElementById('bot-token').value = data.telegram_bot_token || '';
+  if (data.telegram_grup_linki !== undefined) document.getElementById('telegram-link').value = data.telegram_grup_linki || '';
+}
+
+async function bannerKaydet() {
+  const data = await apiFetch('update-settings', { method: 'POST', body: JSON.stringify({
+    banner_url: document.getElementById('banner-url').value,
+    banner_link: document.getElementById('banner-link').value,
+    banner_aktif: document.getElementById('banner-aktif').value
+  })});
+  showAyarAlert(data.success ? '✅ Banner kaydedildi.' : '❌ ' + data.error, data.success ? 'basari' : 'hata');
+}
+
+async function bayiKaydet() {
+  const data = await apiFetch('update-settings', { method: 'POST', body: JSON.stringify({
+    bayi_kodu: document.getElementById('bayi-kodu').value,
+    bayi_adi: document.getElementById('bayi-adi').value
+  })});
+  showAyarAlert(data.success ? '✅ Bayi bilgileri kaydedildi.' : '❌ ' + data.error, data.success ? 'basari' : 'hata');
+}
+
+async function telegramKaydet() {
+  const data = await apiFetch('update-settings', { method: 'POST', body: JSON.stringify({
+    telegram_bot_token: document.getElementById('bot-token').value,
+    telegram_grup_linki: document.getElementById('telegram-link').value
+  })});
+  showAyarAlert(data.success ? '✅ Telegram ayarları kaydedildi.' : '❌ ' + data.error, data.success ? 'basari' : 'hata');
+}
+
+function showAyarAlert(msg, tip) {
+  const el = document.getElementById('ayar-alert');
+  el.textContent = msg; el.className = 'alert ' + tip; el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 3000);
+}
+
+// ADMİNLER
+async function adminleriyukle() {
+  const data = await apiFetch('get-admins');
+  const el = document.getElementById('admin-listesi');
+  const adminlar = data.admins || [];
+  if (!adminlar.length) { el.innerHTML = '<div class="empty">Admin bulunamadı.</div>'; return; }
+  el.innerHTML = adminlar.map(a => `
+    <div class="admin-item">
+      <div class="admin-info">
+        <div class="admin-isim">${a.isim}</div>
+        <div class="admin-meta">
+          <span class="rol-badge rol-${a.rol}">${a.rol}</span>
+          @${a.username} · ${a.aktif ? '🟢 Aktif' : '🔴 Pasif'}
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button class="${a.aktif ? 'btn-pasif' : 'btn-aktif'}" onclick="adminToggle('${a.id}',${a.aktif})">${a.aktif ? 'Pasif Yap' : 'Aktif Yap'}</button>
+        <button class="btn-reddet" onclick="adminSil('${a.id}')">Sil</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function adminEkle() {
+  const isim = document.getElementById('yeni-isim').value.trim();
+  const username = document.getElementById('yeni-username').value.trim();
+  const sifre = document.getElementById('yeni-sifre').value;
+  const rol = document.getElementById('yeni-rol').value;
+  if (!isim || !username || !sifre) { showAdminAlert('❌ Tüm alanları doldurun.', 'hata'); return; }
+  if (sifre.length < 6) { showAdminAlert('❌ Şifre en az 6 karakter olmalı.', 'hata'); return; }
+  const data = await apiFetch('admin-ekle', { method: 'POST', body: JSON.stringify({ isim, username, sifre, rol }) });
+  if (data.success) {
+    showAdminAlert('✅ Admin eklendi.', 'basari');
+    document.getElementById('yeni-isim').value = '';
+    document.getElementById('yeni-username').value = '';
+    document.getElementById('yeni-sifre').value = '';
+    adminleriyukle();
+  } else showAdminAlert('❌ ' + data.error, 'hata');
+}
+
+async function adminToggle(id, aktif) {
+  const data = await apiFetch('admin-guncelle', { method: 'POST', body: JSON.stringify({ id, aktif: !aktif }) });
+  if (data.success) adminleriyukle();
+  else alert('Hata: ' + data.error);
+}
+
+async function adminSil(id) {
+  if (!confirm('Bu admini silmek istediğinize emin misiniz?')) return;
+  const data = await apiFetch('admin-sil', { method: 'POST', body: JSON.stringify({ id }) });
+  if (data.success) adminleriyukle();
+  else alert('Hata: ' + data.error);
+}
+
+function showAdminAlert(msg, tip) {
+  const el = document.getElementById('admin-alert');
+  el.textContent = msg; el.className = 'alert ' + tip; el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 3000);
+}
+
+// ŞARTLAR
+async function sartlariyukle() {
+  const data = await apiFetch('get-settings?keys=uyelik_sartlari');
+  if (data.uyelik_sartlari) document.getElementById('sartlar-icerik').value = data.uyelik_sartlari;
+}
+
+async function sartlarKaydet() {
+  const icerik = document.getElementById('sartlar-icerik').value;
+  const data = await apiFetch('update-settings', { method: 'POST', body: JSON.stringify({ uyelik_sartlari: icerik }) });
+  const el = document.getElementById('sart-alert');
+  el.textContent = data.success ? '✅ Şartlar kaydedildi.' : '❌ ' + data.error;
+  el.className = 'alert ' + (data.success ? 'basari' : 'hata');
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 3000);
+}
+
+function cikis() { localStorage.clear(); window.location.href = '/admin-login.html'; }
+
+basvurulariyukle();
+</script>
+</body>
+</html>

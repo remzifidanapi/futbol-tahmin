@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analizhane — Üyelik Kaydı</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --turuncu: #F5C518;
+  --turuncu2: #F0B800;
+  --yesil: #2DB84B;
+  --koyu-yesil: #1a8f35;
+  --koyu: #050905;
+  --koyu2: #0a0f0a;
+  --panel: #111a11;
+  --panel2: #1f2740;
+  --beyaz: #ffffff;
+  --gri: #9ca3af;
+  --border: rgba(245,197,24,0.3);
+  --hata: #ef4444;
+  --basari: #22c55e;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:#0a0f0a;color:var(--beyaz);min-height:100vh;}
+
+
+/* placeholder nav{background:linear-gradient(90deg,#050905,#111a11);border-bottom:3px solid var(--sari);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:999;}
+.logo{font-family:'Bebas Neue',cursive;font-size:26px;color:var(--sari);letter-spacing:3px;text-decoration:none;}
+.logo span{color:#fff;}
+.nav-links{display:flex;gap:8px;}
+.nav-links a{color:var(--gri);text-decoration:none;font-size:12px;font-weight:700;padding:6px 10px;border-radius:6px;transition:.2s;text-transform:uppercase;letter-spacing:.5px;}
+.nav-links a:hover{color:#fff;background:rgba(245,197,24,.2);}
+
+/* BANNER */
+#banner-wrap{display:none;width:100%;cursor:pointer;}
+#banner-wrap img{width:100%;max-height:100px;object-fit:cover;display:block;}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#050905 0%,#0a0f0a 60%,#0f1a08 100%);padding:50px 20px 40px;text-align:center;border-bottom:1px solid rgba(245,197,24,.2);}
+.hero-badge{display:inline-block;background:linear-gradient(90deg,var(--sari),var(--sari2));color:#fff;font-size:11px;font-weight:800;padding:4px 14px;border-radius:20px;letter-spacing:1px;margin-bottom:16px;text-transform:uppercase;}
+.hero h1{font-family:'Bebas Neue',cursive;font-size:clamp(36px,8vw,64px);letter-spacing:3px;line-height:1;margin-bottom:12px;}
+.hero h1 span{color:var(--sari);}
+.hero p{color:var(--gri);font-size:14px;max-width:480px;margin:0 auto 24px;line-height:1.7;}
+.hero-stats{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;}
+.stat{text-align:center;}
+.stat-num{font-family:'Bebas Neue',cursive;font-size:28px;color:var(--sari);}
+.stat-label{font-size:11px;color:var(--gri);text-transform:uppercase;letter-spacing:.5px;}
+
+/* MAIN LAYOUT */
+.container{max-width:900px;margin:0 auto;padding:40px 16px;}
+.section-title{font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:2px;color:var(--sari);border-left:4px solid var(--sari);padding-left:12px;margin-bottom:24px;}
+
+/* ADIMLAR */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:48px;}
+.step{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;position:relative;}
+.step-num{width:36px;height:36px;background:var(--sari);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',cursive;font-size:18px;margin:0 auto 12px;}
+.step h3{font-size:13px;font-weight:800;margin-bottom:6px;}
+.step p{font-size:12px;color:var(--gri);line-height:1.5;}
+.bayi-box{background:linear-gradient(135deg,var(--koyu-yesil),var(--yesil));border-radius:10px;padding:16px;margin:12px 0;text-align:center;}
+.bayi-box .label{font-size:11px;opacity:.8;text-transform:uppercase;letter-spacing:.5px;}
+.bayi-box .val{font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:2px;}
+
+/* FORM */
+.form-card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:48px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+@media(max-width:600px){.form-row{grid-template-columns:1fr;}}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.form-group label{font-size:12px;font-weight:700;color:var(--gri);text-transform:uppercase;letter-spacing:.5px;}
+.form-group input,.form-group select,.form-group textarea{background:#080e08;border:1.5px solid rgba(245,197,24,.25);border-radius:8px;color:#fff;font-family:'Nunito',sans-serif;font-size:14px;padding:11px 14px;transition:.2s;outline:none;width:100%;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--sari);box-shadow:0 0 0 3px rgba(245,197,24,.1);}
+.form-group select option{background:#111a11;}
+.upload-area{border:2px dashed rgba(245,197,24,.4);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:.2s;background:#080e08;position:relative;}
+.upload-area:hover{border-color:var(--sari);background:rgba(245,197,24,.05);}
+.upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-icon{font-size:28px;margin-bottom:8px;}
+.upload-area p{font-size:13px;color:var(--gri);}
+.upload-area .upload-name{font-size:12px;color:var(--yesil);margin-top:6px;display:none;}
+.btn-submit{width:100%;background:linear-gradient(90deg,var(--sari),var(--sari2));color:#fff;border:none;border-radius:10px;font-family:'Bebas Neue',cursive;font-size:20px;letter-spacing:2px;padding:16px;cursor:pointer;transition:.2s;margin-top:8px;}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,197,24,.4);}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.form-info{background:rgba(245,197,24,.08);border:1px solid rgba(245,197,24,.2);border-radius:8px;padding:12px 16px;font-size:12px;color:var(--gri);margin-bottom:20px;line-height:1.6;}
+.form-info strong{color:var(--sari);}
+
+/* ALERT */
+.alert{border-radius:10px;padding:14px 18px;font-size:13px;font-weight:700;margin-bottom:20px;display:none;}
+.alert.hata{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.4);color:#fca5a5;}
+.alert.basari{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.4);color:#86efac;}
+
+/* FOOTER */
+footer{background:#050905;border-top:1px solid rgba(245,197,24,.15);padding:24px 20px;text-align:center;}
+footer p{font-size:12px;color:var(--gri);}
+footer a{color:var(--sari);text-decoration:none;}
+
+/* NAVBAR */
+nav{background:linear-gradient(90deg,#050905,#111a11);border-bottom:3px solid var(--sari);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:999;flex-wrap:wrap;}
+.logo{font-family:'Bebas Neue',cursive;font-size:26px;color:var(--sari);letter-spacing:3px;text-decoration:none;flex-shrink:0;}
+.logo span{color:#fff;}
+.nav-links{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.nav-links a{color:var(--gri);text-decoration:none;font-size:12px;font-weight:700;padding:6px 10px;border-radius:6px;transition:.2s;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+.nav-links a:hover{color:#fff;background:rgba(245,197,24,.2);}
+.nav-links a.aktif{color:var(--sari);background:rgba(245,197,24,.15);}
+.nav-admin{border:1px solid rgba(245,197,24,.4)!important;color:var(--sari)!important;}
+.nav-toggle{display:none;background:none;border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:16px;}
+@media(max-width:700px){
+  .nav-toggle{display:block;}
+  .nav-links{display:none;width:100%;flex-direction:column;background:#050905;padding:8px 0;border-top:1px solid rgba(245,197,24,.2);}
+  .nav-links.acik{display:flex;}
+  .nav-links a{width:100%;padding:10px 20px;border-radius:0;}
+  nav{flex-wrap:wrap;height:auto;padding:10px 20px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/index.html" class="logo">ANALİZ<span>HANE</span></a>
+  <button class="nav-toggle" onclick="navToggle()">☰</button>
+  <div class="nav-links" id="nav-links">
+    <a href="/index.html" class="aktif">🏠 Ana Sayfa</a>
+    <a href="/tahminler.html">📊 Tahminler</a>
+    <a href="/rehber.html">📖 Bayi Rehberi</a>
+    <a href="/sartlar.html">📋 Şartlar</a>
+    <a href="/sorumluluk.html">⚖️ Sorumluluk</a>
+    <a href="/admin-login.html" class="nav-admin">🔐 Admin</a>
+  </div>
+</nav>
+
+<div id="banner-wrap">
+  <a id="banner-link" href="#" target="_blank">
+    <img id="banner-img" src="" alt="Reklam">
+  </a>
+</div>
+
+<div class="hero">
+  <div class="hero-badge">⚽ Türkiye'nin Analiz Grubu</div>
+  <h1>ANALİZ<span>HANE</span><br>ÜYELİK KAYDI</h1>
+  <p>Profesyonel maç analizlerine erişmek için iddaa.com üzerinden bayi kodunu değiştir ve gruba katıl.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">3000+</div><div class="stat-label">Aktif Üye</div></div>
+    <div class="stat"><div class="stat-num">7/24</div><div class="stat-label">Canlı Analiz</div></div>
+    <div class="stat"><div class="stat-num">%0</div><div class="stat-label">Ücret</div></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <p class="section-title">NASIL ÜYE OLUNUR?</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Bayi Kodunu Değiştir</h3>
+      <p>iddaa.com'a gir ve bayi kodunu aşağıdaki bilgilerle ücretsiz güncelle.</p>
+      <div class="bayi-box">
+        <div class="label">Bayi Kodu</div>
+        <div class="val" id="bayi-kodu-hero">303527</div>
+        <div class="label" style="margin-top:6px">Bayi Adı</div>
+        <div style="font-size:13px;font-weight:800" id="bayi-adi-hero">Mehmet Mustafa Donma</div>
+      </div>
+      <a href="rehber.html" style="font-size:12px;color:var(--sari);text-decoration:none;">📖 Nasıl yapılır? →</a>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Formu Doldur</h3>
+      <p>Bilgilerini ve bayi değişim ekran görüntüsünü aşağıdaki forma yükle.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Onay Bekle</h3>
+      <p>Başvurunu inceleyeceğiz. Onaylanınca Telegram grubuna davet gönderilir.</p>
+    </div>
+  </div>
+
+  <p class="section-title">ÜYELİK BAŞVURU FORMU</p>
+
+  <div class="form-card">
+    <div class="form-info">
+      ⚠️ <strong>Önemli:</strong> Başvuru için iddaa.com'da bayi kodunu <strong id="bayi-kodu-form">303527</strong> (<strong id="bayi-adi-form">Mehmet Mustafa Donma</strong>) olarak güncellemiş olman gerekmektedir. Güncelleme sonrası bayi ekranının ekran görüntüsünü aşağıya yükle.
+    </div>
+
+    <div id="alert-box" class="alert"></div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Ad *</label>
+        <input type="text" id="ad" placeholder="Adınız">
+      </div>
+      <div class="form-group">
+        <label>Soyad *</label>
+        <input type="text" id="soyad" placeholder="Soyadınız">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>E-Posta *</label>
+        <input type="email" id="email" placeholder="email@gmail.com">
+      </div>
+      <div class="form-group">
+        <label>Telefon *</label>
+        <input type="tel" id="telefon" placeholder="05XX XXX XX XX">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Telegram Kullanıcı Adı *</label>
+        <input type="text" id="telegram" placeholder="@kullaniciadi">
+      </div>
+      <div class="form-group">
+        <label>Bayi Kodu (iddaa.com'dan) *</label>
+        <input type="text" id="bayi-kodu" placeholder="303527">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Şifre Belirleyin * <span style="font-size:10px;color:var(--gri)">(min. 6 karakter)</span></label>
+        <input type="password" id="sifre" placeholder="••••••••">
+      </div>
+      <div class="form-group">
+        <label>Şifre Tekrar *</label>
+        <input type="password" id="sifre-tekrar" placeholder="••••••••">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Referans Admin *</label>
+      <select id="referans-admin">
+        <option value="">-- Referans admini seçin --</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Bayi Değişim Ekran Görüntüsü *</label>
+      <div class="upload-area" id="upload-area">
+        <input type="file" id="gorsel" accept="image/*">
+        <div class="upload-icon">📷</div>
+        <p>iddaa.com bayi ekranının görüntüsünü yükle</p>
+        <p style="font-size:11px;margin-top:4px">JPG, PNG, WebP — Max 5MB</p>
+        <div class="upload-name" id="upload-name"></div>
+      </div>
+    </div>
+
+    <button class="btn-submit" id="btn-kayit" onclick="kayitGonder()">BAŞVURUYU GÖNDER</button>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2026 Analizhane — Tüm hakları saklıdır.<br>
+  <a href="sorumluluk.html">Sorumluluk Reddi</a> · <a href="sartlar.html">Üyelik Şartları</a></p>
+</footer>
+
+<script>
+const SUPABASE_URL = 'https://tgyovobwyvywhsxkqwtn.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_tg426zdtj1K6oSaW3jEM2Q_B04K9LJt';
+
+async function supabaseFetch(path, opts={}) {
+  const res = await fetch(SUPABASE_URL + path, {
+    ...opts,
+    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY, 'Content-Type': 'application/json', ...(opts.headers||{}) }
+  });
+  return res.json();
+}
+
+// Banner yükle
+async function banneryukle() {
+  const data = await supabaseFetch('/rest/v1/site_ayarlari?anahtar=in.(banner_url,banner_link,banner_aktif)&select=anahtar,deger');
+  if (!Array.isArray(data)) return;
+  const ayarlar = {};
+  data.forEach(d => ayarlar[d.anahtar] = d.deger);
+  if (ayarlar.banner_aktif === 'true' && ayarlar.banner_url) {
+    document.getElementById('banner-wrap').style.display = 'block';
+    document.getElementById('banner-img').src = ayarlar.banner_url;
+    if (ayarlar.banner_link) document.getElementById('banner-link').href = ayarlar.banner_link;
+  }
+}
+
+// Bayi bilgileri yükle
+async function bayiyukle() {
+  const data = await supabaseFetch('/rest/v1/site_ayarlari?anahtar=in.(bayi_kodu,bayi_adi)&select=anahtar,deger');
+  if (!Array.isArray(data)) return;
+  data.forEach(d => {
+    if (d.anahtar === 'bayi_kodu') {
+      document.getElementById('bayi-kodu-hero').textContent = d.deger;
+      document.getElementById('bayi-kodu-form').textContent = d.deger;
+      document.getElementById('bayi-kodu').placeholder = d.deger;
+    }
+    if (d.anahtar === 'bayi_adi') {
+      document.getElementById('bayi-adi-hero').textContent = d.deger;
+      document.getElementById('bayi-adi-form').textContent = d.deger;
+    }
+  });
+}
+
+// Adminleri yükle
+async function adminleriyukle() {
+  const data = await supabaseFetch('/rest/v1/admins?aktif=eq.true&select=id,isim,rol&order=isim');
+  if (!Array.isArray(data)) return;
+  const sel = document.getElementById('referans-admin');
+  data.forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a.id;
+    opt.textContent = a.isim + (a.rol === 'superadmin' ? ' ⭐' : '');
+    sel.appendChild(opt);
+  });
+}
+
+// Dosya adı göster
+document.getElementById('gorsel').addEventListener('change', function() {
+  const n = this.files[0]?.name;
+  if (n) {
+    document.getElementById('upload-name').textContent = '✅ ' + n;
+    document.getElementById('upload-name').style.display = 'block';
+  }
+});
+
+function showAlert(msg, tip) {
+  const el = document.getElementById('alert-box');
+  el.textContent = msg;
+  el.className = 'alert ' + tip;
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+async function kayitGonder() {
+  const ad = document.getElementById('ad').value.trim();
+  const soyad = document.getElementById('soyad').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const telefon = document.getElementById('telefon').value.trim();
+  const telegram = document.getElementById('telegram').value.trim();
+  const bayi = document.getElementById('bayi-kodu').value.trim();
+  const referans = document.getElementById('referans-admin').value;
+  const sifre = document.getElementById('sifre').value;
+  const sifreTekrar = document.getElementById('sifre-tekrar').value;
+  const file = document.getElementById('gorsel').files[0];
+
+  if (!ad || !soyad || !email || !telefon || !telegram || !bayi || !referans || !sifre) {
+    showAlert('❌ Lütfen tüm alanları doldurun.', 'hata'); return;
+  }
+  if (sifre.length < 6) { showAlert('❌ Şifre en az 6 karakter olmalıdır.', 'hata'); return; }
+  if (sifre !== sifreTekrar) { showAlert('❌ Şifreler eşleşmiyor.', 'hata'); return; }
+  if (!ad || !soyad || !email || !telefon || !telegram || !bayi || !referans) {
+    showAlert('❌ Lütfen tüm alanları doldurun.', 'hata'); return;
+  }
+  if (!file) { showAlert('❌ Bayi ekran görüntüsü yüklemelisiniz.', 'hata'); return; }
+  if (file.size > 5 * 1024 * 1024) { showAlert('❌ Dosya 5MB\'dan büyük olamaz.', 'hata'); return; }
+
+  const btn = document.getElementById('btn-kayit');
+  btn.disabled = true;
+  btn.textContent = 'GÖNDERİLİYOR...';
+
+  try {
+    // Görseli Netlify Function üzerinden yükle
+    const formData = new FormData();
+    formData.append('gorsel', file);
+    formData.append('ad', ad);
+    formData.append('soyad', soyad);
+    formData.append('email', email);
+    formData.append('telefon', telefon);
+    formData.append('telegram', telegram.startsWith('@') ? telegram : '@' + telegram);
+    formData.append('bayi_kodu', bayi);
+    formData.append('referans_admin_id', referans);
+    formData.append('sifre', sifre);
+
+    const res = await fetch('/.netlify/functions/register', { method: 'POST', body: formData });
+    const data = await res.json();
+
+    if (data.success) {
+      showAlert('✅ Başvurunuz alındı! İnceleme sonucunda Telegram adresinize bildirim yapılacaktır.', 'basari');
+      btn.textContent = 'GÖNDERILDI ✓';
+    } else {
+      showAlert('❌ Hata: ' + (data.error || 'Bilinmeyen hata'), 'hata');
+      btn.disabled = false;
+      btn.textContent = 'BAŞVURUYU GÖNDER';
+    }
+  } catch(e) {
+    showAlert('❌ Sunucu hatası. Lütfen tekrar deneyin.', 'hata');
+    btn.disabled = false;
+    btn.textContent = 'BAŞVURUYU GÖNDER';
+  }
+}
+
+banneryukle();
+bayiukle();
+adminleriyukle();
+</script>
+</body>
+</html>

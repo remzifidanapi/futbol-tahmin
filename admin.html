@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analizhane — Admin Paneli</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--turuncu:#F5C518;--yesil:#2DB84B;--koyu:#050905;--koyu2:#0a0f0a;--panel:#111a11;--panel2:#162016;--beyaz:#fff;--gri:#9ca3af;--border:rgba(245,197,24,.25);--hata:#ef4444;--basari:#22c55e;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:#0a0f0a;color:var(--beyaz);min-height:100vh;}
+nav{background:linear-gradient(90deg,#050905,#111a11);border-bottom:3px solid var(--sari);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:99;}
+.logo{font-family:'Bebas Neue',cursive;font-size:22px;color:var(--sari);letter-spacing:2px;}
+.logo span{color:#fff;}
+.nav-right{display:flex;align-items:center;gap:16px;}
+.admin-badge{background:rgba(245,197,24,.15);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:700;color:var(--sari);}
+.btn-cikis{background:none;border:1px solid rgba(255,255,255,.2);border-radius:6px;color:var(--gri);font-size:12px;padding:6px 12px;cursor:pointer;font-family:'Nunito',sans-serif;}
+.btn-cikis:hover{color:#fff;border-color:#fff;}
+.container{max-width:900px;margin:0 auto;padding:32px 16px;}
+.section-title{font-family:'Bebas Neue',cursive;font-size:20px;letter-spacing:2px;color:var(--sari);border-left:4px solid var(--sari);padding-left:12px;margin-bottom:20px;}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:28px;}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:11px;font-weight:700;color:var(--gri);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.form-group input,.form-group select,.form-group textarea{width:100%;background:#080e08;border:1.5px solid var(--border);border-radius:8px;color:#fff;font-family:'Nunito',sans-serif;font-size:14px;padding:11px 14px;transition:.2s;outline:none;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--sari);box-shadow:0 0 0 3px rgba(245,197,24,.1);}
+.form-group textarea{resize:vertical;min-height:100px;}
+.form-group select option{background:#111a11;}
+.tip-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.tip-tab{padding:8px 16px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--gri);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:.2s;}
+.tip-tab.aktif{background:var(--sari);border-color:var(--sari);color:#fff;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:600px){.form-row{grid-template-columns:1fr;}}
+.upload-area{border:2px dashed rgba(245,197,24,.4);border-radius:10px;padding:20px;text-align:center;cursor:pointer;background:#080e08;position:relative;}
+.upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-area p{font-size:13px;color:var(--gri);}
+.btn-ekle{background:linear-gradient(90deg,var(--sari),#F0B800);color:#fff;border:none;border-radius:10px;font-family:'Bebas Neue',cursive;font-size:18px;letter-spacing:2px;padding:14px 32px;cursor:pointer;transition:.2s;}
+.btn-ekle:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(245,197,24,.4);}
+.btn-ekle:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.alert{border-radius:8px;padding:12px 16px;font-size:13px;font-weight:700;margin-bottom:16px;display:none;}
+.alert.hata{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.4);color:#fca5a5;}
+.alert.basari{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.4);color:#86efac;}
+
+/* TAHMİN LİSTESİ */
+.tahmin-item{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.tahmin-info{flex:1;}
+.tahmin-baslik{font-weight:800;font-size:14px;margin-bottom:4px;}
+.tahmin-meta{font-size:11px;color:var(--gri);}
+.tahmin-tip{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;margin-right:6px;}
+.tip-yazili{background:rgba(29,185,84,.2);color:var(--yesil);}
+.tip-gorsel{background:rgba(245,197,24,.2);color:var(--sari);}
+.tip-aciklama{background:rgba(59,130,246,.2);color:#60a5fa;}
+.tahmin-actions{display:flex;gap:6px;flex-shrink:0;}
+.btn-sil{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#fca5a5;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;transition:.2s;}
+.btn-sil:hover{background:rgba(239,68,68,.3);}
+.btn-toggle{background:rgba(245,197,24,.15);border:1px solid var(--border);color:var(--sari);border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;transition:.2s;}
+.btn-toggle:hover{background:rgba(245,197,24,.3);}
+.gorsel-preview{max-width:80px;max-height:60px;border-radius:6px;object-fit:cover;cursor:pointer;}
+.empty{text-align:center;padding:32px;color:var(--gri);font-size:14px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/index.html" class="logo" style="text-decoration:none;">ANALİZ<span>HANE</span> <span style="font-size:14px;color:var(--gri);">Admin</span></a>
+  <div class="nav-right">
+    <span class="admin-badge" id="admin-isim">...</span>
+    <a href="/index.html" style="color:var(--gri);font-size:12px;text-decoration:none;margin-right:4px;">🏠 Site</a> <button class="btn-cikis" onclick="cikis()">Çıkış</button>
+  </div>
+</nav>
+
+<div class="container">
+  <p class="section-title">YENİ TAHMİN EKLE</p>
+  <div class="card">
+    <div id="alert-box" class="alert"></div>
+
+    <div class="form-group">
+      <label>Tahmin Tipi</label>
+      <div class="tip-tabs">
+        <button class="tip-tab aktif" data-tip="yazili" onclick="setTip('yazili',this)">📝 Yazılı Tahmin</button>
+        <button class="tip-tab" data-tip="gorsel" onclick="setTip('gorsel',this)">🖼️ Görsel Tahmin</button>
+        <button class="tip-tab" data-tip="aciklama" onclick="setTip('aciklama',this)">📊 Açıklama / Analiz</button>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Başlık *</label>
+        <input type="text" id="baslik" placeholder="örn: Galatasaray - Fenerbahçe">
+      </div>
+      <div class="form-group">
+        <label>Maç Tarihi</label>
+        <input type="date" id="mac-tarihi">
+      </div>
+    </div>
+
+    <div id="alan-yazili" class="form-group">
+      <label>Tahmin İçeriği *</label>
+      <textarea id="icerik" placeholder="Tahmininizi ve analizinizi buraya yazın..."></textarea>
+    </div>
+
+    <div id="alan-gorsel" style="display:none" class="form-group">
+      <label>Tahmin Görseli *</label>
+      <div class="upload-area">
+        <input type="file" id="gorsel-dosya" accept="image/*" onchange="gorselSec(this)">
+        <p>📷 Görsel yüklemek için tıkla</p>
+        <p style="font-size:11px;margin-top:4px">JPG, PNG, WebP — Max 5MB</p>
+        <div id="gorsel-adi" style="font-size:12px;color:var(--yesil);margin-top:6px;display:none;"></div>
+      </div>
+    </div>
+
+    <div id="alan-aciklama" style="display:none" class="form-group">
+      <label>Analiz / Açıklama *</label>
+      <textarea id="aciklama" placeholder="Detaylı analiz, istatistik veya açıklama..." style="min-height:140px;"></textarea>
+    </div>
+
+    <button class="btn-ekle" id="btn-ekle" onclick="tahminEkle()">TAHMİNİ YAYINLA</button>
+  </div>
+
+  <p class="section-title">TAHMİNLERİM</p>
+  <div id="tahmin-listesi"><div class="empty">Yükleniyor...</div></div>
+</div>
+
+<script>
+const TOKEN = localStorage.getItem('ah_token');
+const ADMIN_ID = localStorage.getItem('ah_id');
+const ISIM = localStorage.getItem('ah_isim');
+const ROL = localStorage.getItem('ah_rol');
+
+if (!TOKEN) window.location.href = '/admin-login.html';
+document.getElementById('admin-isim').textContent = ISIM || 'Admin';
+
+let seciliTip = 'yazili';
+
+function setTip(tip, el) {
+  seciliTip = tip;
+  document.querySelectorAll('.tip-tab').forEach(t => t.classList.remove('aktif'));
+  el.classList.add('aktif');
+  document.getElementById('alan-yazili').style.display = tip === 'yazili' ? '' : 'none';
+  document.getElementById('alan-gorsel').style.display = tip === 'gorsel' ? '' : 'none';
+  document.getElementById('alan-aciklama').style.display = tip === 'aciklama' ? '' : 'none';
+}
+
+function gorselSec(input) {
+  const f = input.files[0];
+  if (f) { document.getElementById('gorsel-adi').textContent = '✅ ' + f.name; document.getElementById('gorsel-adi').style.display = 'block'; }
+}
+
+function showAlert(msg, tip) {
+  const el = document.getElementById('alert-box');
+  el.textContent = msg; el.className = 'alert ' + tip; el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 4000);
+}
+
+async function tahminEkle() {
+  const baslik = document.getElementById('baslik').value.trim();
+  const macTarihi = document.getElementById('mac-tarihi').value;
+  if (!baslik) { showAlert('❌ Başlık gereklidir.', 'hata'); return; }
+
+  let icerikVal = '', gorselFile = null;
+  if (seciliTip === 'yazili') {
+    icerikVal = document.getElementById('icerik').value.trim();
+    if (!icerikVal) { showAlert('❌ İçerik gereklidir.', 'hata'); return; }
+  } else if (seciliTip === 'gorsel') {
+    gorselFile = document.getElementById('gorsel-dosya').files[0];
+    if (!gorselFile) { showAlert('❌ Görsel seçin.', 'hata'); return; }
+  } else {
+    icerikVal = document.getElementById('aciklama').value.trim();
+    if (!icerikVal) { showAlert('❌ Açıklama gereklidir.', 'hata'); return; }
+  }
+
+  const btn = document.getElementById('btn-ekle');
+  btn.disabled = true; btn.textContent = 'YAYINLANİYOR...';
+
+  try {
+    const fd = new FormData();
+    fd.append('baslik', baslik);
+    fd.append('icerik', icerikVal);
+    fd.append('tip', seciliTip);
+    fd.append('mac_tarihi', macTarihi);
+    fd.append('admin_id', ADMIN_ID);
+    if (gorselFile) fd.append('gorsel', gorselFile);
+
+    const res = await fetch('/.netlify/functions/tahmin-ekle', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + TOKEN },
+      body: fd
+    });
+    const data = await res.json();
+    if (data.success) {
+      showAlert('✅ Tahmin başarıyla yayınlandı!', 'basari');
+      document.getElementById('baslik').value = '';
+      document.getElementById('icerik').value = '';
+      document.getElementById('aciklama').value = '';
+      tahminleriyukle();
+    } else {
+      showAlert('❌ ' + (data.error || 'Hata oluştu'), 'hata');
+    }
+  } catch(e) { showAlert('❌ Sunucu hatası', 'hata'); }
+  btn.disabled = false; btn.textContent = 'TAHMİNİ YAYINLA';
+}
+
+async function tahminleriyukle() {
+  const el = document.getElementById('tahmin-listesi');
+  el.innerHTML = '<div class="empty">Yükleniyor...</div>';
+  try {
+    const res = await fetch('/.netlify/functions/tahmin-listesi?admin_id=' + ADMIN_ID, {
+      headers: { 'Authorization': 'Bearer ' + TOKEN }
+    });
+    const data = await res.json();
+    if (!data.tahminler || data.tahminler.length === 0) {
+      el.innerHTML = '<div class="empty">Henüz tahmin yok. Yukarıdan ekleyebilirsin.</div>'; return;
+    }
+    el.innerHTML = data.tahminler.map(t => `
+      <div class="tahmin-item" id="ti-${t.id}">
+        <div class="tahmin-info">
+          ${t.gorsel_url ? `<img src="${t.gorsel_url}" class="gorsel-preview" onclick="window.open('${t.gorsel_url}')">` : ''}
+          <div class="tahmin-baslik">${t.baslik}</div>
+          <div class="tahmin-meta">
+            <span class="tahmin-tip tip-${t.tip}">${t.tip}</span>
+            ${t.mac_tarihi ? '📅 ' + t.mac_tarihi : ''}
+            · ${new Date(t.created_at).toLocaleDateString('tr-TR')}
+            ${!t.aktif ? ' · <span style="color:#ef4444">Pasif</span>' : ''}
+          </div>
+          ${t.icerik ? `<div style="font-size:12px;color:var(--gri);margin-top:6px;max-height:40px;overflow:hidden;">${t.icerik.substring(0,120)}${t.icerik.length>120?'...':''}</div>` : ''}
+        </div>
+        <div class="tahmin-actions">
+          <button class="btn-toggle" onclick="tahminToggle('${t.id}',${t.aktif})">${t.aktif ? 'Pasif Yap' : 'Aktif Yap'}</button>
+          <button class="btn-sil" onclick="tahminSil('${t.id}')">Sil</button>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) { el.innerHTML = '<div class="empty">Yükleme hatası.</div>'; }
+}
+
+async function tahminSil(id) {
+  if (!confirm('Bu tahmini silmek istediğinize emin misiniz?')) return;
+  const res = await fetch('/.netlify/functions/tahmin-sil', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+    body: JSON.stringify({ id })
+  });
+  const data = await res.json();
+  if (data.success) { document.getElementById('ti-' + id).remove(); }
+  else alert('Hata: ' + data.error);
+}
+
+async function tahminToggle(id, aktif) {
+  const res = await fetch('/.netlify/functions/tahmin-toggle', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+    body: JSON.stringify({ id, aktif: !aktif })
+  });
+  const data = await res.json();
+  if (data.success) tahminleriyukle();
+  else alert('Hata: ' + data.error);
+}
+
+function cikis() {
+  localStorage.clear();
+  window.location.href = '/admin-login.html';
+}
+
+tahminleriyukle();
+</script>
+</body>
+</html>

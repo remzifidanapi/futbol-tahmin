@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analizhane — Üyelik Şartları</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--turuncu:#F5C518;--koyu2:#0a0f0a;--panel:#111a11;--beyaz:#fff;--gri:#9ca3af;--border:rgba(245,197,24,.25);}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:#0a0f0a;color:var(--beyaz);min-height:100vh;}
+/* placeholder nav{background:linear-gradient(90deg,#050905,#111a11);border-bottom:3px solid var(--sari);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:99;}
+.logo{font-family:'Bebas Neue',cursive;font-size:26px;color:var(--sari);letter-spacing:3px;text-decoration:none;}
+.logo span{color:#fff;}
+.nav-links a{color:var(--gri);text-decoration:none;font-size:12px;font-weight:700;padding:6px 10px;border-radius:6px;transition:.2s;}
+.nav-links a:hover{color:#fff;background:rgba(245,197,24,.2);}
+.hero{background:linear-gradient(135deg,#050905,#0a0f0a);padding:40px 20px 30px;text-align:center;border-bottom:1px solid rgba(245,197,24,.2);}
+.hero h1{font-family:'Bebas Neue',cursive;font-size:clamp(26px,6vw,48px);letter-spacing:3px;}
+.hero h1 span{color:var(--sari);}
+.container{max-width:760px;margin:0 auto;padding:40px 16px;}
+.content-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:32px;}
+.content-card h2{font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:2px;color:var(--sari);margin:24px 0 12px;}
+.content-card h2:first-child{margin-top:0;}
+.content-card h3{font-size:15px;font-weight:800;color:var(--sari);margin:16px 0 8px;}
+.content-card p{font-size:14px;color:#d1d5db;line-height:1.8;margin-bottom:10px;}
+.content-card ul{padding-left:20px;margin-bottom:10px;}
+.content-card li{font-size:14px;color:#d1d5db;line-height:1.8;margin-bottom:4px;}
+.update-date{font-size:11px;color:var(--gri);margin-top:24px;padding-top:16px;border-top:1px solid var(--border);}
+footer{background:#050905;border-top:1px solid rgba(245,197,24,.15);padding:20px;text-align:center;margin-top:40px;}
+footer p{font-size:12px;color:var(--gri);}
+footer a{color:var(--sari);text-decoration:none;}
+
+/* NAVBAR */
+nav{background:linear-gradient(90deg,#050905,#111a11);border-bottom:3px solid var(--sari);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:999;flex-wrap:wrap;}
+.logo{font-family:'Bebas Neue',cursive;font-size:26px;color:var(--sari);letter-spacing:3px;text-decoration:none;flex-shrink:0;}
+.logo span{color:#fff;}
+.nav-links{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.nav-links a{color:var(--gri);text-decoration:none;font-size:12px;font-weight:700;padding:6px 10px;border-radius:6px;transition:.2s;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+.nav-links a:hover{color:#fff;background:rgba(245,197,24,.2);}
+.nav-links a.aktif{color:var(--sari);background:rgba(245,197,24,.15);}
+.nav-admin{border:1px solid rgba(245,197,24,.4)!important;color:var(--sari)!important;}
+.nav-toggle{display:none;background:none;border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:16px;}
+@media(max-width:700px){
+  .nav-toggle{display:block;}
+  .nav-links{display:none;width:100%;flex-direction:column;background:#050905;padding:8px 0;border-top:1px solid rgba(245,197,24,.2);}
+  .nav-links.acik{display:flex;}
+  .nav-links a{width:100%;padding:10px 20px;border-radius:0;}
+  nav{flex-wrap:wrap;height:auto;padding:10px 20px;}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/index.html" class="logo">ANALİZ<span>HANE</span></a>
+  <button class="nav-toggle" onclick="navToggle()">☰</button>
+  <div class="nav-links" id="nav-links">
+    <a href="/index.html">🏠 Ana Sayfa</a>
+    <a href="/tahminler.html">📊 Tahminler</a>
+    <a href="/rehber.html">📖 Bayi Rehberi</a>
+    <a href="/sartlar.html" class="aktif">📋 Şartlar</a>
+    <a href="/sorumluluk.html">⚖️ Sorumluluk</a>
+    <a href="/admin-login.html" class="nav-admin">🔐 Admin</a>
+  </div>
+</nav>
+<div class="hero">
+  <h1>ÜYELİK <span>ŞARTLARI</span></h1>
+</div>
+<div class="container">
+  <div class="content-card" id="sartlar-icerik">
+    <p>Yükleniyor...</p>
+  </div>
+</div>
+<footer><p>© 2026 Analizhane · <a href="sorumluluk.html">Sorumluluk Reddi</a></p></footer>
+<script>
+const SUPABASE_URL = 'https://tgyovobwyvywhsxkqwtn.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_tg426zdtj1K6oSaW3jEM2Q_B04K9LJt';
+async function yukle() {
+  const r = await fetch(SUPABASE_URL+'/rest/v1/site_ayarlari?anahtar=eq.uyelik_sartlari&select=deger',{headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY}});
+  const data = await r.json();
+  if(Array.isArray(data)&&data[0]?.deger) document.getElementById('sartlar-icerik').innerHTML = data[0].deger;
+}
+yukle();
+</script>
+</body>
+</html>

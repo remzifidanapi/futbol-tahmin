@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analizhane — Günlük Tahminler</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--turuncu:#F5C518;--yesil:#2DB84B;--koyu2:#0a0f0a;--panel:#111a11;--panel2:#162016;--beyaz:#fff;--gri:#9ca3af;--border:rgba(245,197,24,.25);}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:#0a0f0a;color:var(--beyaz);min-height:100vh;}
+nav{background:linear-gradient(90deg,#050905,#111a11);border-bottom:3px solid var(--sari);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:99;}
+.logo{font-family:'Bebas Neue',cursive;font-size:26px;color:var(--sari);letter-spacing:3px;text-decoration:none;}
+.logo span{color:#fff;}
+.nav-links{display:flex;gap:8px;}
+.nav-links a{color:var(--gri);text-decoration:none;font-size:12px;font-weight:700;padding:6px 10px;border-radius:6px;transition:.2s;text-transform:uppercase;}
+.nav-links a:hover{color:#fff;background:rgba(245,197,24,.2);}
+.hero{background:linear-gradient(135deg,#050905,#0a0f0a,#0f1a08);padding:40px 20px 30px;text-align:center;border-bottom:1px solid rgba(245,197,24,.2);}
+.hero h1{font-family:'Bebas Neue',cursive;font-size:clamp(28px,7vw,52px);letter-spacing:3px;}
+.hero h1 span{color:var(--sari);}
+.hero p{color:var(--gri);font-size:13px;margin-top:8px;}
+#banner-wrap{display:none;width:100%;cursor:pointer;}
+#banner-wrap img{width:100%;max-height:100px;object-fit:cover;display:block;}
+.container{max-width:800px;margin:0 auto;padding:32px 16px;}
+.tahmin-grid{display:flex;flex-direction:column;gap:16px;}
+.tahmin-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:.2s;}
+.tahmin-card:hover{border-color:var(--sari);transform:translateY(-2px);}
+.card-header{padding:16px 20px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(245,197,24,.1);}
+.card-admin{font-size:12px;font-weight:700;color:var(--sari);}
+.card-tarih{font-size:11px;color:var(--gri);}
+.tip-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;}
+.tip-yazili{background:rgba(29,185,84,.2);color:var(--yesil);}
+.tip-gorsel{background:rgba(245,197,24,.2);color:var(--sari);}
+.tip-aciklama{background:rgba(59,130,246,.2);color:#60a5fa;}
+.card-body{padding:16px 20px;}
+.card-baslik{font-size:16px;font-weight:800;margin-bottom:10px;}
+.card-icerik{font-size:13px;color:#d1d5db;line-height:1.7;white-space:pre-wrap;}
+.card-gorsel{width:100%;max-height:400px;object-fit:contain;border-radius:8px;cursor:pointer;margin-top:8px;background:#080e08;}
+.mac-tarihi{font-size:11px;color:var(--yesil);margin-top:10px;font-weight:700;}
+.empty{text-align:center;padding:64px 20px;color:var(--gri);}
+.loading{text-align:center;padding:48px;color:var(--gri);}
+footer{background:#050905;border-top:1px solid rgba(245,197,24,.15);padding:20px;text-align:center;}
+footer p{font-size:12px;color:var(--gri);}
+footer a{color:var(--sari);text-decoration:none;}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="logo">ANALİZ<span>HANE</span></a>
+  <div class="nav-links">
+    <a href="tahminler.html" style="color:var(--sari)">📊 Tahminler</a>
+    <a href="rehber.html">📖 Rehber</a>
+    <a href="/">📝 Kayıt</a>
+  </div>
+</nav>
+<div id="banner-wrap"><a id="banner-link" href="#" target="_blank"><img id="banner-img" src="" alt="Reklam"></a></div>
+<div class="hero">
+  <h1>GÜNLÜK <span>TAHMİNLER</span></h1>
+  <p>Admin ekibimiz tarafından hazırlanan güncel maç analizleri</p>
+</div>
+<div class="container">
+  <div id="tahmin-grid" class="tahmin-grid">
+    <div class="loading">⚽ Tahminler yükleniyor...</div>
+  </div>
+</div>
+<footer><p>© 2026 Analizhane · <a href="sorumluluk.html">Sorumluluk Reddi</a> · <a href="sartlar.html">Şartlar</a></p></footer>
+<script>
+const SUPABASE_URL = 'https://tgyovobwyvywhsxkqwtn.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_tg426zdtj1K6oSaW3jEM2Q_B04K9LJt';
+async function sf(path) {
+  const r = await fetch(SUPABASE_URL+path,{headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY}});
+  return r.json();
+}
+async function yukle() {
+  const bData = await sf('/rest/v1/site_ayarlari?anahtar=in.(banner_url,banner_link,banner_aktif)&select=anahtar,deger');
+  if(Array.isArray(bData)){const m={};bData.forEach(d=>m[d.anahtar]=d.deger);if(m.banner_aktif==='true'&&m.banner_url){document.getElementById('banner-wrap').style.display='block';document.getElementById('banner-img').src=m.banner_url;if(m.banner_link)document.getElementById('banner-link').href=m.banner_link;}}
+  const data = await sf('/rest/v1/tahminler?aktif=eq.true&order=created_at.desc&limit=50&select=*');
+  const grid = document.getElementById('tahmin-grid');
+  if(!Array.isArray(data)||!data.length){grid.innerHTML='<div class="empty">📭 Henüz tahmin paylaşılmadı. Yakında eklenecek!</div>';return;}
+  grid.innerHTML = data.map(t=>`
+    <div class="tahmin-card">
+      <div class="card-header">
+        <div>
+          <span class="card-admin">👤 ${t.admin_isim}</span>
+          <span class="tip-badge tip-${t.tip}" style="margin-left:8px">${t.tip==='yazili'?'Yazılı':t.tip==='gorsel'?'Görsel':'Analiz'}</span>
+        </div>
+        <div class="card-tarih">${new Date(t.created_at).toLocaleDateString('tr-TR',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+      <div class="card-body">
+        <div class="card-baslik">${t.baslik}</div>
+        ${t.icerik?`<div class="card-icerik">${t.icerik}</div>`:''}
+        ${t.gorsel_url?`<img src="${t.gorsel_url}" class="card-gorsel" onclick="window.open('${t.gorsel_url}','_blank')" alt="Tahmin görseli">`:''}
+        ${t.mac_tarihi?`<div class="mac-tarihi">📅 Maç tarihi: ${new Date(t.mac_tarihi).toLocaleDateString('tr-TR',{day:'numeric',month:'long'})}</div>`:''}
+      </div>
+    </div>
+  `).join('');
+}
+yukle();
+</script>
+</body>
+</html>
