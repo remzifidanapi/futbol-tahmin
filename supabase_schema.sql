@@ -71,7 +71,12 @@ ALTER TABLE site_ayarlari ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Tahminleri herkes okur" ON tahminler FOR SELECT USING (aktif = true);
 CREATE POLICY "Herkes basvuru ekler" ON applications FOR INSERT WITH CHECK (true);
 CREATE POLICY "Site ayarlari herkes okur" ON site_ayarlari FOR SELECT USING (true);
-CREATE POLICY "Aktif adminler gorunur" ON admins FOR SELECT USING (aktif = true);
+-- DİKKAT: admins tablosuna anon key ile SELECT izni VERİLMEZ.
+-- Önceki "Aktif adminler gorunur" politikası password_hash dahil tüm satırları
+-- herkese açıyordu. Admin verisine yalnızca service key kullanan Netlify
+-- fonksiyonları erişir; service key RLS'i baypas ettiği için politika gerekmez.
+-- Ad/rol listesi public olarak gerekirse password_hash içermeyen bir view açın:
+--   CREATE VIEW public_adminler AS SELECT id, isim, rol FROM admins WHERE aktif = true;
 
 CREATE OR REPLACE FUNCTION update_updated_at()
 RETURNS TRIGGER AS $$ BEGIN NEW.updated_at = NOW(); RETURN NEW; END; $$ LANGUAGE plpgsql;

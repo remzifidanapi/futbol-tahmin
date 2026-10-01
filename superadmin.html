@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root{--turuncu:#F5C518;--yesil:#2DB84B;--koyu:#050905;--koyu2:#0a0f0a;--panel:#111a11;--panel2:#162016;--beyaz:#fff;--gri:#9ca3af;--border:rgba(245,197,24,.25);--hata:#ef4444;--basari:#22c55e;}
+:root{--sari:#F5C518;--turuncu:#F5C518;--yesil:#2DB84B;--koyu:#050905;--koyu2:#0a0f0a;--panel:#111a11;--panel2:#162016;--beyaz:#fff;--gri:#9ca3af;--border:rgba(245,197,24,.25);--hata:#ef4444;--basari:#22c55e;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Nunito',sans-serif;background:#0a0f0a;color:var(--beyaz);min-height:100vh;}
 nav{background:linear-gradient(90deg,#050905,#111a11);border-bottom:3px solid var(--sari);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:999;}
@@ -331,7 +331,29 @@ tr:hover td{background:rgba(245,197,24,.03);}
 <script>
 const TOKEN = localStorage.getItem('ah_token');
 const ROL = localStorage.getItem('ah_rol');
-if (!TOKEN || ROL !== 'superadmin') window.location.href = '/admin-login.html';
+
+function ahJwtPayload(token) {
+  try {
+    const b64 = token.split('.')[1];
+    if (!b64) return null;
+    const json = decodeURIComponent(
+      atob(b64.replace(/-/g, '+').replace(/_/g, '/'))
+        .split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')
+    );
+    return JSON.parse(json);
+  } catch (e) { return null; }
+}
+function ahTokenGecerli(token) {
+  if (!token) return false;
+  const p = ahJwtPayload(token);
+  return !!(p && p.exp && p.exp * 1000 > Date.now());
+}
+function ahOturumaGit() {
+  ['ah_token', 'ah_rol', 'ah_isim', 'ah_id'].forEach(k => localStorage.removeItem(k));
+  window.location.replace('/admin-login.html');
+}
+// Rolü token'ın içinden okuyoruz; localStorage'daki 'ah_rol' elle değiştirilebilir.
+if (!ahTokenGecerli(TOKEN) || (ahJwtPayload(TOKEN) || {}).rol !== 'superadmin') ahOturumaGit();
 
 let tumBasvurular = [], aktifBasvuruId = null;
 
@@ -349,10 +371,14 @@ function tabAc(id, el) {
 }
 
 async function apiFetch(path, opts={}) {
-  return fetch('/.netlify/functions/' + path, {
+  const r = await fetch('/.netlify/functions/' + path, {
     ...opts,
     headers: { 'Authorization': 'Bearer ' + TOKEN, 'Content-Type': 'application/json', ...(opts.headers||{}) }
-  }).then(r => r.json());
+  });
+  // Token sunucu tarafında reddedildiyse panelde kalmanın anlamı yok.
+  if (r.status === 401 || r.status === 403) { ahOturumaGit(); return {}; }
+  try { return await r.json(); }
+  catch (e) { return { error: 'Sunucu beklenmeyen yanıt verdi (HTTP ' + r.status + ')' }; }
 }
 
 // BAŞVURULAR

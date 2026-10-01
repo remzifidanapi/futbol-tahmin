@@ -6,7 +6,7 @@
 <title>Analizhane — Admin Paneli</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--turuncu:#F5C518;--yesil:#2DB84B;--koyu:#050905;--koyu2:#0a0f0a;--panel:#111a11;--panel2:#162016;--beyaz:#fff;--gri:#9ca3af;--border:rgba(245,197,24,.25);--hata:#ef4444;--basari:#22c55e;}
+:root{--sari:#F5C518;--turuncu:#F5C518;--yesil:#2DB84B;--koyu:#050905;--koyu2:#0a0f0a;--panel:#111a11;--panel2:#162016;--beyaz:#fff;--gri:#9ca3af;--border:rgba(245,197,24,.25);--hata:#ef4444;--basari:#22c55e;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Nunito',sans-serif;background:#0a0f0a;color:var(--beyaz);min-height:100vh;}
 nav{background:linear-gradient(90deg,#050905,#111a11);border-bottom:3px solid var(--sari);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:99;}
@@ -126,7 +126,29 @@ const ADMIN_ID = localStorage.getItem('ah_id');
 const ISIM = localStorage.getItem('ah_isim');
 const ROL = localStorage.getItem('ah_rol');
 
-if (!TOKEN) window.location.href = '/admin-login.html';
+function ahJwtPayload(token) {
+  try {
+    const b64 = token.split('.')[1];
+    if (!b64) return null;
+    const json = decodeURIComponent(
+      atob(b64.replace(/-/g, '+').replace(/_/g, '/'))
+        .split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')
+    );
+    return JSON.parse(json);
+  } catch (e) { return null; }
+}
+function ahTokenGecerli(token) {
+  if (!token) return false;
+  const p = ahJwtPayload(token);
+  return !!(p && p.exp && p.exp * 1000 > Date.now());
+}
+// Süresi geçmiş token'ı burada temizliyoruz; yoksa panel açık kalıyor ama
+// her istek 401 dönüyor ve giriş sayfasına da dönülemiyordu.
+function ahOturumaGit() {
+  ['ah_token', 'ah_rol', 'ah_isim', 'ah_id'].forEach(k => localStorage.removeItem(k));
+  window.location.replace('/admin-login.html');
+}
+if (!ahTokenGecerli(TOKEN)) ahOturumaGit();
 document.getElementById('admin-isim').textContent = ISIM || 'Admin';
 
 let seciliTip = 'yazili';

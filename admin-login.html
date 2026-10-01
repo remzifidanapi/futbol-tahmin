@@ -6,7 +6,7 @@
 <title>Analizhane — Admin Giriş</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--turuncu:#F5C518;--yesil:#2DB84B;--koyu:#050905;--koyu2:#0a0f0a;--panel:#111a11;--beyaz:#fff;--gri:#9ca3af;--hata:#ef4444;}
+:root{--sari:#F5C518;--turuncu:#F5C518;--yesil:#2DB84B;--koyu:#050905;--koyu2:#0a0f0a;--panel:#111a11;--beyaz:#fff;--gri:#9ca3af;--hata:#ef4444;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Nunito',sans-serif;background:#0a0f0a;color:var(--beyaz);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
 .login-wrap{width:100%;max-width:400px;}
@@ -20,7 +20,7 @@ body{font-family:'Nunito',sans-serif;background:#0a0f0a;color:var(--beyaz);min-h
 .form-group label{display:block;font-size:11px;font-weight:700;color:var(--gri);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;}
 .form-group input{width:100%;background:#080e08;border:1.5px solid rgba(245,197,24,.25);border-radius:8px;color:#fff;font-family:'Nunito',sans-serif;font-size:14px;padding:12px 14px;transition:.2s;outline:none;}
 .form-group input:focus{border-color:var(--sari);box-shadow:0 0 0 3px rgba(245,197,24,.1);}
-.btn{width:100%;background:linear-gradient(90deg,var(--sari),#F0B800);color:#fff;border:none;border-radius:10px;font-family:'Bebas Neue',cursive;font-size:20px;letter-spacing:2px;padding:14px;cursor:pointer;transition:.2s;margin-top:4px;}
+.btn{width:100%;background:linear-gradient(90deg,var(--sari),#F0B800);color:#1a1200;border:none;border-radius:10px;font-family:'Bebas Neue',cursive;font-size:20px;letter-spacing:2px;padding:14px;cursor:pointer;transition:.2s;margin-top:4px;}
 .btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,197,24,.4);}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
 .alert{border-radius:8px;padding:12px 16px;font-size:13px;font-weight:700;margin-bottom:16px;display:none;}
@@ -53,6 +53,31 @@ body{font-family:'Nunito',sans-serif;background:#0a0f0a;color:var(--beyaz);min-h
 </div>
 
 <script>
+// ── OTURUM YARDIMCILARI ───────────────────────────
+// JWT'nin payload'ını çözer (imza doğrulaması sunucuda yapılır, burada
+// sadece son kullanma tarihine bakarız ki süresi geçmiş token ile
+// panele yönlendirip kullanıcıyı kilitlemeyelim).
+function ahJwtPayload(token) {
+  try {
+    const b64 = token.split('.')[1];
+    if (!b64) return null;
+    const json = decodeURIComponent(
+      atob(b64.replace(/-/g, '+').replace(/_/g, '/'))
+        .split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')
+    );
+    return JSON.parse(json);
+  } catch (e) { return null; }
+}
+function ahTokenGecerli(token) {
+  if (!token) return false;
+  const p = ahJwtPayload(token);
+  if (!p || !p.exp) return false;
+  return p.exp * 1000 > Date.now();
+}
+function ahOturumTemizle() {
+  ['ah_token', 'ah_rol', 'ah_isim', 'ah_id'].forEach(k => localStorage.removeItem(k));
+}
+
 async function giris() {
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value;
@@ -65,7 +90,16 @@ async function giris() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
     });
-    const data = await res.json();
+    // Fonksiyon çökerse gövde JSON olmayabilir; gerçek sebebi gizlememek için
+    // ham yanıtı ayrıştırıp HTTP kodunu gösteriyoruz.
+    const raw = await res.text();
+    let data;
+    try { data = JSON.parse(raw); }
+    catch (e) {
+      showAlert('Sunucu beklenmeyen yanıt verdi (HTTP ' + res.status + '). ' + raw.slice(0, 160));
+      btn.disabled = false; btn.textContent = 'GİRİŞ YAP';
+      return;
+    }
     if (data.success) {
       localStorage.setItem('ah_token', data.token);
       localStorage.setItem('ah_rol', data.rol);
@@ -74,11 +108,11 @@ async function giris() {
       if (data.rol === 'superadmin') window.location.href = '/superadmin.html';
       else window.location.href = '/admin.html';
     } else {
-      showAlert(data.error || 'Geçersiz kullanıcı adı veya şifre.');
+      showAlert((data.error || 'Geçersiz kullanıcı adı veya şifre.') + (res.ok ? '' : ' (HTTP ' + res.status + ')'));
       btn.disabled = false; btn.textContent = 'GİRİŞ YAP';
     }
   } catch(e) {
-    showAlert('Sunucu hatası. Tekrar deneyin.');
+    showAlert('Sunucuya ulaşılamadı: ' + e.message);
     btn.disabled = false; btn.textContent = 'GİRİŞ YAP';
   }
 }
@@ -87,10 +121,20 @@ function showAlert(msg) {
   el.textContent = '❌ ' + msg;
   el.style.display = 'block';
 }
-// Zaten giriş yapılmışsa yönlendir
-const tok = localStorage.getItem('ah_token');
-const rol = localStorage.getItem('ah_rol');
-if (tok) { if (rol === 'superadmin') window.location.href = '/superadmin.html'; else window.location.href = '/admin.html'; }
+// Zaten GEÇERLİ bir oturum varsa yönlendir.
+// Süresi geçmiş token'ı temizleyip giriş formunu gösteririz; aksi halde
+// panele yönlendirilip her istek 401 döndüğü için tekrar giriş yapılamıyordu.
+(function () {
+  const tok = localStorage.getItem('ah_token');
+  if (!tok) return;
+  if (!ahTokenGecerli(tok)) {
+    ahOturumTemizle();
+    showAlert('Oturum süresi doldu. Lütfen tekrar giriş yapın.');
+    return;
+  }
+  const rol = localStorage.getItem('ah_rol');
+  window.location.replace(rol === 'superadmin' ? '/superadmin.html' : '/admin.html');
+})();
 </script>
 </body>
 </html>
